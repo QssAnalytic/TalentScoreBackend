@@ -54,7 +54,19 @@ class Answer(models.Model):
 class SubAnswer(models.Model):
     answer = models.ForeignKey('app.Answer', on_delete = models.CASCADE, related_name='subanswers')
     sub_answer_title = models.CharField(max_length=150)
+    sub_answer_weight = models.CharField(max_length=150,  null=True, blank=True)
+    sub_answer_weight_for_hashing = models.CharField(max_length=150, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        env = environ.Env()
+        environ.Env.read_env()
+        hash_key = ast.literal_eval(env("hash_key"))
+        cipher = Fernet(hash_key)
+        if self.sub_answer_weight_for_hashing!=None:
+
+            self.asub_answer_weight = cipher.encrypt(self.sub_answer_weight_for_hashing.encode())
+        return super().save(*args, **kwargs)
+    
 
 class Question(models.Model):
 

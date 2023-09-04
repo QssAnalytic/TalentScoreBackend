@@ -6,7 +6,7 @@ class SubAnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.SubAnswer 
-        exclude = ["id", "answer"]
+        exclude = ["id", "answer", "sub_answer_weight_for_hashing"]
 
 class AnswerListSerializer(serializers.ModelSerializer):
     subanswers = SubAnswerSerializer(many=True, read_only=True)

@@ -10,12 +10,19 @@ from django.db import models
 
 @admin.register(model.SubAnswer)
 class SubAnswerAdmin(admin.ModelAdmin):
-    list_display = ("sub_answer_title",)
+    list_display = ("sub_answer_title","answer")
+    raw_id_fields = ("answer",)
 
+
+
+class SubAnswerTabularInline(admin.TabularInline):
+    model = model.SubAnswer
+    fields = ("sub_answer_title","sub_answer_weight", "sub_answer_weight_for_hashing")
 
 class AnswerTabularInline(admin.TabularInline):
     model = model.Answer
     fields = ('answer_title','answer_weight_for_hashing', 'answer_weight',  'answer_dependens_on', 'answer_weight_store')
+    
     raw_id_fields = ('answer_dependens_on', 'stage_fit')
     fk_name = "questionIdd"
 
@@ -44,6 +51,7 @@ class AnswerAdmin(admin.ModelAdmin):
     search_fields= ('answer_title','questionIdd__question_title')
     autocomplete_fields = ['answer_dependens_on']
     list_display = ('answer_title', 'get_question_title', 'answer_weight', 'answer_weight_store')
+    inlines = [SubAnswerTabularInline]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)

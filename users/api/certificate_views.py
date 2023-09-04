@@ -98,6 +98,9 @@ class CertificateDesigAPIView(APIView):
 
             return response.choices[0].message.content
         certificate_designation_content = generate_certificate_designation_content()
+        if certificate_designation_content.endswith('.'):
+            certificate_designation_content = certificate_designation_content[:-1]
+            
         return response.Response({"certificate_designation_content": certificate_designation_content}, status=rest_status.HTTP_200_OK)
 
     
@@ -191,6 +194,7 @@ class CertificateIntroAPIView(APIView):
             return response.choices[0].message.content
 
         certificate_intro_content = generate_certificate_intro_content()
+        
         return response.Response({"certificate-intro-content":certificate_intro_content}, status=rest_status.HTTP_200_OK)
     
 

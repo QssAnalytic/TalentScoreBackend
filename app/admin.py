@@ -8,6 +8,11 @@ from django.db import models
 # Register your models here.
 
 
+@admin.register(model.SubAnswer)
+class SubAnswerAdmin(admin.ModelAdmin):
+    list_display = ("sub_answer_title",)
+
+
 class AnswerTabularInline(admin.TabularInline):
     model = model.Answer
     fields = ('answer_title','answer_weight_for_hashing', 'answer_weight',  'answer_dependens_on', 'answer_weight_store')

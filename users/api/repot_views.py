@@ -10,6 +10,7 @@ from users.models import ReportModel, UserAccount, UserAccountFilePage
 from users.serializers.report_serializers import ReportUploadSerializer
 from users.serializers.user_account_file_serializers import UserAccountFilePage
 from users.helpers.sync_user_helpers import *
+from users.helpers.report_score_result import get_report_score
 
 class ReportUploadAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -81,37 +82,7 @@ class ReportUploadAPIView(APIView):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    # def post(self, request, *args, **kwargs):
-        
-    #     try:
-    #       email = request.data.get('email')
-        #   user = UserAccount.objects.first()
-    #     except ReportModel.DoesNotExist:
-    #         return Response({'error': 'User not found with the provided email.'}, status=status.HTTP_404_NOT_FOUND)
-    #     file_key = request.data.get('file_key')
-    #     req_data = request.data.get('report_file')
-    #     try:
-            # format, imgstr = req_data.split(';base64,')
-    #         ext = format.split('/')[-1]
-    #         cont_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-    #     except (ValueError, TypeError):
-    #         return Response({'error': 'Invalid report file data.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    #     # Create a dictionary with the data to be saved
-    #     data = {
-    #         'user': user.id,
-    #         'file_key': file_key,
-    #         'file': cont_data,
-    #         'file_category': 'REPORT',
-    #     }
-
-    #     # Serialize and save the data
-    #     user_account_file_serializer = UserAccountFilePage(data=data)
-    #     if user_account_file_serializer.is_valid():
-    #         user_account_file_serializer.save()
-    #         return Response({'message': 'Report file uploaded successfully.'}, status=status.HTTP_201_CREATED)
-    #     else:
-    #         return Response(user_account_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SkillInfo(TypedDict):
@@ -140,7 +111,8 @@ class ReportInfoAPIView(APIView):
             for d_key, d_value in data.items():
                 if d_key in key:
                     if isinstance(value, Decimal):
-                        float_value = float(value)
+                        # float_value = float(value)
+                        float_value = value
                         result = ''
                         if 1 <= float_value <= 20:
                             result = 'limited'
@@ -173,39 +145,51 @@ class UserScoreAPIView(APIView):
         special_skills_score = 1
         language_score = 1
         programming_skills_score = 1
-        sport_score = 2
+        sport_score = 1
         report = ReportModel.objects.filter(user=user).last()
-        print(report.id)
+        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education', 'result':''}, 
+                'language': {'text': 'Language skills', 'result':''},
+                'special': {'text': 'Special talent', 'result':''},
+                'sport': {'text': 'Sport skills', 'result':''},
+                'work': {'text': 'Work experience', 'result':''},
+                'program': {'text': 'Program skills', 'result':''}}
+        user_info = request.data.get('user_info')
         for stage in report.general_questions:
             if stage['name'] == "umumi-suallar":
-                education_score = get_education_score(user)                
-                report.education_score = education_score
+                education_score = get_education_score(user)
+                data['education']['result'] = get_report_score(education_score)          
+                # report.education_score = education_score
 
         for stage in report.work_experience_questions:
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
-                report.work_experiance_score = experience_score
+                data['work']['result'] = get_report_score(experience_score)
+                # report.work_experiance_score = experience_score
 
         for stage in report.special_skills_questions:
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
-                report.special_skills_score = special_skills_score
+                data['work']['result'] = get_report_score(education_score)
+                # report.special_skills_score = special_skills_score
 
         for stage in report.language_skills_questions:
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)     
-                report.language_score = language_score
+                data['work']['result'] = get_report_score(education_score)
+                # report.language_score = language_score
 
         for stage in report.sport_questions:
             if stage['name'] == "idman-substage":
                 sport_score = get_sport_skills_score(stage)   
-                report.sport_score = sport_score
+                data['work']['result'] = get_report_score(education_score)
+                # report.sport_score = sport_score
 
         for stage in report.program_questions:
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)  
-                report.program_score = programming_skills_score
-        report.save()
+                data['work']['result'] = get_report_score(education_score)
+                # report.program_score = programming_skills_score
+        # report.save()
                             
         
         return Response(

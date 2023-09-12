@@ -51,25 +51,45 @@ class ReportUploadAPIView(APIView):
         try:
             text_data = request.data.get('report_file')
             user = UserAccount.objects.first()  # Change this to fetch the user based on your logic
-            general_questions = request.data.get('general_questions')
-            secondary_education_questions = request.data.get('secondary_education_questions')
-            olympiad_questions = request.data.get('olympiad_questions')
-            work_experience_questions = request.data.get('work_experience_questions')
-            special_skills_questions = request.data.get('special_skills_questions')
-            language_skills_questions = request.data.get('language_skills_questions')
-            special_skills_certificate_questions = request.data.get('special_skills_certificate_questions')
-            sport_questions = request.data.get('sport_questions')
-            program_questions = request.data.get('program_questions')
-        
-            # email = request.data.get('email')
-            # user = UserAccount.objects.filter(email=email)       
+            # general_questions = request.data.get('general_questions')
+            # secondary_education_questions = request.data.get('secondary_education_questions')
+            # olympiad_questions = request.data.get('olympiad_questions')
+            # work_experience_questions = request.data.get('work_experience_questions')
+            # special_skills_questions = request.data.get('special_skills_questions')
+            # language_skills_questions = request.data.get('language_skills_questions')
+            # special_skills_certificate_questions = request.data.get('special_skills_certificate_questions')
+            # sport_questions = request.data.get('sport_questions')
+            # program_questions = request.data.get('program_questions')
+            user_info = request.data.get("user_info")
+            for data in user_info:
+                if data.get("name") !="umumi-suallar":
+                    general_questions = {'formData':data.get('formData')}
+                if data.get("name") =="orta-texniki-ve-ali-tehsil-suallari":
+                    secondary_education_questions = {'formData':data.get('formData')}
+                if data.get("name") =="olimpiada-suallar":
+                    olympiad_questions = {'formData':data.get('formData')}
+                if data.get("name") =="is-tecrubesi-substage":
+                    work_experience_questions = {'formData':data.get('formData')}
+                if data.get("name") =="xususi-bacariqlar-substage":
+                    special_skills_questions = {'formData':data.get('formData')}
+                if data.get("name") =="dil-bilikleri-substage":
+                    language_skills_questions = {'formData':data.get('formData')}
+                if data.get("name") == "elave-dil-bilikleri-substage":
+                    extra_language_skills_questions = {'formData':data.get('formData')}
+                if data.get("name") == "xususi-bacariqlar-sertifikat-substage":
+                    special_skills_certificate_questions = {'formData':data.get('formData')}
+                if data.get("name") == "idman-substage":
+                    sport_questions = {'formData':data.get('formData')}
+                if data.get("name") == "proqram-bilikleri-substage":
+                    program_questions = {'formData':data.get('formData')}
 
+            print(user_info)
             # Decode the base64 data and validate it
             bytes_data =base64.b64decode(text_data, validate=True)
 
             # Check if the first 4 bytes match the PDF signature
-            if bytes_data[0:4] != b'%PDF':
-                raise ValueError('Missing the PDF file signature')
+            # if bytes_data[0:4] != b'%PDF':
+            #     raise ValueError('Missing the PDF file signature')
 
             # Create a ContentFile from the decoded bytes
             pdf_file = ContentFile(bytes_data, name='output.pdf')
@@ -83,9 +103,10 @@ class ReportUploadAPIView(APIView):
                                  special_skills_certificate_questions = special_skills_certificate_questions,
                                  special_skills_questions = special_skills_questions,
                                  language_skills_questions = language_skills_questions,
+                                 extra_language_skills_questions = extra_language_skills_questions,
                                  sport_questions = sport_questions,
                                  program_questions = program_questions)
-           
+            # return Response({'message': 'Report file uploaded successfully.'}, status=status.HTTP_201_CREATED)
             if user_account_file_serializer and report:
                 user_account_file_serializer.save()
                 report.save()

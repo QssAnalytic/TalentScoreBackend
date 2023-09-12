@@ -185,47 +185,47 @@ class UserInfoPost(APIView):
         return Response(status=rest_status.HTTP_200_OK)
 
 
-class UserScoreAPIView(APIView):
-    def get(self, request, username):
-        user = (
-            models.UserAccount.objects.filter(email=username)
-            .only("email", "user_info")
-            .first()
-        )
-        tehsil_score = get_education_score(user)
-        experience_score = 1
-        skills_score = 1
-        language_score = 1
-        programming_skills_score = 1
-        sports_score = 1
+# class UserScoreAPIView(APIView):
+#     def get(self, request, username):
+#         user = (
+#             models.UserAccount.objects.filter(email=username)
+#             .only("email", "user_info")
+#             .first()
+#         )
+#         tehsil_score = get_education_score(user)
+#         experience_score = 1
+#         skills_score = 1
+#         language_score = 1
+#         programming_skills_score = 1
+#         sports_score = 1
 
-        for stage in user.user_info:
-            if stage["name"] == "is-tecrubesi-substage":
-                experience_score = get_experience_score(stage)
+#         for stage in user.user_info:
+#             if stage["name"] == "is-tecrubesi-substage":
+#                 experience_score = get_experience_score(stage)
 
-            if stage["name"] == "xususi-bacariqlar-substage":
-                skills_score = get_skills_score(stage)
+#             if stage["name"] == "xususi-bacariqlar-substage":
+#                 skills_score = get_skills_score(stage)
 
-            if stage["name"] == "dil-bilikleri-substage":
-                language_score = get_language_score(stage)
+#             if stage["name"] == "dil-bilikleri-substage":
+#                 language_score = get_language_score(stage)
 
-            if stage["name"] == "proqram-bilikleri-substage":
-                programming_skills_score = get_programming_skills_score(stage)
+#             if stage["name"] == "proqram-bilikleri-substage":
+#                 programming_skills_score = get_programming_skills_score(stage)
 
-            if stage["name"] == "idman-substage":
-                sports_score = get_sport_skills_score(stage)
+#             if stage["name"] == "idman-substage":
+#                 sports_score = get_sport_skills_score(stage)
         
-        return Response(
-            {
-                "user_info": user.user_info,
-                "special_skills_weight": skills_score,
-                "language_score": language_score,
-                "experience_score": experience_score,
-                "tehsil_score": tehsil_score,
-                "programming_skills_score": programming_skills_score,
-                "sports_score": sports_score,
-            }
-        )
+#         return Response(
+#             {
+#                 "user_info": user.user_info,
+#                 "special_skills_weight": skills_score,
+#                 "language_score": language_score,
+#                 "experience_score": experience_score,
+#                 "tehsil_score": tehsil_score,
+#                 "programming_skills_score": programming_skills_score,
+#                 "sports_score": sports_score,
+#             }
+#         )
 
 
 # class UserScoreAPIView(AsyncAPIView):

@@ -42,7 +42,7 @@ class UserAccount(AbstractBaseUser):
     is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
-    user_info = models.JSONField(blank=True, null=True)
+    # user_info = models.OneToOneField(ReportModel, on_delete=models.CASCADE, null=True, blank=True, related_name='user')
     test = models.CharField(max_length = 150, null=True, blank = True)
     objects = UserManager()
     
@@ -62,6 +62,7 @@ class UserAccount(AbstractBaseUser):
         
         return self.email
 
+
 def user_account_file_upload_path(instance, filename):
     return f'{instance.file_category}/{filename}'
 
@@ -72,7 +73,7 @@ class UserAccountFilePage(models.Model):
         CERTIFICATE = "CERTIFICATE", "CERTIFICATE"
 
     user = models.ForeignKey(
-        'users.UserAccount', models.CASCADE
+        'users.UserAccount', models.CASCADE, 
     )
     file_category = models.CharField(max_length=20, choices=FileCategoryChoices.choices)
     
@@ -81,30 +82,43 @@ class UserAccountFilePage(models.Model):
     class Meta:
         verbose_name = "UserAccountFilePage"
 
+    def __str__(self) -> str:
+        return f'{self.file_category} of {self.user}'
+
 class ReportModel(models.Model):
 
-    report_file = models.OneToOneField(UserAccountFilePage, models.CASCADE, blank=True, null=True, related_name="report_file") #TODO: delete blank=True, null=True
-    user_info = models.JSONField(blank=True, null=True) #TODO: delete blank=True, null=True
-    education_score = models.DecimalField(max_digits=16, decimal_places=13)
+    report_file = models.ForeignKey(UserAccountFilePage, models.CASCADE, blank=True, null=True, related_name="report") #TODO: delete blank=True, null=True
+    general_questions = models.JSONField(blank=True, null=True, verbose_name='Ümumi suallar')
+    secondary_education_questions = models.JSONField(blank=True, null=True, verbose_name='Orta, texniki və ali təhsil sualları')
+    olympiad_questions = models.JSONField(blank=True, null=True, verbose_name='Olimpiada sualları')
+    work_experience_questions = models.JSONField(blank=True, null=True, verbose_name='İş təcrübəsi')
+    special_skills_questions =  models.JSONField(blank=True, null=True, verbose_name='Xüsusi bacarıqlar')
+    language_skills_questions = models.JSONField(blank=True, null=True, verbose_name='Dil bilikləri')
+    extra_language_skills_questions = models.JSONField(blank=True, null=True, verbose_name='Əlavə dil bilikləri')
+    special_skills_certificate_questions =  models.JSONField(blank=True, null=True, verbose_name='Xüsusi bacarıq sertifikatları')
+    sport_questions = models.JSONField(blank=True, null=True, verbose_name='İdman sualları')
+    program_questions = models.JSONField(blank=True, null=True, verbose_name='Proqram bilikləri')
+    education_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     education_color = models.CharField(max_length=30, default='#00E5BC')
-    language_score = models.DecimalField(max_digits=16, decimal_places=13)
+    language_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     language_color = models.CharField(max_length=30, default='#FF0038')
-    special_skills_score = models.DecimalField(max_digits=16, decimal_places=13)
+    special_skills_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     special_skills_color = models.CharField(max_length=30, default='#00A8E1')
-    sport_score = models.DecimalField(max_digits=16, decimal_places=13)
+    sport_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     sport_color = models.CharField(max_length=30, default='#09959A')
-    work_experiance_score = models.DecimalField(max_digits=16, decimal_places=13)
+    work_experiance_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     work_experiance_color = models.CharField(max_length=30, default='#FFCB05')
-    program_score = models.DecimalField(max_digits=16, decimal_places=13)
+    program_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     program_color = models.CharField(max_length=30, default='#8800E0')
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True) #TODO: delete blank=True, null=True
     file_key = models.UUIDField(unique=True, editable=False, blank=True, null=True) #TODO: delete blank=True, null=True
+    user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True, blank=True, related_name='reports')
 
     class Meta:
         verbose_name = "ReportModel"
 
-    def __str__(self) -> str:
-        return self.user.email 
+    # def __str__(self) -> str:
+    #     return self.user.email
     
     def delete(self,*args,**kwargs):
         self.report_file.delete(save=False)

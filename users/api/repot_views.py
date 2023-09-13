@@ -147,6 +147,7 @@ class UserScoreAPIView(APIView):
         language_score = 1
         programming_skills_score = 1
         sport_score = 1
+        report = ReportModel.objects.filter(user=user).last()
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education', 'result':''}, 
                 'language': {'text': 'Language skills', 'result':''},
                 'special': {'text': 'Special talent', 'result':''},
@@ -158,26 +159,33 @@ class UserScoreAPIView(APIView):
             if stage['name'] == "umumi-suallar":
                 education_score = get_education_score(user, request)
                 data['education']['result'] = get_report_score(education_score) 
+                report.education_score = education_score
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
                 data['work']['result'] = get_report_score(experience_score)
+                report.work_experiance_score = experience_score
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
                 data['work']['result'] = get_report_score(special_skills_score)
+                report.special_skills_score = special_skills_score
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)     
                 data['work']['result'] = get_report_score(language_score)
+                report.language_score = language_score
 
             if stage['name'] == "idman-substage":
                 sport_score = get_sport_skills_score(stage)   
                 data['work']['result'] = get_report_score(sport_score)
+                report.sport_score = sport_score
 
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)  
                 data['work']['result'] = get_report_score(programming_skills_score)
+                report.program_score = programming_skills_score
+            report.save()
                             
         
         return Response(

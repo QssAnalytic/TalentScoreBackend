@@ -27,8 +27,10 @@ class ReportUploadAPIView(APIView):
             # sport_questions = request.data.get('sport_questions')
             # program_questions = request.data.get('program_questions')
             user_info = request.data.get("user_info")
+            print(user_info)
+            print(5)
             for data in user_info:
-                if data.get("name") !="umumi-suallar":
+                if data.get("name") =="umumi-suallar":
                     general_questions = {'formData':data.get('formData')}
                 if data.get("name") =="orta-texniki-ve-ali-tehsil-suallari":
                     secondary_education_questions = {'formData':data.get('formData')}
@@ -139,7 +141,6 @@ class UserScoreAPIView(APIView):
             .only("email")
             .first()
         )
-        print(user)
         education_score = 1
         experience_score = 1
         special_skills_score = 1
@@ -153,43 +154,38 @@ class UserScoreAPIView(APIView):
                 'sport': {'text': 'Sport skills', 'result':''},
                 'work': {'text': 'Work experience', 'result':''},
                 'program': {'text': 'Program skills', 'result':''}}
-        
-        for stage in report.general_questions:
+        user_info = request.data.get('user_info')
+        for stage in user_info:
             if stage['name'] == "umumi-suallar":
-                education_score = get_education_score(user)
-                data['education']['result'] = get_report_score(education_score)          
-                # report.education_score = education_score
+                education_score = get_education_score(user, request)
+                data['education']['result'] = get_report_score(education_score) 
+                report.education_score = education_score
 
-        for stage in report.work_experience_questions:
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
                 data['work']['result'] = get_report_score(experience_score)
-                # report.work_experiance_score = experience_score
+                report.work_experiance_score = experience_score
 
-        for stage in report.special_skills_questions:
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
-                data['work']['result'] = get_report_score(education_score)
-                # report.special_skills_score = special_skills_score
+                data['work']['result'] = get_report_score(special_skills_score)
+                report.special_skills_score = special_skills_score
 
-        for stage in report.language_skills_questions:
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)     
-                data['work']['result'] = get_report_score(education_score)
-                # report.language_score = language_score
+                data['work']['result'] = get_report_score(language_score)
+                report.language_score = language_score
 
-        for stage in report.sport_questions:
             if stage['name'] == "idman-substage":
                 sport_score = get_sport_skills_score(stage)   
-                data['work']['result'] = get_report_score(education_score)
-                # report.sport_score = sport_score
+                data['work']['result'] = get_report_score(sport_score)
+                report.sport_score = sport_score
 
-        for stage in report.program_questions:
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)  
-                data['work']['result'] = get_report_score(education_score)
-                # report.program_score = programming_skills_score
-        # report.save()
+                data['work']['result'] = get_report_score(programming_skills_score)
+                report.program_score = programming_skills_score
+            report.save()
                             
         
         return Response(

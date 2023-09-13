@@ -117,8 +117,8 @@ class ReportModel(models.Model):
     class Meta:
         verbose_name = "ReportModel"
 
-    # def __str__(self) -> str:
-    #     return self.user.email
+    def __str__(self) -> str:
+        return self.user.email
     
     def delete(self,*args,**kwargs):
         self.report_file.delete(save=False)

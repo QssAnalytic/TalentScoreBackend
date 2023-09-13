@@ -15,15 +15,14 @@ def check(data, key):
                         return float(data[key]["answer_weight"])
         return 1
 
-def get_education_score(user: user_account_type):
-        report = ReportModel.objects.filter(user=user).last()
-        for stage in report.general_questions:
+def get_education_score(user: user_account_type, request):
+        # report = ReportModel.objects.filter(user=user).last()
+        user_info = request.data.get('user_info')
+        for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
-        for stage in report.secondary_education_questions:
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
                 education_stage = stage
-        for stage in report.olympiad_questions:
             if stage['name'] == 'olimpiada-suallar':
                 olimpia_stage = stage
                     

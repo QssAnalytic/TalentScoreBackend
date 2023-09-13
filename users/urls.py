@@ -3,7 +3,7 @@ from django.urls import path, include
 
 from django.contrib import admin
 
-from users.api import repot_views, user_views, certificate_views
+from users.api import repot_views, user_views, certificate_views, cv_views
 
 urlpatterns = [
     path('login/', user_views.loginView),
@@ -13,7 +13,7 @@ urlpatterns = [
     path('user/', user_views.user),
     path('user-education-score/<str:username>/', repot_views.UserScoreAPIView.as_view()),
     path('get-summry-prompt/', user_views.SummryPromptAPIView.as_view()),
-    path('get-experiance-prompt/', user_views.ExperiancePromptAPIView.as_view()),
+    path('get-experiance-prompt/<str:email>/', cv_views.ExperiancePromptAPIView.as_view()),
     path('get-job-title-prompt/', user_views.JobTitleAPIView.as_view()),
     path('user-info-post/', user_views.UserInfoPost.as_view()),
     path('upload-report/', repot_views.ReportUploadAPIView.as_view()),

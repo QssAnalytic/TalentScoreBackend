@@ -153,7 +153,7 @@ class UserScoreAPIView(APIView):
                 'sport': {'text': 'Sport skills', 'result':''},
                 'work': {'text': 'Work experience', 'result':''},
                 'program': {'text': 'Program skills', 'result':''}}
-        user_info = request.data.get('user_info')
+        
         for stage in report.general_questions:
             if stage['name'] == "umumi-suallar":
                 education_score = get_education_score(user)

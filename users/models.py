@@ -42,7 +42,6 @@ class UserAccount(AbstractBaseUser):
     is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
-    # user_info = models.OneToOneField(ReportModel, on_delete=models.CASCADE, null=True, blank=True, related_name='user')
     test = models.CharField(max_length = 150, null=True, blank = True)
     objects = UserManager()
     
@@ -117,8 +116,8 @@ class ReportModel(models.Model):
     class Meta:
         verbose_name = "ReportModel"
 
-    # def __str__(self) -> str:
-    #     return self.user.email
+    def __str__(self) -> str:
+        return self.report_file.file.name
     
     def delete(self,*args,**kwargs):
         self.report_file.delete(save=False)

@@ -11,7 +11,7 @@ urlpatterns = [
     path('refresh-token/', user_views.CookieTokenRefreshView.as_view()),
     path('logout/', user_views.logoutView),
     path('user/', user_views.user),
-    path('user-education-score/<str:username>/', repot_views.UserScoreAPIView.as_view()),
+    path('user-education-score/<str:email>/', repot_views.UserScoreAPIView.as_view()),
     path('get-summry-prompt/', user_views.SummryPromptAPIView.as_view()),
     path('get-experiance-prompt/<str:email>/', cv_views.ExperiancePromptAPIView.as_view()),
     path('get-job-title-prompt/', user_views.JobTitleAPIView.as_view()),

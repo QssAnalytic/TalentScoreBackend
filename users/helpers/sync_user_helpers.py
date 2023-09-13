@@ -10,8 +10,11 @@ UserAccount = get_user_model()
 user_account_type = TypeVar('user_account_type', bound=UserAccount)
 
 def check(data, key):
+        
+                
         if data.get(key) is not None:
                 if data[key] !={}:
+                        
                         return float(data[key]["answer_weight"])
         return 1
 
@@ -21,12 +24,15 @@ def get_education_score(user: user_account_type, request):
         for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
+                
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
                 education_stage = stage
             if stage['name'] == 'olimpiada-suallar':
                 olimpia_stage = stage
-                    
+                
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
+                
+                
                 education_weight = check(umumi_stage["formData"]["education"], key = "master")
                 education_grand_weight = check(data = umumi_stage["formData"], key = "educationGrant")
                 olimp_highest_weight = check(data = olimpia_stage["formData"], key = "highestOlympiad")
@@ -34,7 +40,7 @@ def get_education_score(user: user_account_type, request):
                 max_bachelor_weight = 1
                 max_master_weight = 1
                 max_phd_weight = 1
-                userdata = education_stage["formData"]["EducationScore"]
+                userdata = education_stage["formData"]["education"]
                 bachelor_weight_list = []
                 master_weight_list = []
                 phd_weight_list = []
@@ -99,14 +105,15 @@ def get_experience_score(stagedata):
 
 
 def get_skills_score(stagedata):
-        if stagedata['formData'] != {}:
+        print(stagedata['formData']['haveSpecialSkills'])
+        if stagedata['formData']['haveSpecialSkills']['answer']!="Yoxdur":
                 userdata = stagedata["formData"]["specialSkills"]
                 lst=[]
                 heveskar_count = 0
                 pesekar_count = 0
                 formula_result = 1
                 for data in userdata:
-                        # print(data)
+                        
                         lst.append(data['talent_level'])
                         if data['talent_level'] == 'heveskar':
                                 heveskar_answer_weight = data['answer_weight']
@@ -121,6 +128,7 @@ def get_skills_score(stagedata):
 
                 formula_result = (heveskar_count**heveskar_answer_weight) * (pesekar_count**pesekar_answer_weight)
                 return formula_result
+        return 1
 
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
@@ -129,7 +137,9 @@ def get_language_score(stagedata):
                 userdata = lang_data 
                 total_language_weight = 1
                 if len(userdata) > 0:
+                        
                         for data in userdata:
+                                print(data)
                                 total_language_weight *= data['answer_weight']
                         return total_language_weight
                 
@@ -154,7 +164,7 @@ def get_sport_skills_score(stagedata):
         heveskar_score = 1
         for sport in userdata["amateurs"]:
             if userdata["amateurs"] != []:
-                heveskar_score *= sport['level']['weight']
+                heveskar_score *= sport['level']['answer_weight']
         
         if pesekar_score * heveskar_score != 1:
             sport_score = pesekar_score * heveskar_score

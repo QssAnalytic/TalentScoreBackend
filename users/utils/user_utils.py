@@ -18,7 +18,7 @@ def get_date_weight(finnly_date):
         return finnly_date_weight
 
 def calculate_date_difference(data):
-        if data["endDate"] == "":
+        if data["endDate"] == "currently working":
             current_date = datetime.now()
             start_date = datetime.strptime(data["startDate"], "%Y-%m-%d")
             difference = current_date - start_date

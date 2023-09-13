@@ -1,6 +1,7 @@
 def get_report_score(float_value):
+    
     result = ''
-    if 1 <= float_value <= 20:
+    if 0 <= float_value <= 20:
             result = 'limited'
     elif 21 <= float_value <= 40:
         result = 'decent'

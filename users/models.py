@@ -96,6 +96,7 @@ class ReportModel(models.Model):
     extra_language_skills_questions = models.JSONField(blank=True, null=True, verbose_name='Əlavə dil bilikləri')
     special_skills_certificate_questions =  models.JSONField(blank=True, null=True, verbose_name='Xüsusi bacarıq sertifikatları')
     sport_questions = models.JSONField(blank=True, null=True, verbose_name='İdman sualları')
+    sport2_questions = models.JSONField(blank=True, null=True, verbose_name='İdman sualları2')
     program_questions = models.JSONField(blank=True, null=True, verbose_name='Proqram bilikləri')
     education_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     education_color = models.CharField(max_length=30, default='#00E5BC')

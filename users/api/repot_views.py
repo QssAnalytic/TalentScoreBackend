@@ -172,10 +172,10 @@ class UserScoreAPIView(APIView):
             #     data['work']['result'] = get_report_score(experience_score)
                 # report.work_experiance_score = experience_score
 
-            if stage['name'] == "xususi-bacariqlar-substage":
-                special_skills_score = get_skills_score(stage)
-                data['special']['result'] = get_report_score(special_skills_score)
-                data['special']['special_skills_score'] = special_skills_score
+            # if stage['name'] == "xususi-bacariqlar-substage":
+            #     special_skills_score = get_skills_score(stage)
+            #     data['special']['result'] = get_report_score(special_skills_score)
+            #     data['special']['special_skills_score'] = special_skills_score
                 # report.special_skills_score = special_skills_score
 
             # if stage['name'] == "dil-bilikleri-substage":
@@ -189,9 +189,10 @@ class UserScoreAPIView(APIView):
             #     data['sport']['sport_score'] = sport_score
                 # report.sport_score = sport_score
 
-            # if stage['name'] == "proqram-bilikleri-substage":
-            #     programming_skills_score = get_programming_skills_score(stage)  
-            #     data['work']['result'] = get_report_score(programming_skills_score)
+            if stage['name'] == "proqram-bilikleri-substage":
+                programming_skills_score = get_programming_skills_score(stage)  
+                data['program']['result'] = get_report_score(programming_skills_score)
+                data['program']['program_score'] = programming_skills_score
                 # report.program_score = programming_skills_score
             # report.save()
                             

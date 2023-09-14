@@ -190,14 +190,17 @@ def get_programming_skills_score(stagedata):
         word_score = 0
         excel_score = 0
         pp_score = 0
-        if userdata['msOffice'] and userdata['msOffice'] != [] and userdata['msOffice'] != 0 and userdata['msOffice'] != '0':
-                for answer in userdata['msOffice']:
-                        if answer['answer'] == 'Word':
-                                word_score = answer['weight'] * answer['level']['weight']
-                        if answer['answer'] == 'Excel':
-                                excel_score = answer['weight'] * answer['level']['weight']
-                        if answer['answer'] == 'PowerPoint':
-                                pp_score = answer['weight'] * answer['level']['weight']
+
+        if userdata['programSkills'] and userdata['programSkills'] != [] and userdata['programSkills'] != 0 and userdata['programSkills'] != '0':
+                for answer in userdata['programSkills']:
+                        for program in answer['whichLevel']:
+                                if program['name'] == 'Word' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
+                                        word_score = program['answer_weight'] * program['value']['answer_weight']
+                                if program['name']  == 'Excel' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
+                                        excel_score = program['answer_weight'] * program['value']['answer_weight']
+                                if program['name']   == 'PowerPoint' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
+                                        pp_score = program['answer_weight'] * program['value']['answer_weight']
+
 
                 weight_list = {
                         'Excel' : excel_score,
@@ -227,32 +230,33 @@ def get_programming_skills_score(stagedata):
                 'others' : [0,0,0]
         }
 
-        if userdata['design'] != [] !='' !=0:
-                for data in userdata['design']:
-                        if data['level']['answer'] == 'Junior':
-                                lst['design'][0] += 1
-                        if data['level']['answer'] == 'Middle':
-                                lst['design'][1] += 1
-                        if data['level']['answer'] == 'Senior':
-                                lst['design'][2] += 1
+        for program in userdata['programSkills']:
+                if program['whichProgram'] == 'design' and program['whichProgram'] != [] and program['whichProgram'] !='' and program['whichProgram'] !=0:
+                        for data in program['whichLevel']:
+                                if data['value']['answer'] == 'Junior':
+                                        lst['programs'][0] += 1
+                                if data['value']['answer'] == 'Middle':
+                                        lst['programs'][1] += 1
+                                if data['value']['answer'] == 'Senior':
+                                        lst['programs'][2] += 1
 
-        if userdata['programs'] != []:
-                for data in userdata['programs']:
-                        if data['level']['answer'] == 'Junior':
-                                lst['programs'][0] += 1
-                        if data['level']['answer'] == 'Middle':
-                                lst['programs'][1] += 1
-                        if data['level']['answer'] == 'Senior':
-                                lst['programs'][2] += 1
+                if program['whichProgram'] == 'Proqramlaşdırma dilləri' and  program['whichProgram'] != [] and program['whichProgram'] !=0:
+                        for data in program['whichLevel']:
+                                if data['value']['answer'] == 'Junior':
+                                        lst['programs'][0] += 1
+                                if data['value']['answer'] == 'Middle':
+                                        lst['programs'][1] += 1
+                                if data['value']['answer'] == 'Senior':
+                                        lst['programs'][2] += 1
 
-        if userdata['others'] != []:
-                for data in userdata['others']:
-                        if data['level']['answer'] == 'Junior':
-                                lst['others'][0] += 1
-                        if data['level']['answer'] == 'Middle':
-                                lst['others'][1] += 1
-                        if data['level']['answer'] == 'Senior':
-                                lst['others'][2] += 1
+                if userdata['whichProgram'] == 'others' and  userdata['whichProgram'] != []:
+                        for data in userdata['whichProgram']:
+                                if data['value']['answer'] == 'Junior':
+                                        lst['programs'][0] += 1
+                                if data['value']['answer'] == 'Middle':
+                                        lst['programs'][1] += 1
+                                if data['value']['answer'] == 'Senior':
+                                        lst['programs'][2] += 1
 
         levels = ['Junior', 'Middle', 'Senior']
         for i, level in enumerate(levels):
@@ -297,9 +301,9 @@ def get_programming_skills_score(stagedata):
         
         # find multiplication of all category scores except minimum one
         category_scores = []
-        for category in userdata:
-                result[f'{category}Score'] = round(result[f'{category}Score'], 4)
-                category_score = result[f'{category}Score']
+        for category in result:
+                result[category] = round(result[category], 4)
+                category_score = result[category]
                 category_scores.append(category_score)
 
         # Check if all category scores are the same
@@ -310,13 +314,12 @@ def get_programming_skills_score(stagedata):
                 minimum_score = min(category_scores)
                 category_scores.remove(minimum_score)
                 programming_skills_score = 1
-
-                if category_scores != []:        
+                
+                if category_scores != []:      
                         for score in category_scores:
                                 if 0.5 < score <= 1:
                                         programming_skills_score *= 0.9
                                         
-
                                 elif 0.3 < score <= 0.5:
                                         programming_skills_score *= 0.8
                                 
@@ -335,7 +338,6 @@ def get_programming_skills_score(stagedata):
                                         programming_skills_score *= 0.1
                                 
                         programming_skills_score *= minimum_score
-                        
                 else:
                         programming_skills_score = 0
                         

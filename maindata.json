@@ -1,0 +1,346 @@
+[
+    {
+      "name": "orta-texniki-ve-ali-tehsil-suallari",
+      "formData": {
+        "education": [
+          {
+            "tehsil": {
+              "answer": "Peşə təhsili"
+            },
+            "country": {
+              "answer": "Almaniya",
+              "answer_weight": null
+            },
+            "university": "asd",
+            "specialty": {
+              "answer": "Aerokosmik informasiya sistemləri",
+              "answer_weight": null
+            },
+            "date": {
+              "start": "2023-09-13",
+              "end": "currently working"
+            },
+            "criterian": {
+              "answer": "Lokal imtahan",
+              "answer_weight": null
+            },
+            "local": {
+              "examName": "asd",
+              "score": "123",
+              "maxScore": "123"
+            },
+            "otherExam": {},
+            "application": [],
+            "currentWorking": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "umumi-suallar",
+      "formData": {
+        "curOccupation": {
+          "answer": "Çalışıram",
+          "answer_weight": "b'gAAAAABk4yB2VEwGuLsMku32UOcXVIOtyG-0dJbHbLHRFSV91kQhnh77MMRcBbNyjS93ebuT4sAkOSQkd2RuXaD7TTvmpvusPg=='"
+        },
+        "education": {
+          "answer": "Peşə təhsili",
+          "answer_weight": "b'gAAAAABk4yFFA1n8OYfQvo0wZJ65C2WMiIrfCmwUkxikP0H6mOP1kplApxxeGNExTDUDrj15WpsUnSFRmNgbWXlxCr2KS4dj4Q=='"
+        },
+        "educationGrant": {
+          "answer": "Zərbəçi",
+          "answer_weight": "b'gAAAAABk4yG-J90YVVgdIzGHZG8eE4pQ5KnvDzGkxxzV_Fw8Xsf-pYWkvYvUzN5Cduy9clw8e6gl__C-1Y-tkIM6gqgkwHJFiQ=='"
+        }
+      }
+    },
+    {
+      "name": "olimpiada-suallari",
+      "formData": {
+        "wonOlympics": {
+          "answer": "Bəli",
+          "answer_weight": null
+        },
+        "subjectOlympiad": {
+          "answer": "Azərbaycan dili və Ədəbiyyat",
+          "answer_weight": null
+        },
+        "highestOlympiad": {
+          "answer": "Rayon",
+          "answer_weight": "b'gAAAAABk4zTpc81MVZlCbMsgIW6An-KE7C-mjssRbk7naQUZVgvpcVNUhT7oqGsVbNkXYk2xXLzbeThM-XxBMAM5ILPdYX9X7g=='"
+        },
+        "rankOlympiad": {
+          "answer": "2-ci yer (Gümüş medal)",
+          "answer_weight": "b'gAAAAABk4zUkbtBtfgu_PCyhR3N1YqZBYieButM2hl0UD7vQK0hVnUBdCz_yUxCvvLroYnSfx-zn19q11rkU_jxOs7bvmjAK5g=='"
+        }
+      }
+    },
+    {
+      "name": "dil-bilikleri-substage",
+      "formData": {
+        "languageSkills": [
+          {
+            "language": {
+              "answer": "Ingilis dili",
+              "answer_weight": null
+            },
+            "langCert": {
+              "answer": ""
+            },
+            "engLangCert": {
+              "answer": "İELTS",
+              "answer_weight": null
+            },
+            "langCertName": "",
+            "engCertResult": {
+              "answer": "4.5-5.0",
+              "answer_weight": "b'gAAAAABk5Ho0IRQ863qgdx4s-hQMimfFZKNj0-GvLoKs3cggNU3oftOtuXmAh3aMzVjHnPOOST7Vut4sINrwnVl0ghGTz51fhQ=='"
+            },
+            "langLevel": {
+              "answer": "B1 (İlkin orta)",
+              "answer_weight": ""
+            }
+          },
+          {
+            "language": {
+              "answer": "Ingilis dili",
+              "answer_weight": null
+            },
+            "langCert": {
+              "answer": ""
+            },
+            "engLangCert": {
+              "answer": "Öz sertifikatın",
+              "answer_weight": null
+            },
+            "langCertName": "123",
+            "langCertResult": "123",
+            "engCertResult": {
+              "answer": "",
+              "answer_weight": ""
+            },
+            "langLevel": {
+              "answer": "A1 (Başlanqıc)",
+              "answer_weight": null
+            }
+          },
+          {
+            "language": {
+              "answer": "Rus dili",
+              "answer_weight": null
+            },
+            "langCert": {
+              "answer": "Bəli",
+              "answer_weight": null
+            },
+            "engLangCert": {
+              "answer": "",
+              "answer_weight": ""
+            },
+            "langCertName": "123",
+            "langCertResult": "123",
+            "engCertResult": {
+              "answer": "",
+              "answer_weight": ""
+            },
+            "langLevel": {
+              "answer": "A2 (Elementar)",
+              "answer_weight": null
+            }
+          }
+        ],
+        "haveLanguageSkills": {
+          "answer": "Var",
+          "answer_weight": ""
+        }
+      }
+    },
+    {
+      "name": "xususi-bacariqlar-substage",
+      "formData": {
+        "haveSpecialSkills": {
+          "answer": "Var",
+          "answer_weight": null
+        },
+        "specialSkills": [
+          "Rəsm",
+          "Musiqi"
+        ],
+        "skills": [
+          {
+            "name": "Rəsm",
+            "value": {
+              "answer": "Həvəskar",
+              "answer_weight": "b'gAAAAABk5IElM6rmr2CmpXy0Adv-Zla1vjKFwLkWuUcxA6zAkND0NIg8Xbb3aEx5iCUHVZR5yJ4kSV0D6voai240hpoUkMHNvQ=='"
+            }
+          },
+          {
+            "name": "Musiqi",
+            "value": {
+              "answer": "Peşəkar",
+              "answer_weight": "b'gAAAAABk5IElyW97pOz07YGThX-jjD4YxOiGFqW_5tqxaJSfic2xJ-VgbswBImo1S0QhVsXK-pIN6JX70v1TV4_qRZ4XZ458oQ=='"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "xususi-bacariqlar-sertifikat-substage",
+      "formData": {
+        "certificates": [
+          {
+            "name": "Musiqi",
+            "value": "asdadaaadasd"
+          }
+        ]
+      }
+    },
+    {
+      "name": "idman-substage",
+      "formData": {
+        "haveSport": {
+          "answer": "Var",
+          "answer_weight": ""
+        },
+        "whichSport": [
+          "Futbol",
+          "Basketbol",
+          "Güləş"
+        ],
+        "sports": [
+          {
+            "name": "Futbol",
+            "value": {
+              "answer": "Həvəskar",
+              "answer_weight": "b'gAAAAABk5G_4hqYnVr8jEFTQLytRYcHjR7xoyh0LNoJ-wYLbERWdKVbDCebzFLmdehoVabkvWkdC6c59nOnNXdpr_bMQY6wedw=='"
+            }
+          },
+          {
+            "name": "Basketbol",
+            "value": {
+              "answer": "Peşəkar",
+              "answer_weight": "b'gAAAAABk5G_4Mut-3yHu3twdJA-ZpXAWXabbGiUA3DjlzucA31-67Ek2mLJzr7VOoFgR7mBAwVSL6gHJvBXjnaf2rfXeq1cebA=='"
+            }
+          },
+          {
+            "name": "Güləş",
+            "value": {
+              "answer": "Peşəkar",
+              "answer_weight": "b'gAAAAABk5G_4Mut-3yHu3twdJA-ZpXAWXabbGiUA3DjlzucA31-67Ek2mLJzr7VOoFgR7mBAwVSL6gHJvBXjnaf2rfXeq1cebA=='"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "idman-substage2",
+      "formData": {
+        "professionalSports": [
+          {
+            "name": "Basketbol",
+            "value": {
+              "whichScore": {
+                "answer": "Respublika",
+                "answer_weight": "b'gAAAAABk5HDxsl0eGoPD4aRPYOAqJXs3zyu8BgPi-VQSGWJehIq6JkUJI7FlSNMiC0rRdoJwsaeJUPxhxQ_vNKxZgC3spry62Q=='"
+              },
+              "whichPlace": {
+                "answer": "1-ci yer",
+                "answer_weight": "b'gAAAAABk5HDxSflkLBjMfjGEJTvBRBlVeLudoJ-oLhicTO88OnRCmMrovBH2XpdLGYpopfuSTevNe8ClkmTOd5wmBSd-0dVGxg=='"
+              }
+            }
+          },
+          {
+            "name": "Güləş",
+            "value": {
+              "whichScore": {
+                "answer": "Respublika",
+                "answer_weight": "b'gAAAAABk5HDxsl0eGoPD4aRPYOAqJXs3zyu8BgPi-VQSGWJehIq6JkUJI7FlSNMiC0rRdoJwsaeJUPxhxQ_vNKxZgC3spry62Q=='"
+              },
+              "whichPlace": {
+                "answer": "1-ci yer",
+                "answer_weight": "b'gAAAAABk5HDxSflkLBjMfjGEJTvBRBlVeLudoJ-oLhicTO88OnRCmMrovBH2XpdLGYpopfuSTevNe8ClkmTOd5wmBSd-0dVGxg=='"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "is-tecrubesi-substage",
+      "formData": {
+        "haveJobExperience": {
+          "answer": "Bəli",
+          "answer_weight": null
+        },
+        "experiences": [
+          {
+            "company": "asda",
+            "profession": "asd",
+            "workingActivityForm": {
+              "answer": "Fiziki əmək",
+              "answer_weight": "b'gAAAAABk5IKNwsaUQqf7r7nhGVx3y0iH2K716_LPlE_-f85xuG78yZ-H3xf5Ff337w9_0pzTcKiYCAkHwWvFk1Us2jbG0iy09g=='"
+            },
+            "degreeOfProfes": {
+              "answer": "Kiçik mütəxəssis",
+              "answer_weight": "b'gAAAAABk5IMXEm3WX20gBnT1QOkU-ZgAQLjYB2dNbjGjiwR5-PvDNBYxro4Fr-ugQlPHI3WDzph0ZMRZt8i2AAHXallKPUed6w=='"
+            },
+            "startDate": "2023-09-14",
+            "endDate": "currently working",
+            "currentWorking": true
+          }
+        ]
+      }
+    },
+    {
+      "name": "proqram-bilikleri-substage",
+      "formData": {
+        "haveProgramSkills": {
+          "answer": "Var",
+          "answer_weight": null
+        },
+        "whichProgram": [
+          "MS Office",
+          "Proqramlaşdırma dilləri"
+        ],
+        "programSkills": [
+          {
+            "whichProgram": "MS Office",
+            "whichLevel": [
+              {
+                "name": "Word",
+                "value": {
+                  "answer": "Orta",
+                  "answer_weight": "b'gAAAAABk5H1cevfxikYIdBywY2EFDYUr5T-Acvq4Y-83daQ-i3XYswVbKGS28oNFj7nyXiNbTs5I1_rJeBEZ9no4F1behvrZdg=='"
+                }
+              },
+              {
+                "name": "Excel",
+                "value": {
+                  "answer": "İrəli",
+                  "answer_weight": "b'gAAAAABk5H1cWoeea0B_5awwebcvDLvPMPS6qvt-CM9dLySv3zHLCj3Xxtql1St6ppH7HiekfzyqyfUr4TbvXONlnSbqU_HSdQ=='"
+                }
+              }
+            ]
+          },
+          {
+            "whichProgram": "Proqramlaşdırma dilləri",
+            "whichLevel": [
+              {
+                "name": "Python",
+                "value": {
+                  "answer": "Middle",
+                  "answer_weight": "b'gAAAAABk5H5ZX83e2zQ6VAeVDkpVvUYzfUHGBwjsPJah-YWxBPEoc_-WZd06sVFkNxlKIZtxnTQQ6c1lzRbcoYUKZnmqD-08Hg=='"
+                }
+              },
+              {
+                "name": "Java",
+                "value": {
+                  "answer": "Senior",
+                  "answer_weight": "b'gAAAAABk5H5Zu-pdDNnGIv4iO6a8T6XyFTpZO7J4AsHFjAohnxNzSSqnJWGC0GNqEdD8DkLuZnIpCWR49d3n4YLAG9xYSWkBBA=='"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]

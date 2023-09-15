@@ -74,8 +74,6 @@ def get_education_score(user: user_account_type, request):
         total_education_weight = np.round(total_education_weight,7)
         return total_education_weight
 
-        
-
 
 def get_experience_score(stagedata):
         userdata = stagedata["formData"]["experiences"]
@@ -134,17 +132,30 @@ def get_skills_score(stagedata):
                 return formula_result
         return 1
 
+
+# def get_language_score(stagedata):
+#         # print(stagedata)
+#         # print("******************")
+#         if stagedata['formData'] != {}:
+#                 lang_data = stagedata["formData"]["languageSkills"]
+#                 userdata = lang_data 
+#                 total_language_weight = 1
+#                 if len(userdata) > 0:
+#                         for data in userdata:
+#                                 print(data.get('answer_weight'))
+#                                 total_language_weight *= data['answer_weight']
+#                         return total_language_weight
+                
+#                 return total_language_weight
+        
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
-                lang_data = stagedata["formData"]["languageSkills"]
-                # lang_data_extra = stagedata["formData"]["langs"]
-                userdata = lang_data 
+                userdata = stagedata["formData"]["languageSkills"]
                 total_language_weight = 1
                 if len(userdata) > 0:
-                        
                         for data in userdata:
-                                print(data)
-                                total_language_weight *= data['answer_weight']
+                                        total_language_weight *= float(data['engCertResult']['answer_weight'])
+                                        print(total_language_weight)
                         return total_language_weight
                 
                 return total_language_weight

@@ -158,11 +158,11 @@ class UserScoreAPIView(APIView):
         
 
         for stage in user_info:
-            if stage['name'] == "umumi-suallar":
+            # if stage['name'] == "umumi-suallar":
                 
-                education_score = get_education_score(user, request)
-                data['education']['education_score'] = education_score
-                data['education']['result'] = get_report_score(education_score) 
+            #     education_score = get_education_score(user, request)
+            #     data['education']['education_score'] = education_score
+            #     data['education']['result'] = get_report_score(education_score) 
                 
                 # report.education_score = education_score
 
@@ -172,10 +172,10 @@ class UserScoreAPIView(APIView):
                 data['work']['result'] = get_report_score(experience_score)
                 # report.work_experiance_score = experience_score
 
-            if stage['name'] == "xususi-bacariqlar-substage":
-                special_skills_score = get_skills_score(stage)
-                data['special']['result'] = get_report_score(special_skills_score)
-                data['special']['special_skills_score'] = special_skills_score
+            # if stage['name'] == "xususi-bacariqlar-substage":
+            #     special_skills_score = get_skills_score(stage)
+            #     data['special']['result'] = get_report_score(special_skills_score)
+            #     data['special']['special_skills_score'] = special_skills_score
                 # report.special_skills_score = special_skills_score
 
             # if stage['name'] == "dil-bilikleri-substage":
@@ -183,15 +183,16 @@ class UserScoreAPIView(APIView):
             #     data['work']['result'] = get_report_score(language_score)
                 # report.language_score = language_score
 
-            if stage['name'] == "idman-substage":
+            if stage['name'] == "idman-substage" or stage['name'] == "idman-substage2":
                 sport_score = get_sport_skills_score(stage)   
                 data['sport']['result'] = get_report_score(sport_score)
                 data['sport']['sport_score'] = sport_score
                 # report.sport_score = sport_score
 
-            # if stage['name'] == "proqram-bilikleri-substage":
-            #     programming_skills_score = get_programming_skills_score(stage)  
-            #     data['work']['result'] = get_report_score(programming_skills_score)
+            if stage['name'] == "proqram-bilikleri-substage":
+                programming_skills_score = get_programming_skills_score(stage)  
+                data['program']['result'] = get_report_score(programming_skills_score)
+                data['program']['program_score'] = programming_skills_score
                 # report.program_score = programming_skills_score
             # report.save()
                             

@@ -350,8 +350,9 @@ class CvContentPromptAPIView(APIView):
                 model=MODEL,
                 messages=[
                     {"role": "system", "content": f"""You are a helpful AI tool which can create CV based on the user data. User data is this: {prompt}. You may also need to know that {testing_system_info}.
-                                                    The response you give will be written into pdf file, so that do not indicate any redundant and irrelevant things in your response.
-                                                    """},
+                                                    Do not indicate any redundant and irrelevant things in your response. Do nit write any information which is not related to the CV, write the CV content only.
+                                                    Do not write something like `Note`                           
+                     """},
                     {"role": "user", "content": "Please create CV based on the information of the user. Add some extra explanations and summaries as needed. Indicate the e summary on the top."},
 
                 ],
@@ -363,5 +364,7 @@ class CvContentPromptAPIView(APIView):
 
             return response.choices[0].message.content
     
-        cv_content = generate_cv_content()
+        cv_content = generate_cv_content().split("\n")
+        if "Note" in cv_content[-1]:
+            cv_content.pop()
         return Response({"cv_content": cv_content})

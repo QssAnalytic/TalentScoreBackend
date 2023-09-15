@@ -1,3 +1,4 @@
+from functools import reduce
 import numpy as np
 import math, time
 from typing import TypeVar
@@ -149,29 +150,20 @@ def get_language_score(stagedata):
                 return total_language_weight
 
 
-def get_sport_skills_score(stagedata):
-    if stagedata['formData'] != {}:
-        userdata = stagedata["formData"]
-
-    if userdata != {}:
-        pesekar_score = 1
-        heveskar_score = 1
-
-        for sport in userdata["professionals"]:
-            if userdata["professionals"] != []:
-                level_weight = sport['level']['weight']
-                score_weight = sport['whichScore']['weight']
-                place_weight = sport['whichPlace']['weight']
-                pesekar_score *= place_weight * score_weight * level_weight
-
-        heveskar_score = 1
-        for sport in userdata["amateurs"]:
-            if userdata["amateurs"] != []:
-                heveskar_score *= sport['level']['answer_weight']
+def get_sport_skills_score(sport_stage = None, sport_stage2 = None):
+        heveskar_weight = 0.3
+        pesekar_weight = 0.03
+        pesekar_total_score = 1
+        heveskar_total_score = 1
+        heveskar_data = [data for data in sport_stage if data['value']['answer'] == 'Həvəskar']
+        heveskar_total_score = reduce(lambda x, y: x * y['value']['answer_weight'], heveskar_data, 1)
+        if sport_stage2 != None:
+                for data in sport_stage2:
+                        pesekar_total_score*=data['value']['whichScore']['answer_weight']*data['value']['whichPlace']['answer_weight']*pesekar_weight
+                total_score = pesekar_total_score*heveskar_total_score
+                return total_score
+        return heveskar_total_score
         
-        if pesekar_score * heveskar_score != 1:
-            sport_score = pesekar_score * heveskar_score
-            return round(sport_score, 10)
 
 
 # get score weights for "proqram-bilikleri-substage"

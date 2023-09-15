@@ -178,15 +178,24 @@ class UserScoreAPIView(APIView):
             #     data['special']['special_skills_score'] = special_skills_score
                 # report.special_skills_score = special_skills_score
 
-            if stage['name'] == "dil-bilikleri-substage":
-                language_score = get_language_score(stage)     
-                data['work']['result'] = get_report_score(language_score)
+            # if stage['name'] == "dil-bilikleri-substage":
+            #     language_score = get_language_score(stage)     
+            #     data['work']['result'] = get_report_score(language_score)
                 # report.language_score = language_score
 
-            # if stage['name'] == "idman-substage":
-            #     sport_score = get_sport_skills_score(stage)   
-            #     data['sport']['result'] = get_report_score(sport_score)
-            #     data['sport']['sport_score'] = sport_score
+            if stage['name'] == 'idman-substage':
+                sport_stage:list = stage['formData']['sports']
+                sport_stage2 = None
+                for level in sport_stage:
+                    if level['value']['answer'] == 'Peşəkar':
+                        sport_stage2:list = list(filter(lambda x: x['name'] == 'idman-substage2', user_info))
+                        sport_stage2:list = sport_stage2[0]['formData']['professionalSports']
+                        break
+
+                sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
+                
+                data['sport']['result'] = get_report_score(sport_score)
+                data['sport']['sport_score'] = sport_score
                 # report.sport_score = sport_score
 
             # if stage['name'] == "proqram-bilikleri-substage":

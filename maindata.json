@@ -81,7 +81,7 @@
           {
             "language": {
               "answer": "Ingilis dili",
-              "answer_weight": null
+              "answer_weight": 1
             },
             "langCert": {
               "answer": ""
@@ -93,17 +93,13 @@
             "langCertName": "",
             "engCertResult": {
               "answer": "4.5-5.0",
-              "answer_weight": "b'gAAAAABk5Ho0IRQ863qgdx4s-hQMimfFZKNj0-GvLoKs3cggNU3oftOtuXmAh3aMzVjHnPOOST7Vut4sINrwnVl0ghGTz51fhQ=='"
-            },
-            "langLevel": {
-              "answer": "B1 (İlkin orta)",
-              "answer_weight": ""
+              "answer_weight": "0.6"
             }
           },
           {
             "language": {
               "answer": "Ingilis dili",
-              "answer_weight": null
+              "answer_weight": 1
             },
             "langCert": {
               "answer": ""
@@ -116,7 +112,7 @@
             "langCertResult": "123",
             "engCertResult": {
               "answer": "",
-              "answer_weight": ""
+              "answer_weight": "0.5"
             },
             "langLevel": {
               "answer": "A1 (Başlanqıc)",
@@ -126,7 +122,7 @@
           {
             "language": {
               "answer": "Rus dili",
-              "answer_weight": null
+              "answer_weight": 1
             },
             "langCert": {
               "answer": "Bəli",
@@ -140,7 +136,7 @@
             "langCertResult": "123",
             "engCertResult": {
               "answer": "",
-              "answer_weight": ""
+              "answer_weight": "0.9"
             },
             "langLevel": {
               "answer": "A2 (Elementar)",

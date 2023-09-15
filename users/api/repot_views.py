@@ -86,7 +86,6 @@ class ReportUploadAPIView(APIView):
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
 class SkillInfo(TypedDict):
     text: str
     result: str
@@ -172,15 +171,15 @@ class UserScoreAPIView(APIView):
             #     data['work']['result'] = get_report_score(experience_score)
                 # report.work_experiance_score = experience_score
 
-            if stage['name'] == "xususi-bacariqlar-substage":
-                special_skills_score = get_skills_score(stage)
-                data['special']['result'] = get_report_score(special_skills_score)
-                data['special']['special_skills_score'] = special_skills_score
+            # if stage['name'] == "xususi-bacariqlar-substage":
+            #     special_skills_score = get_skills_score(stage)
+            #     data['special']['result'] = get_report_score(special_skills_score)
+            #     data['special']['special_skills_score'] = special_skills_score
                 # report.special_skills_score = special_skills_score
 
-            # if stage['name'] == "dil-bilikleri-substage":
-            #     language_score = get_language_score(stage)     
-            #     data['work']['result'] = get_report_score(language_score)
+            if stage['name'] == "dil-bilikleri-substage":
+                language_score = get_language_score(stage)     
+                data['work']['result'] = get_report_score(language_score)
                 # report.language_score = language_score
 
             # if stage['name'] == "idman-substage":

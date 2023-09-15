@@ -153,23 +153,42 @@ def get_sport_skills_score(stagedata):
     if stagedata['formData'] != {}:
         userdata = stagedata["formData"]
 
+
     if userdata != {}:
         pesekar_score = 1
         heveskar_score = 1
+        level_weight = 1
 
-        for sport in userdata["professionals"]:
-            if userdata["professionals"] != []:
-                level_weight = sport['level']['weight']
-                score_weight = sport['whichScore']['weight']
-                place_weight = sport['whichPlace']['weight']
-                pesekar_score *= place_weight * score_weight * level_weight
+        # for sport in userdata["professionalSports"]:
+        #     if userdata["professionalSports"] != []:
+        #         level_weight = sport['level']['weight']
+        #         score_weight = sport['whichScore']['weight']
+        #         place_weight = sport['whichPlace']['weight']
+        #         pesekar_score *= place_weight * score_weight * level_weight
 
-        heveskar_score = 1
-        for sport in userdata["amateurs"]:
-            if userdata["amateurs"] != []:
-                heveskar_score *= sport['level']['answer_weight']
+        # heveskar_score = 1
+        # for sport in userdata["amateurs"]:
+        #     if userdata["amateurs"] != []:
+        #         heveskar_score *= sport['level']['answer_weight']
         
-        if pesekar_score * heveskar_score != 1:
+        # if pesekar_score * heveskar_score != 1:
+        #     sport_score = pesekar_score * heveskar_score
+        #     return round(sport_score, 10)
+        if stagedata['name'] == "idman-substage":
+                for sport in userdata['sports']:
+                        if userdata["sports"] != [] and sport['value']['answer'] == 'Peşəkar':
+                                level_weight = sport['value']['answer_weight']
+                        if userdata["sports"] != [] and sport['value']['answer'] == 'Həvəskar':
+                                heveskar_score *= sport['value']['answer_weight']
+
+        if stagedata['name'] == "idman-substage2":
+                for sport in userdata["professionalSports"]:
+                        if userdata["professionalSports"] != []:
+                                score_weight = sport['value']['whichScore']['answer_weight']
+                                place_weight = sport['value']['whichPlace']['answer_weight']
+                                pesekar_score *= place_weight * score_weight * level_weight
+
+        if pesekar_score * heveskar_score:
             sport_score = pesekar_score * heveskar_score
             return round(sport_score, 10)
 

@@ -21,55 +21,58 @@ def check(data, key):
 def get_education_score(user: user_account_type, request):
         # report = ReportModel.objects.filter(user=user).last()
         user_info = request.data.get('user_info')
+        umumi_stage = None
+        education_stage = None
+        olimpia_stage = None
         for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
                 
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
                 education_stage = stage
-            if stage['name'] == 'olimpiada-suallar':
+            if stage['name'] == 'olimpiada-suallari':
                 olimpia_stage = stage
-                
+        if umumi_stage != None:
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
-                
-                
+        
+        
                 education_weight = check(umumi_stage["formData"]["education"], key = "master")
                 education_grand_weight = check(data = umumi_stage["formData"], key = "educationGrant")
+        if olimpia_stage !=None:
                 olimp_highest_weight = check(data = olimpia_stage["formData"], key = "highestOlympiad")
                 olimp_rank_weight = check(data = olimpia_stage["formData"], key = "rankOlympiad")
-                max_bachelor_weight = 1
-                max_master_weight = 1
-                max_phd_weight = 1
-                userdata = education_stage["formData"]["education"]
-                bachelor_weight_list = []
-                master_weight_list = []
-                phd_weight_list = []
-                for edu in userdata:
-                        if edu.get("bachelor") is not None:
-                                if edu["bachelor"] != {}:
-                                        bachelor_weight = get_bachelor_weight(edu)
-                                        bachelor_weight_list.append(bachelor_weight)
-                        if edu.get("master") is not None:
-                                if edu["master"] != {}:
-                                        master_weight = get_master_weight(edu)
-                                        master_weight_list.append(master_weight)
-                                        
-                        if edu.get("phd") is not None:
-                                if edu["phd"] != {}:
-                                        phd_weight = get_phd_weight(edu)
-                                        phd_weight_list.append(phd_weight)                           
-                if bachelor_weight_list!=[]:
-                        max_bachelor_weight = max(bachelor_weight_list)
-                if  master_weight_list != []:
-                        max_master_weight = max(master_weight_list)
-                if phd_weight_list != []:
-                        max_phd_weight = max(master_weight_list)
-                education_degree_weight = np.round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
-                total_education_weight = work_activite_weight*education_weight*(education_grand_weight*education_degree_weight*olimp_highest_weight*olimp_rank_weight)**(1/3)
-                total_education_weight = np.round(total_education_weight,7)
+        max_bachelor_weight = 1
+        max_master_weight = 1
+        max_phd_weight = 1
+        userdata = education_stage["formData"]["education"]
+        bachelor_weight_list = []
+        master_weight_list = []
+        phd_weight_list = []
+        for edu in userdata:
+                if edu.get("bachelor") is not None:
+                        if edu["bachelor"] != {}:
+                                bachelor_weight = get_bachelor_weight(edu)
+                                bachelor_weight_list.append(bachelor_weight)
+                if edu.get("master") is not None:
+                        if edu["master"] != {}:
+                                master_weight = get_master_weight(edu)
+                                master_weight_list.append(master_weight)
+                                
+                if edu.get("phd") is not None:
+                        if edu["phd"] != {}:
+                                phd_weight = get_phd_weight(edu)
+                                phd_weight_list.append(phd_weight)                           
+        if bachelor_weight_list!=[]:
+                max_bachelor_weight = max(bachelor_weight_list)
+        if  master_weight_list != []:
+                max_master_weight = max(master_weight_list)
+        if phd_weight_list != []:
+                max_phd_weight = max(master_weight_list)
+        education_degree_weight = np.round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
+        total_education_weight = work_activite_weight*education_weight*(education_grand_weight*education_degree_weight*olimp_highest_weight*olimp_rank_weight)**(1/3)
+        total_education_weight = np.round(total_education_weight,7)
+        return total_education_weight
 
-                return total_education_weight
-        
         
 
 
@@ -105,30 +108,40 @@ def get_experience_score(stagedata):
 
 
 def get_skills_score(stagedata):
-        print(stagedata['formData']['haveSpecialSkills'])
-        if stagedata['formData']['haveSpecialSkills']['answer']!="Yoxdur":
-                userdata = stagedata["formData"]["specialSkills"]
-                lst=[]
-                heveskar_count = 0
-                pesekar_count = 0
-                formula_result = 1
-                for data in userdata:
-                        
-                        lst.append(data['talent_level'])
-                        if data['talent_level'] == 'heveskar':
-                                heveskar_answer_weight = data['answer_weight']
-                        elif data['talent_level'] == 'pesekar':
-                                pesekar_answer_weight = data['answer_weight']
+    
+    if stagedata['formData']['haveSpecialSkills']['answer'] == "Var":
+       
+        userdata = stagedata["formData"]["skills"]
+        lst = []  
+        heveskar_count = 0  
+        pesekar_count = 0  
+        formula_result = 1  
 
-                for value in lst:
-                        if value=='heveskar':
-                                heveskar_count += 1
-                        elif value=='pesekar':
-                                pesekar_count += 1
+        
+        for data in userdata:
+            lst.append(data['value']['answer'])  
+            
+            if data['value']['answer'] == 'Həvəskar':
+                heveskar_answer_weight = float(data['value']['answer_weight'])                  
+            
+            elif data['value']['answer'] == 'Peşəkar':
+                pesekar_answer_weight = float(data['value']['answer_weight'])                  
+        
+        for value in lst:
+            if value == 'Həvəskar':
+                heveskar_count += 1
+                
+            elif value == 'Peşəkar':
+                pesekar_count += 1
+                
+        
+        formula_result = (heveskar_answer_weight ** heveskar_count) * (pesekar_answer_weight ** pesekar_count)        
 
-                formula_result = (heveskar_count**heveskar_answer_weight) * (pesekar_count**pesekar_answer_weight)
-                return formula_result
-        return 1
+        return formula_result
+
+    else:
+        return 1 
+  
 
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:

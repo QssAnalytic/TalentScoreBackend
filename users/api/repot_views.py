@@ -158,18 +158,18 @@ class UserScoreAPIView(APIView):
         
 
         for stage in user_info:
-            if stage['name'] == "umumi-suallar":
+            # if stage['name'] == "umumi-suallar":
                 
-                education_score = get_education_score(user, request)
-                data['education']['education_score'] = education_score
-                data['education']['result'] = get_report_score(education_score) 
+            #     education_score = get_education_score(user, request)
+            #     data['education']['education_score'] = education_score
+            #     data['education']['result'] = get_report_score(education_score) 
                 
                 # report.education_score = education_score
 
-            if stage['name'] == "is-tecrubesi-substage":
-                experience_score = get_experience_score(stage)
-                data['work']['work_experiance_score'] = experience_score
-                data['work']['result'] = get_report_score(experience_score)
+            # if stage['name'] == "is-tecrubesi-substage":
+            #     experience_score = get_experience_score(stage)
+            #     data['work']['work_experiance_score'] = experience_score
+            #     data['work']['result'] = get_report_score(experience_score)
                 # report.work_experiance_score = experience_score
 
             if stage['name'] == "xususi-bacariqlar-substage":
@@ -183,10 +183,10 @@ class UserScoreAPIView(APIView):
             #     data['work']['result'] = get_report_score(language_score)
                 # report.language_score = language_score
 
-            if stage['name'] == "idman-substage":
-                sport_score = get_sport_skills_score(stage)   
-                data['sport']['result'] = get_report_score(sport_score)
-                data['sport']['sport_score'] = sport_score
+            # if stage['name'] == "idman-substage":
+            #     sport_score = get_sport_skills_score(stage)   
+            #     data['sport']['result'] = get_report_score(sport_score)
+            #     data['sport']['sport_score'] = sport_score
                 # report.sport_score = sport_score
 
             # if stage['name'] == "proqram-bilikleri-substage":

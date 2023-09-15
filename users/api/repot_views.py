@@ -198,9 +198,10 @@ class UserScoreAPIView(APIView):
                 data['sport']['sport_score'] = sport_score
                 # report.sport_score = sport_score
 
-            # if stage['name'] == "proqram-bilikleri-substage":
-            #     programming_skills_score = get_programming_skills_score(stage)  
-            #     data['work']['result'] = get_report_score(programming_skills_score)
+            if stage['name'] == "proqram-bilikleri-substage":
+                programming_skills_score = get_programming_skills_score(stage)  
+                data['program']['result'] = get_report_score(programming_skills_score)
+                data['program']['program_score'] = programming_skills_score
                 # report.program_score = programming_skills_score
             # report.save()
                             

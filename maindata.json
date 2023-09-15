@@ -93,7 +93,7 @@
             "langCertName": "",
             "engCertResult": {
               "answer": "4.5-5.0",
-              "answer_weight": "b'gAAAAABk5Ho0IRQ863qgdx4s-hQMimfFZKNj0-GvLoKs3cggNU3oftOtuXmAh3aMzVjHnPOOST7Vut4sINrwnVl0ghGTz51fhQ=='"
+              "answer_weight": 0.4
             },
             "langLevel": {
               "answer": "B1 (İlkin orta)",
@@ -144,7 +144,7 @@
             },
             "langLevel": {
               "answer": "A2 (Elementar)",
-              "answer_weight": null
+              "answer_weight": 0.6
             }
           }
         ],
@@ -307,6 +307,7 @@
             "whichLevel": [
               {
                 "name": "Word",
+                
                 "value": {
                   "answer": "Orta",
                   "answer_weight": "b'gAAAAABk5H1cevfxikYIdBywY2EFDYUr5T-Acvq4Y-83daQ-i3XYswVbKGS28oNFj7nyXiNbTs5I1_rJeBEZ9no4F1behvrZdg=='"

@@ -1,4 +1,5 @@
 from functools import reduce
+from pprint import pprint
 import numpy as np
 import math, time
 from typing import TypeVar
@@ -150,15 +151,25 @@ def get_skills_score(stagedata):
         
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
-                userdata = stagedata["formData"]["languageSkills"]
+                language_skills:bool = stagedata['formData']['haveLanguageSkills']['answer']
                 total_language_weight = 1
-                if len(userdata) > 0:
-                        for data in userdata:
-                                        total_language_weight *= float(data['engCertResult']['answer_weight'])
-                                        print(total_language_weight)
+                if language_skills != 'Var':
                         return total_language_weight
                 
+                userdata = stagedata["formData"]["languageSkills"]
+                for data in userdata:
+                        if data['language']['answer'] == "Ingilis dili":
+                                if data['engLangCert']['answer'] == "IELTS" or data['engLangCert']['answer'] == "TOEFL":
+                                        total_language_weight*=data['engCertResult']['answer_weight']
+                                else:
+                                        pprint(data)
+                                        total_language_weight*=data['langLevel']['answer_weight']
+                        else:
+                                total_language_weight*=data['langLevel']['answer_weight']
                 return total_language_weight
+                
+
+
 
 
 def get_sport_skills_score(sport_stage = None, sport_stage2 = None):

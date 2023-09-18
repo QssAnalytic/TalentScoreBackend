@@ -20,7 +20,7 @@ def check(data, key):
                         return float(data[key]["answer_weight"])
         return 1
 
-def get_education_score(user: user_account_type, request):
+def get_education_score(request):
         # report = ReportModel.objects.filter(user=user).last()
         user_info = request.data.get('user_info')
         umumi_stage = None
@@ -108,30 +108,39 @@ def get_experience_score(stagedata):
 
 
 def get_skills_score(stagedata):
-        print(stagedata['formData']['haveSpecialSkills'])
-        if stagedata['formData']['haveSpecialSkills']['answer']!="Yoxdur":
-                userdata = stagedata["formData"]["skills"]
-                lst=[]
-                heveskar_count = 0
-                pesekar_count = 0
-                formula_result = 1
-                for data in userdata:
-                        
-                        lst.append(data['talent_level'])
-                        if data['talent_level'] == 'heveskar':
-                                heveskar_answer_weight = data['answer_weight']
-                        elif data['talent_level'] == 'pesekar':
-                                pesekar_answer_weight = data['answer_weight']
+    
+    if stagedata['formData']['haveSpecialSkills']['answer'] == "Var":
+       
+        userdata = stagedata["formData"]["skills"]
+        lst = []  
+        heveskar_count = 0  
+        pesekar_count = 0  
+        formula_result = 1  
 
-                for value in lst:
-                        if value=='heveskar':
-                                heveskar_count += 1
-                        elif value=='pesekar':
-                                pesekar_count += 1
+        
+        for data in userdata:
+            lst.append(data['value']['answer'])  
+            
+            if data['value']['answer'] == 'Həvəskar':
+                heveskar_answer_weight = float(data['value']['answer_weight'])                  
+            
+            elif data['value']['answer'] == 'Peşəkar':
+                pesekar_answer_weight = float(data['value']['answer_weight'])                  
+        
+        for value in lst:
+            if value == 'Həvəskar':
+                heveskar_count += 1
+                
+            elif value == 'Peşəkar':
+                pesekar_count += 1
+                
+        
+        formula_result = (heveskar_answer_weight ** heveskar_count) * (pesekar_answer_weight ** pesekar_count)        
 
-                formula_result = (heveskar_count**heveskar_answer_weight) * (pesekar_count**pesekar_answer_weight)
-                return formula_result
-        return 1
+        return formula_result
+
+    else:
+        return 1 
 
 
 # def get_language_score(stagedata):

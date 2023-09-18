@@ -2,22 +2,23 @@ from functools import reduce
 from pprint import pprint
 import numpy as np
 import math, time
+import ast
 from typing import TypeVar
 from users.utils.user_utils import *
 from users.models import ReportModel
+from users.utils.hash_utils import decrypt_string
 
 from django.contrib.auth import get_user_model
 
 UserAccount = get_user_model()
 user_account_type = TypeVar('user_account_type', bound=UserAccount)
 
-def check(data, key):
-        
-                
+def check(data, key):     
+
         if data.get(key) is not None:
-                if data[key] !={}:
-                        
-                        return float(data[key]["answer_weight"])
+                if data[key] !={}:                       
+                        decoded_data = decrypt_string(ast.literal_eval(data[key]["answer_weight"]))
+                        return float(decoded_data)
         return 1
 
 def get_education_score(request):
@@ -36,8 +37,6 @@ def get_education_score(request):
                 olimpia_stage = stage
         if umumi_stage != None:
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
-        
-        
                 education_weight = check(umumi_stage["formData"]["education"], key = "master")
                 education_grand_weight = check(data = umumi_stage["formData"], key = "educationGrant")
         if olimpia_stage !=None:
@@ -66,7 +65,6 @@ def get_education_score(request):
                                 phd_weight_list.append(phd_weight)                           
         if bachelor_weight_list!=[]:
                 max_bachelor_weight = max(bachelor_weight_list)
-        if  master_weight_list != []:
                 max_master_weight = max(master_weight_list)
         if phd_weight_list != []:
                 max_phd_weight = max(master_weight_list)
@@ -162,19 +160,19 @@ def get_language_score(stagedata):
         if stagedata['formData'] != {}:
                 language_skills:bool = stagedata['formData']['haveLanguageSkills']['answer']
                 total_language_weight = 1
-                if language_skills != 'Var':
+                if language_skills == 'Var':
                         return total_language_weight
                 
                 userdata = stagedata["formData"]["languageSkills"]
                 for data in userdata:
+                        print(data)
                         if data['language']['answer'] == "Ingilis dili":
                                 if data['engLangCert']['answer'] == "IELTS" or data['engLangCert']['answer'] == "TOEFL":
-                                        total_language_weight*=data['engCertResult']['answer_weight']
+                                        total_language_weight*=decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight']))
                                 else:
-                                        pprint(data)
-                                        total_language_weight*=data['langLevel']['answer_weight']
+                                        total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
                         else:
-                                total_language_weight*=data['langLevel']['answer_weight']
+                                total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
                 return total_language_weight
                 
 

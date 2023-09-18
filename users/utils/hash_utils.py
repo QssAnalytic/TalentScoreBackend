@@ -9,3 +9,4 @@ def decrypt_string(encrypted_data):
     cipher = Fernet(hash_key)
     decrypted_data = cipher.decrypt(encrypted_data)
     return decrypted_data.decode()
+

@@ -2,9 +2,11 @@ from functools import reduce
 from pprint import pprint
 import numpy as np
 import math, time
+import ast
 from typing import TypeVar
 from users.utils.user_utils import *
 from users.models import ReportModel
+from users.utils.hash_utils import decrypt_string
 
 from django.contrib.auth import get_user_model
 
@@ -77,38 +79,36 @@ def get_education_score(request):
 
 
 def get_experience_score(stagedata):
-        userdata = stagedata["formData"]["experiences"]
-        experiance_score = 1
-        if len(userdata)>0:
-                workingform = {"Fiziki əmək":1, "Sənət":2, "Ali ixtisas":3, "Sahibkar":4}
-                max_working_form_weight = 0
-                profession_degree_weight = 0
-                if len(userdata)>1:
-                        max = 0
-                        for data in userdata:
-                                if workingform[data["workingActivityForm"]["answer"]]>max:
-                                        max = workingform[data["workingActivityForm"]["answer"]]
-                                        max_working_form_weight = data["workingActivityForm"]["answer_weight"]
-                                        profession_degree_weight = data["degreeOfProfes"]["answer_weight"]
-                                        difference = calculate_date_difference(data)
+    userdata = stagedata["formData"]["experiences"]
+    experiance_score = 1
+    if len(userdata) > 0:
+        workingform = {"Fiziki əmək": 1, "Sənət": 2, "Ali ixtisas": 3, "Sahibkar": 4}
+        max_working_form_weight = 0
+        profession_degree_weight = 0
+        if len(userdata) > 1:
+            max = 0
+            for data in userdata:
+                if workingform[data["workingActivityForm"]["answer"]] > max:
+                    max = workingform[data["workingActivityForm"]["answer"]]
+                    max_working_form_weight = float(decrypt_string(ast.literal_eval(data["workingActivityForm"]["answer_weight"])))
+                    profession_degree_weight = float(decrypt_string(ast.literal_eval(data["degreeOfProfes"]["answer_weight"])))
+                    difference = calculate_date_difference(data)
 
-                        finnly_date = difference.days/365.25
-                        finnly_date_weight = get_date_weight(finnly_date=finnly_date)
-                        experiance_score = max_working_form_weight*profession_degree_weight* finnly_date_weight
-                else:
-                        max_working_form_weight = userdata[0]["workingActivityForm"]["answer_weight"]
-                        profession_degree_weight = userdata[0]["degreeOfProfes"]["answer_weight"]
-                        difference = calculate_date_difference(userdata[0])
-                        finnly_date = difference.days/365.25
-                        finnly_date_weight = get_date_weight(finnly_date=finnly_date)
-                        experiance_score = max_working_form_weight*profession_degree_weight* finnly_date_weight
+            finnly_date = difference.days / 365.25
+            finnly_date_weight = get_date_weight(finnly_date=finnly_date)
+            experiance_score = max_working_form_weight * profession_degree_weight * finnly_date_weight
+        else:
+            max_working_form_weight = float(decrypt_string(ast.literal_eval(userdata[0]["workingActivityForm"]["answer_weight"])))
+            profession_degree_weight = float(decrypt_string(ast.literal_eval(userdata[0]["degreeOfProfes"]["answer_weight"])))
+            difference = calculate_date_difference(userdata[0])
+            finnly_date = difference.days / 365.25
+            finnly_date_weight = get_date_weight(finnly_date=finnly_date)
+            experiance_score = max_working_form_weight * profession_degree_weight * finnly_date_weight
 
-                return experiance_score
-        return experiance_score
+    return experiance_score
 
 
-def get_skills_score(stagedata):
-    
+# def get_skills_score(stagedata):    
     if stagedata['formData']['haveSpecialSkills']['answer'] == "Var":
        
         userdata = stagedata["formData"]["skills"]
@@ -135,6 +135,36 @@ def get_skills_score(stagedata):
                 pesekar_count += 1
                 
         
+        formula_result = (heveskar_answer_weight ** heveskar_count) * (pesekar_answer_weight ** pesekar_count)        
+
+        return formula_result
+
+    else:
+        return 1 
+def get_skills_score(stagedata):
+    if stagedata['formData']['haveSpecialSkills']['answer'] == "Var":
+        userdata = stagedata["formData"]["skills"]
+        lst = []  
+        heveskar_count = 0  
+        pesekar_count = 0  
+        formula_result = 1  
+
+        for data in userdata:
+            lst.append(data['value']['answer'])  
+            
+            if data['value']['answer'] == 'Həvəskar':
+                heveskar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))                  
+            
+            elif data['value']['answer'] == 'Peşəkar':
+                pesekar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))                  
+        
+        for value in lst:
+            if value == 'Həvəskar':
+                heveskar_count += 1
+                
+            elif value == 'Peşəkar':
+                pesekar_count += 1
+                
         formula_result = (heveskar_answer_weight ** heveskar_count) * (pesekar_answer_weight ** pesekar_count)        
 
         return formula_result

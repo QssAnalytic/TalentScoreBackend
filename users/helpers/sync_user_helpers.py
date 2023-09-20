@@ -2,22 +2,23 @@ from functools import reduce
 from pprint import pprint
 import numpy as np
 import math, time
+import ast
 from typing import TypeVar
 from users.utils.user_utils import *
 from users.models import ReportModel
+from users.utils.hash_utils import decrypt_string
 
 from django.contrib.auth import get_user_model
 
 UserAccount = get_user_model()
 user_account_type = TypeVar('user_account_type', bound=UserAccount)
 
-def check(data, key):
-        
-                
+def check(data, key):     
+
         if data.get(key) is not None:
-                if data[key] !={}:
-                        
-                        return float(data[key]["answer_weight"])
+                if data[key] !={}:                       
+                        decoded_data = decrypt_string(ast.literal_eval(data[key]["answer_weight"]))
+                        return float(decoded_data)
         return 1
 
 def get_education_score(request):
@@ -36,8 +37,6 @@ def get_education_score(request):
                 olimpia_stage = stage
         if umumi_stage != None:
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
-        
-        
                 education_weight = check(umumi_stage["formData"]["education"], key = "master")
                 education_grand_weight = check(data = umumi_stage["formData"], key = "educationGrant")
         if olimpia_stage !=None:
@@ -66,7 +65,6 @@ def get_education_score(request):
                                 phd_weight_list.append(phd_weight)                           
         if bachelor_weight_list!=[]:
                 max_bachelor_weight = max(bachelor_weight_list)
-        if  master_weight_list != []:
                 max_master_weight = max(master_weight_list)
         if phd_weight_list != []:
                 max_phd_weight = max(master_weight_list)
@@ -77,33 +75,32 @@ def get_education_score(request):
 
 
 def get_experience_score(stagedata):
-        userdata = stagedata["formData"]["experiences"]
-        experiance_score = 1
-        if len(userdata)>0:
-                workingform = {"Fiziki əmək":1, "Sənət":2, "Ali ixtisas":3, "Sahibkar":4}
-                max_working_form_weight = 0
-                profession_degree_weight = 0
-                if len(userdata)>1:
-                        max = 0
-                        for data in userdata:
-                                if workingform[data["workingActivityForm"]["answer"]]>max:
-                                        max = workingform[data["workingActivityForm"]["answer"]]
-                                        max_working_form_weight = data["workingActivityForm"]["answer_weight"]
-                                        profession_degree_weight = data["degreeOfProfes"]["answer_weight"]
-                                        difference = calculate_date_difference(data)
+    userdata = stagedata["formData"]["experiences"]
+    experiance_score = 1
+    if len(userdata) > 0:
+        workingform = {"Fiziki əmək": 1, "Sənət": 2, "Ali ixtisas": 3, "Sahibkar": 4}
+        max_working_form_weight = 0
+        profession_degree_weight = 0
+        if len(userdata) > 1:
+            max = 0
+            for data in userdata:
+                if workingform[data["workingActivityForm"]["answer"]] > max:
+                    max = workingform[data["workingActivityForm"]["answer"]]
+                    max_working_form_weight = float(decrypt_string(ast.literal_eval(data["workingActivityForm"]["answer_weight"])))
+                    profession_degree_weight = float(decrypt_string(ast.literal_eval(data["degreeOfProfes"]["answer_weight"])))
+                    difference = calculate_date_difference(data)
 
-                        finnly_date = difference.days/365.25
-                        finnly_date_weight = get_date_weight(finnly_date=finnly_date)
-                        experiance_score = max_working_form_weight*profession_degree_weight* finnly_date_weight
-                else:
-                        max_working_form_weight = userdata[0]["workingActivityForm"]["answer_weight"]
-                        profession_degree_weight = userdata[0]["degreeOfProfes"]["answer_weight"]
-                        difference = calculate_date_difference(userdata[0])
-                        finnly_date = difference.days/365.25
-                        finnly_date_weight = get_date_weight(finnly_date=finnly_date)
-                        experiance_score = max_working_form_weight*profession_degree_weight* finnly_date_weight
+            finnly_date = difference.days / 365.25
+            finnly_date_weight = get_date_weight(finnly_date=finnly_date)
+            experiance_score = max_working_form_weight * profession_degree_weight * finnly_date_weight
+        else:
+            max_working_form_weight = float(decrypt_string(ast.literal_eval(userdata[0]["workingActivityForm"]["answer_weight"])))
+            profession_degree_weight = float(decrypt_string(ast.literal_eval(userdata[0]["degreeOfProfes"]["answer_weight"])))
+            difference = calculate_date_difference(userdata[0])
+            finnly_date = difference.days / 365.25
+            finnly_date_weight = get_date_weight(finnly_date=finnly_date)
+            experiance_score = max_working_form_weight * profession_degree_weight * finnly_date_weight
 
-                return experiance_score
         return experiance_score
 
 
@@ -122,10 +119,10 @@ def get_skills_score(stagedata):
             lst.append(data['value']['answer'])  
             
             if data['value']['answer'] == 'Həvəskar':
-                heveskar_answer_weight = float(data['value']['answer_weight'])                  
+                heveskar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))                
             
             elif data['value']['answer'] == 'Peşəkar':
-                pesekar_answer_weight = float(data['value']['answer_weight'])                  
+                pesekar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))                   
         
         for value in lst:
             if value == 'Həvəskar':
@@ -148,19 +145,19 @@ def get_language_score(stagedata):
         if stagedata['formData'] != {}:
                 language_skills:bool = stagedata['formData']['haveLanguageSkills']['answer']
                 total_language_weight = 1
-                if language_skills != 'Var':
+                if language_skills == 'Var':
                         return total_language_weight
                 
                 userdata = stagedata["formData"]["languageSkills"]
                 for data in userdata:
+                        print(data)
                         if data['language']['answer'] == "Ingilis dili":
                                 if data['engLangCert']['answer'] == "IELTS" or data['engLangCert']['answer'] == "TOEFL":
-                                        total_language_weight*=data['engCertResult']['answer_weight']
+                                        total_language_weight*=decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight']))
                                 else:
-                                        pprint(data)
-                                        total_language_weight*=data['langLevel']['answer_weight']
+                                        total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
                         else:
-                                total_language_weight*=data['langLevel']['answer_weight']
+                                total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
                 return total_language_weight
                 
 
@@ -173,10 +170,10 @@ def get_sport_skills_score(sport_stage = None, sport_stage2 = None):
         pesekar_total_score = 1
         heveskar_total_score = 1
         heveskar_data = [data for data in sport_stage if data['value']['answer'] == 'Həvəskar']
-        heveskar_total_score = reduce(lambda x, y: x * y['value']['answer_weight'], heveskar_data, 1)
+        heveskar_total_score = reduce(lambda x, y: x * float(decrypt_string(ast.literal_eval(y['value']['answer_weight']))), heveskar_data, 1)
         if sport_stage2 != None:
                 for data in sport_stage2:
-                        pesekar_total_score*=data['value']['whichScore']['answer_weight']*data['value']['whichPlace']['answer_weight']*pesekar_weight
+                        pesekar_total_score*=float(decrypt_string(ast.literal_eval(data['value']['whichScore']['answer_weight'])))*float(decrypt_string(ast.literal_eval(data['value']['whichPlace']['answer_weight'])))*pesekar_weight
                 total_score = pesekar_total_score*heveskar_total_score
                 return total_score
         return heveskar_total_score

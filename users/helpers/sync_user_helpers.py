@@ -116,8 +116,8 @@ def get_skills_score(stagedata):
         heveskar_count = 0  
         pesekar_count = 0  
         formula_result = 1  
-
-        
+        pesekar_answer_weight = 1
+        heveskar_answer_weight = 1
         for data in userdata:
             lst.append(data['value']['answer'])  
             
@@ -143,20 +143,6 @@ def get_skills_score(stagedata):
         return 1 
 
 
-# def get_language_score(stagedata):
-#         # print(stagedata)
-#         # print("******************")
-#         if stagedata['formData'] != {}:
-#                 lang_data = stagedata["formData"]["languageSkills"]
-#                 userdata = lang_data 
-#                 total_language_weight = 1
-#                 if len(userdata) > 0:
-#                         for data in userdata:
-#                                 print(data.get('answer_weight'))
-#                                 total_language_weight *= data['answer_weight']
-#                         return total_language_weight
-                
-#                 return total_language_weight
         
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
@@ -208,166 +194,167 @@ def get_programming_skills_score(stagedata):
                 'programsScore':1,
                 'othersScore':1,
         }
+        if userdata['haveProgramSkills']['answer'] != "Yoxdur":
+                # Calculating officeScore
+                word_score = 0
+                excel_score = 0
+                pp_score = 0
 
-        # Calculating officeScore
-        word_score = 0
-        excel_score = 0
-        pp_score = 0
-
-        if userdata['programSkills'] and userdata['programSkills'] != [] and userdata['programSkills'] != 0 and userdata['programSkills'] != '0':
-                for answer in userdata['programSkills']:
-                        for program in answer['whichLevel']:
-                                if program['name'] == 'Word' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
-                                        word_score = program['answer_weight'] * program['value']['answer_weight']
-                                if program['name']  == 'Excel' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
-                                        excel_score = program['answer_weight'] * program['value']['answer_weight']
-                                if program['name']   == 'PowerPoint' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
-                                        pp_score = program['answer_weight'] * program['value']['answer_weight']
+                if userdata['programSkills'] and userdata['programSkills'] != [] and userdata['programSkills'] != 0 and userdata['programSkills'] != '0':
+                        for answer in userdata['programSkills']:
+                                for program in answer['whichLevel']:
+                                        if program['name'] == 'Word' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
+                                                word_score = program['answer_weight'] * program['value']['answer_weight']
+                                        if program['name']  == 'Excel' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
+                                                excel_score = program['answer_weight'] * program['value']['answer_weight']
+                                        if program['name']   == 'PowerPoint' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
+                                                pp_score = program['answer_weight'] * program['value']['answer_weight']
 
 
-                weight_list = {
-                        'Excel' : excel_score,
-                        'Word' : word_score,
-                        "PowerPoint" : pp_score,
+                        weight_list = {
+                                'Excel' : excel_score,
+                                'Word' : word_score,
+                                "PowerPoint" : pp_score,
+                        }
+                        for value in weight_list.values():
+                                if value != 0:
+                                        result['msOfficeScore'] *= value
+
+                else:
+                        result["msOfficeScore"] = 0
+
+
+                # Calculating Scores of design,programs, others categories       
+                level_scores_mapping = {
+                        "programs": {"Junior": {1:0.3, 2:0.2, 3:0.1, 4:0.05}, 'Middle': {1:0.05, 2:0.03, 3:0.01, 4:0.005}, 'Senior' : {1:0.005, 2:0.003, 3:0.001, 4:0.0005}},
+                        "design": {"Junior": {1:0.4, 2:0.3, 3:0.2, 4:0.1}, 'Middle': {1:0.1, 2:0.05, 3:0.01, 4:0.005}, 'Senior' : {1:0.01, 2:0.005, 3:0.001, 4:0.0005}},
+                        "others": {"Junior": {1:0.4, 2:0.3, 3:0.2, 4:0.1}, 'Middle': {1:0.1, 2:0.05, 3:0.01, 4:0.005}, 'Senior' : {1:0.01, 2:0.005, 3:0.001, 4:0.0005}}
+                        # "msOffice": {"Junior": {1:0.1,2:0.2,3:0.3,4:0.4}, 'Middle': {1:0.1,2:0.2,3:0.3,4:0.4}, 'Senior' : {1:0.1,2:0.2,3:0.3,4:0.4}},
                 }
-                for value in weight_list.values():
-                        if value != 0:
-                                result['msOfficeScore'] *= value
 
-        else:
-                result["msOfficeScore"] = 0
-        
-        
-        # Calculating Scores of design,programs, others categories       
-        level_scores_mapping = {
-                "programs": {"Junior": {1:0.3, 2:0.2, 3:0.1, 4:0.05}, 'Middle': {1:0.05, 2:0.03, 3:0.01, 4:0.005}, 'Senior' : {1:0.005, 2:0.003, 3:0.001, 4:0.0005}},
-                "design": {"Junior": {1:0.4, 2:0.3, 3:0.2, 4:0.1}, 'Middle': {1:0.1, 2:0.05, 3:0.01, 4:0.005}, 'Senior' : {1:0.01, 2:0.005, 3:0.001, 4:0.0005}},
-                "others": {"Junior": {1:0.4, 2:0.3, 3:0.2, 4:0.1}, 'Middle': {1:0.1, 2:0.05, 3:0.01, 4:0.005}, 'Senior' : {1:0.01, 2:0.005, 3:0.001, 4:0.0005}}
-                # "msOffice": {"Junior": {1:0.1,2:0.2,3:0.3,4:0.4}, 'Middle': {1:0.1,2:0.2,3:0.3,4:0.4}, 'Senior' : {1:0.1,2:0.2,3:0.3,4:0.4}},
-        }
+                # count of each level in 3 other categories
+                lst = {
+                        'design' : [0,0,0],
+                        'programs' : [0,0,0],
+                        'others' : [0,0,0]
+                }
 
-        # count of each level in 3 other categories
-        lst = {
-                'design' : [0,0,0],
-                'programs' : [0,0,0],
-                'others' : [0,0,0]
-        }
+                for program in userdata['programSkills']:
 
-        for program in userdata['programSkills']:
-                
-                if program['whichProgram'] == 'design' and program['whichProgram'] != [] and program['whichProgram'] !='' and program['whichProgram'] !=0:
-                        
-                        for data in program['whichLevel']:
-                                if data['value']['answer'] == 'Junior':
-                                        lst['programs'][0] += 1
-                                if data['value']['answer'] == 'Middle':
-                                        lst['programs'][1] += 1
-                                if data['value']['answer'] == 'Senior':
-                                        lst['programs'][2] += 1
-                
-                if program['whichProgram'] == 'Proqramlaşdırma dilləri' and  program['whichProgram'] != [] and program['whichProgram'] !=0:
-                        for data in program['whichLevel']:
-                                if data['value']['answer'] == 'Junior':
-                                        lst['programs'][0] += 1
-                                if data['value']['answer'] == 'Middle':
-                                        lst['programs'][1] += 1
-                                if data['value']['answer'] == 'Senior':
-                                        lst['programs'][2] += 1
+                        if program['whichProgram'] == 'design' and program['whichProgram'] != [] and program['whichProgram'] !='' and program['whichProgram'] !=0:
 
-                if userdata['whichProgram'] == 'others' and  userdata['whichProgram'] != []:
-                        for data in userdata['whichProgram']:
-                                if data['value']['answer'] == 'Junior':
-                                        lst['programs'][0] += 1
-                                if data['value']['answer'] == 'Middle':
-                                        lst['programs'][1] += 1
-                                if data['value']['answer'] == 'Senior':
-                                        lst['programs'][2] += 1
+                                for data in program['whichLevel']:
+                                        if data['value']['answer'] == 'Junior':
+                                                lst['programs'][0] += 1
+                                        if data['value']['answer'] == 'Middle':
+                                                lst['programs'][1] += 1
+                                        if data['value']['answer'] == 'Senior':
+                                                lst['programs'][2] += 1
 
-        levels = ['Junior', 'Middle', 'Senior']
-        
-        for i, level in enumerate(levels):
-                #designScore
-                if lst['design'] != [0,0,0]:
-                        
-                        count = lst['design'][i]
-                        if count != 0:
-                                if count > 4:
-                                        level_score = level_scores_mapping['design'][level].get(4)
-                                        result['designScore'] *= level_score
-                                elif count <=4:
-                                        level_score = level_scores_mapping['design'][level].get(count)
-                                        result['designScore'] *= level_score
+                        if program['whichProgram'] == 'Proqramlaşdırma dilləri' and  program['whichProgram'] != [] and program['whichProgram'] !=0:
+                                for data in program['whichLevel']:
+                                        if data['value']['answer'] == 'Junior':
+                                                lst['programs'][0] += 1
+                                        if data['value']['answer'] == 'Middle':
+                                                lst['programs'][1] += 1
+                                        if data['value']['answer'] == 'Senior':
+                                                lst['programs'][2] += 1
+
+                        if userdata['whichProgram'] == 'others' and  userdata['whichProgram'] != []:
+                                for data in userdata['whichProgram']:
+                                        if data['value']['answer'] == 'Junior':
+                                                lst['programs'][0] += 1
+                                        if data['value']['answer'] == 'Middle':
+                                                lst['programs'][1] += 1
+                                        if data['value']['answer'] == 'Senior':
+                                                lst['programs'][2] += 1
+
+                levels = ['Junior', 'Middle', 'Senior']
+
+                for i, level in enumerate(levels):
+                        #designScore
+                        if lst['design'] != [0,0,0]:
+
+                                count = lst['design'][i]
+                                if count != 0:
+                                        if count > 4:
+                                                level_score = level_scores_mapping['design'][level].get(4)
+                                                result['designScore'] *= level_score
+                                        elif count <=4:
+                                                level_score = level_scores_mapping['design'][level].get(count)
+                                                result['designScore'] *= level_score
+                        else:
+                                result['designScore'] = 1
+
+                        # programsScore
+                        if lst['programs'] != [0,0,0]:
+                                count = lst['programs'][i]
+                                if count != 0:
+                                        if count > 4:
+                                                level_score = level_scores_mapping['programs'][level].get(4)
+                                                result['programsScore'] *= level_score
+                                        elif count <=4:
+                                                level_score = level_scores_mapping['programs'][level].get(count)
+                                                result['programsScore'] *= level_score
+                        else:
+                                result['programsScore'] = 1
+
+                        #othersScore
+                        if lst['others'] != [0,0,0]:
+                                count = lst['others'][i]
+                                if count != 0:
+                                        if count > 4:
+                                                level_score = level_scores_mapping['others'][level].get(4)
+                                                result['othersScore'] *= level_score
+                                        elif count <=4:
+                                                level_score = level_scores_mapping['others'][level].get(count)
+                                                result['othersScore'] *= level_score
+                        else:
+                                result['othersScore'] = 1
+
+                # find multiplication of all category scores except minimum one
+                category_scores = []
+
+                for category in result:
+                        result[category] = round(result[category], 4)
+                        category_score = result[category]
+                        category_scores.append(category_score)
+
+                # Check if all category scores are the same
+                # calculate overall programming skills score
+                if len(set(category_scores)) == 1:
+                        print(f"All category scores are the same. min is {min(category_scores)}")
                 else:
-                        result['designScore'] = 1
+                        minimum_score = min(category_scores)
+                        category_scores.remove(minimum_score)
+                        programming_skills_score = 1
 
-                # programsScore
-                if lst['programs'] != [0,0,0]:
-                        count = lst['programs'][i]
-                        if count != 0:
-                                if count > 4:
-                                        level_score = level_scores_mapping['programs'][level].get(4)
-                                        result['programsScore'] *= level_score
-                                elif count <=4:
-                                        level_score = level_scores_mapping['programs'][level].get(count)
-                                        result['programsScore'] *= level_score
-                else:
-                        result['programsScore'] = 1
+                        if category_scores != []:      
+                                for score in category_scores:
+                                        if 0.5 < score <= 1:
+                                                programming_skills_score *= 0.9
 
-                #othersScore
-                if lst['others'] != [0,0,0]:
-                        count = lst['others'][i]
-                        if count != 0:
-                                if count > 4:
-                                        level_score = level_scores_mapping['others'][level].get(4)
-                                        result['othersScore'] *= level_score
-                                elif count <=4:
-                                        level_score = level_scores_mapping['others'][level].get(count)
-                                        result['othersScore'] *= level_score
-                else:
-                        result['othersScore'] = 1
-        
-        # find multiplication of all category scores except minimum one
-        category_scores = []
-        
-        for category in result:
-                result[category] = round(result[category], 4)
-                category_score = result[category]
-                category_scores.append(category_score)
+                                        elif 0.3 < score <= 0.5:
+                                                programming_skills_score *= 0.8
 
-        # Check if all category scores are the same
-        # calculate overall programming skills score
-        if len(set(category_scores)) == 1:
-                print(f"All category scores are the same. min is {min(category_scores)}")
-        else:
-                minimum_score = min(category_scores)
-                category_scores.remove(minimum_score)
-                programming_skills_score = 1
-                
-                if category_scores != []:      
-                        for score in category_scores:
-                                if 0.5 < score <= 1:
-                                        programming_skills_score *= 0.9
-                                        
-                                elif 0.3 < score <= 0.5:
-                                        programming_skills_score *= 0.8
-                                
-                                elif 0.1 < score <= 0.3:
-                                        programming_skills_score *= 0.7
+                                        elif 0.1 < score <= 0.3:
+                                                programming_skills_score *= 0.7
 
-                                elif 0.01 < score <= 0.1:
-                                        programming_skills_score *= 0.5
+                                        elif 0.01 < score <= 0.1:
+                                                programming_skills_score *= 0.5
 
-                                elif 0.001 < score <= 0.01:
-                                        programming_skills_score *= 0.3
-                                elif 0.0001 < score <= 0.001:
-                                        programming_skills_score *= 0.2
+                                        elif 0.001 < score <= 0.01:
+                                                programming_skills_score *= 0.3
+                                        elif 0.0001 < score <= 0.001:
+                                                programming_skills_score *= 0.2
 
-                                else:
-                                        programming_skills_score *= 0.1
-                                
-                        programming_skills_score *= minimum_score
-                else:
-                        programming_skills_score = 0
-                        
-        return programming_skills_score 
-        
+                                        else:
+                                                programming_skills_score *= 0.1
+
+                                programming_skills_score *= minimum_score
+                        else:
+                                programming_skills_score = 0
+
+                return programming_skills_score
+        return 1 
+

@@ -11,7 +11,7 @@ from users.serializers.report_serializers import ReportUploadSerializer
 from users.serializers.user_account_file_serializers import UserAccountFilePage
 from users.helpers.sync_user_helpers import *
 from users.helpers.report_score_result import get_report_score
-
+from users.utils.random_unique_key_utils import generate_unique_random_key
 class ReportUploadAPIView(APIView):
     def post(self, request, *args, **kwargs):
         try:
@@ -147,40 +147,40 @@ class UserScoreAPIView(APIView):
         programming_skills_score = 1
         sport_score = 1
         # report = ReportModel.objects.filter(user=user).last()
-        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"education_score":1, 'result':''}, 
-                'language': {'text': 'Language skills',"language_score":1,'result':''},
-                'special': {'text': 'Special talent','special_skills_score':1, 'result':''},
-                'sport': {'text': 'Sport skills','sport_score':1, 'result':''},
-                'work': {'text': 'Work experience','work_experiance_score':1, 'result':''},
-                'program': {'text': 'Program skills','program_score':1, 'result':''}}
+        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':''},
+                'language': {'text': 'Language skills',"score":1,'result':''},
+                'special': {'text': 'Special talent','score':1, 'result':''},
+                'sport': {'text': 'Sport skills','score':1, 'result':''},
+                'work': {'text': 'Work experience','score':1, 'result':''},
+                'program': {'text': 'Program skills','score':1, 'result':''}}
         user_info = request.data.get('user_info')
-        
+
 
         for stage in user_info:
             if stage['name'] == "umumi-suallar":
-                
+
                 education_score = get_education_score(request)
-                data['education']['education_score'] = education_score
-                data['education']['result'] = get_report_score(education_score) 
-                
+                data['education']['score'] = education_score
+                data['education']['result'] = get_report_score(education_score)
+
                 # report.education_score = education_score
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
-                data['work']['work_experiance_score'] = experience_score
+                data['work']['score'] = experience_score
                 data['work']['result'] = get_report_score(experience_score)
                 # report.work_experiance_score = experience_score
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
                 data['special']['result'] = get_report_score(special_skills_score)
-                data['special']['special_skills_score'] = special_skills_score
+                data['special']['score'] = special_skills_score
                 # report.special_skills_score = special_skills_score
 
             if stage['name'] == "dil-bilikleri-substage":
-                language_score = get_language_score(stage)     
+                language_score = get_language_score(stage)
                 data['language']['result'] = get_report_score(language_score)
-                data['language']['language_score'] = language_score
+                data['language']['score'] = language_score
                 # report.language_score = language_score
 
             if stage['name'] == 'idman-substage':
@@ -193,19 +193,19 @@ class UserScoreAPIView(APIView):
                         break
 
                 sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
-                
+
                 data['sport']['result'] = get_report_score(sport_score)
-                data['sport']['sport_score'] = sport_score
+                data['sport']['score'] = sport_score
                 # report.sport_score = sport_score
 
             if stage['name'] == "proqram-bilikleri-substage":
-                programming_skills_score = get_programming_skills_score(stage)  
+                programming_skills_score = get_programming_skills_score(stage)
                 data['program']['result'] = get_report_score(programming_skills_score)
-                data['program']['program_score'] = programming_skills_score
+                data['program']['score'] = programming_skills_score
                 # report.program_score = programming_skills_score
             # # report.save()
-                            
-        
+
+
         return Response(
-            data
+            {"data":data,"report_key": generate_unique_random_key()}
         )

@@ -3,8 +3,6 @@
   {
     "name": "umumi-suallar",
     "formData": {
-      "firstName": "Tamerlan",
-      "lastName": "Aliyev",
       "workExp": "1",
       "curOccupation": {
         "id": 6,

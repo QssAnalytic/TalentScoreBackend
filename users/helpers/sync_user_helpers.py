@@ -1,6 +1,5 @@
 from functools import reduce
 from pprint import pprint
-import numpy as np
 import math, time
 import ast
 from typing import TypeVar
@@ -13,10 +12,10 @@ from django.contrib.auth import get_user_model
 UserAccount = get_user_model()
 user_account_type = TypeVar('user_account_type', bound=UserAccount)
 
-def check(data, key):     
+def check(data, key):
 
         if data.get(key) is not None:
-                if data[key] !={}:                       
+                if data[key] !={}:
                         decoded_data = decrypt_string(ast.literal_eval(data[key]["answer_weight"]))
                         return float(decoded_data)
         return 1
@@ -27,12 +26,17 @@ def get_education_score(request):
         umumi_stage = None
         education_stage = None
         olimpia_stage = None
+        max_bachelor_weight = 1
+        max_master_weight = 1
+        max_phd_weight = 1
+        education_degree_weight = 1
         for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
-                
+
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
                 education_stage = stage
+                
             if stage['name'] == 'olimpiada-suallari':
                 olimpia_stage = stage
         if umumi_stage != None:
@@ -42,33 +46,32 @@ def get_education_score(request):
         if olimpia_stage !=None:
                 olimp_highest_weight = check(data = olimpia_stage["formData"], key = "highestOlympiad")
                 olimp_rank_weight = check(data = olimpia_stage["formData"], key = "rankOlympiad")
-        max_bachelor_weight = 1
-        max_master_weight = 1
-        max_phd_weight = 1
-        userdata = education_stage["formData"]["education"]
-        bachelor_weight_list = []
-        master_weight_list = []
-        phd_weight_list = []
-        for edu in userdata:
-                if edu.get("bachelor") is not None:
-                        if edu["bachelor"] != {}:
-                                bachelor_weight = get_bachelor_weight(edu)
-                                bachelor_weight_list.append(bachelor_weight)
-                if edu.get("master") is not None:
-                        if edu["master"] != {}:
-                                master_weight = get_master_weight(edu)
-                                master_weight_list.append(master_weight)
-                                
-                if edu.get("phd") is not None:
-                        if edu["phd"] != {}:
-                                phd_weight = get_phd_weight(edu)
-                                phd_weight_list.append(phd_weight)                           
-        if bachelor_weight_list!=[]:
-                max_bachelor_weight = max(bachelor_weight_list)
-                max_master_weight = max(master_weight_list)
-        if phd_weight_list != []:
-                max_phd_weight = max(master_weight_list)
-        education_degree_weight = np.round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
+        if education_stage !=None:
+                userdata = education_stage["formData"]["education"]
+                bachelor_weight_list = []
+                master_weight_list = []
+                phd_weight_list = []
+                print(userdata)
+                for edu in userdata:
+                        if edu.get("bachelor") is not None:
+                                if edu["bachelor"] != {}:
+                                        bachelor_weight = get_bachelor_weight(edu)
+                                        bachelor_weight_list.append(bachelor_weight)
+                        if edu.get("master") is not None:
+                                if edu["master"] != {}:
+                                        master_weight = get_master_weight(edu)
+                                        master_weight_list.append(master_weight)
+
+                        if edu.get("phd") is not None:
+                                if edu["phd"] != {}:
+                                        phd_weight = get_phd_weight(edu)
+                                        phd_weight_list.append(phd_weight)
+                if bachelor_weight_list!=[]:
+                        max_bachelor_weight = max(bachelor_weight_list)
+                        max_master_weight = max(master_weight_list)
+                if phd_weight_list != []:
+                        max_phd_weight = max(master_weight_list)
+                education_degree_weight = np.round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
         total_education_weight = work_activite_weight*education_weight*(education_grand_weight*education_degree_weight*olimp_highest_weight*olimp_rank_weight)**(1/3)
         total_education_weight = np.round(total_education_weight,7)
         return total_education_weight
@@ -102,55 +105,56 @@ def get_experience_score(stagedata):
             experiance_score = max_working_form_weight * profession_degree_weight * finnly_date_weight
 
         return experiance_score
+    return 1
 
 
 def get_skills_score(stagedata):
-    
+
     if stagedata['formData']['haveSpecialSkills']['answer'] == "Var":
-       
+
         userdata = stagedata["formData"]["skills"]
-        lst = []  
-        heveskar_count = 0  
-        pesekar_count = 0  
-        formula_result = 1  
+        lst = []
+        heveskar_count = 0
+        pesekar_count = 0
+        formula_result = 1
         pesekar_answer_weight = 1
         heveskar_answer_weight = 1
         for data in userdata:
-            lst.append(data['value']['answer'])  
-            
+            lst.append(data['value']['answer'])
+
             if data['value']['answer'] == 'Həvəskar':
-                heveskar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))                
-            
+                heveskar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))
+
             elif data['value']['answer'] == 'Peşəkar':
-                pesekar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))                   
-        
+                pesekar_answer_weight = float(decrypt_string(ast.literal_eval(data['value']['answer_weight'])))
+
         for value in lst:
             if value == 'Həvəskar':
                 heveskar_count += 1
-                
+
             elif value == 'Peşəkar':
                 pesekar_count += 1
-                
-        
-        formula_result = (heveskar_answer_weight ** heveskar_count) * (pesekar_answer_weight ** pesekar_count)        
+
+
+        formula_result = (heveskar_answer_weight ** heveskar_count) * (pesekar_answer_weight ** pesekar_count)
 
         return formula_result
 
     else:
-        return 1 
+        return 1
 
 
-        
+
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
                 language_skills:bool = stagedata['formData']['haveLanguageSkills']['answer']
                 total_language_weight = 1
                 if language_skills == 'Var':
                         return total_language_weight
-                
+
                 userdata = stagedata["formData"]["languageSkills"]
                 for data in userdata:
-                        print(data)
+                        
                         if data['language']['answer'] == "Ingilis dili":
                                 if data['engLangCert']['answer'] == "IELTS" or data['engLangCert']['answer'] == "TOEFL":
                                         total_language_weight*=decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight']))
@@ -159,7 +163,7 @@ def get_language_score(stagedata):
                         else:
                                 total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
                 return total_language_weight
-                
+
 
 
 
@@ -177,7 +181,7 @@ def get_sport_skills_score(sport_stage = None, sport_stage2 = None):
                 total_score = pesekar_total_score*heveskar_total_score
                 return total_score
         return heveskar_total_score
-        
+
 
 
 # get score weights for "proqram-bilikleri-substage"
@@ -221,7 +225,7 @@ def get_programming_skills_score(stagedata):
                         result["msOfficeScore"] = 0
 
 
-                # Calculating Scores of design,programs, others categories       
+                # Calculating Scores of design,programs, others categories
                 level_scores_mapping = {
                         "programs": {"Junior": {1:0.3, 2:0.2, 3:0.1, 4:0.05}, 'Middle': {1:0.05, 2:0.03, 3:0.01, 4:0.005}, 'Senior' : {1:0.005, 2:0.003, 3:0.001, 4:0.0005}},
                         "design": {"Junior": {1:0.4, 2:0.3, 3:0.2, 4:0.1}, 'Middle': {1:0.1, 2:0.05, 3:0.01, 4:0.005}, 'Senior' : {1:0.01, 2:0.005, 3:0.001, 4:0.0005}},
@@ -326,7 +330,7 @@ def get_programming_skills_score(stagedata):
                         category_scores.remove(minimum_score)
                         programming_skills_score = 1
 
-                        if category_scores != []:      
+                        if category_scores != []:
                                 for score in category_scores:
                                         if 0.5 < score <= 1:
                                                 programming_skills_score *= 0.9
@@ -353,5 +357,5 @@ def get_programming_skills_score(stagedata):
                                 programming_skills_score = 0
 
                 return programming_skills_score
-        return 1 
+        return 1
 

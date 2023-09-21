@@ -1,0 +1,14 @@
+{
+    "builds": [
+      {
+        "src": "talent_score/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "talent_score/wsgi.py"
+      }
+    ]
+}

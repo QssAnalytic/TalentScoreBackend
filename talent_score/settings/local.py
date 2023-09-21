@@ -9,39 +9,6 @@ DATABASES = {
     }
 }
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:5174',
-    'http://127.0.0.1:5173',
-    'http://localhost:5173',
-    'https://talent-scoring-frontend.vercel.app',
-    'https://talent-scoring-frontend-fikaroo.vercel.app',
-    'https://talent-scoring-frontend-git-main-fikaroo.vercel.app',
-    'https://talentscoring.vercel.app',
-    'https://talent-score-front-end-deploy-noi3.vercel.app',
-    'https://talentscore-report.netlify.app',
-]
-
-CORS_ALLOW_CREDENTIALS = True
-CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTP_ONLY = True
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000/',
-    'http://127.0.0.1:5173/',
-    'http://localhost:5173/',
-    'http://localhost:5174',
-    'https://talent-scoring-frontend.vercel.app/',
-    'https://talent-scoring-frontend-fikaroo.vercel.app/',
-    'https://talent-scoring-frontend-git-main-fikaroo.vercel.app/',
-    'https://talentscoring.vercel.app/',
-    'https://talent-score-front-end-deploy-noi3.vercel.app/',
-    'https://talentscore-report.netlify.app/'
-    
-]
-CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SAMESITE = "None"
-SESSION_COOKIE_SAMESITE = "None"
 
 CACHES = {
     "default": {

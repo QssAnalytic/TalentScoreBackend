@@ -56,9 +56,12 @@ def loginView(request):
             key=settings.SIMPLE_JWT["AUTH_COOKIE"],
             value=tokens["access_token"],
             expires=settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"],
-            secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+            # secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
             httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
-            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+            # samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+            samesite='None', 
+            
+            secure=True
         )
 
         res.set_cookie(

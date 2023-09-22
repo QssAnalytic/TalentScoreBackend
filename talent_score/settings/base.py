@@ -11,7 +11,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'localhost','127.0.0.1',
-    '192.168.8.160', 
+    '192.168.8.160',
     'nazimbudaqli.pythonanywhere.com',
     'qssanalyticstalentscore.pythonanywhere.com'
     ]
@@ -135,7 +135,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTP_ONLY = True    
+CSRF_COOKIE_HTTP_ONLY = True
 # CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000/',

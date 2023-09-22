@@ -76,7 +76,7 @@ def loginView(request):
         res.data = tokens
 
         res["X-CSRFToken"] = csrf.get_token(request)
-
+        
         return res
     raise rest_exceptions.AuthenticationFailed("Username or Password is incorrect!")
 

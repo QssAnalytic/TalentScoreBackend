@@ -101,6 +101,7 @@ def registerView(request):
 
 @rest_decorators.api_view(["POST"])
 @rest_decorators.permission_classes([rest_permissions.IsAuthenticated])
+
 def logoutView(request):
     try:
         refreshToken = request.COOKIES.get(settings.SIMPLE_JWT["AUTH_COOKIE_REFRESH"])

@@ -214,7 +214,7 @@ def get_programming_skills_score(stagedata):
                 if value != 0:
                     result['msOfficeScore'] *= value
         else:
-            result["msOfficeScore"] = 0
+            result["msOfficeScore"] = 1
 
 
         level_scores_mapping = {

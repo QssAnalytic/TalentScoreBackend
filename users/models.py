@@ -118,11 +118,12 @@ class ReportModel(models.Model):
         verbose_name = "ReportModel"
 
     def __str__(self) -> str:
-        return self.report_file.file.name
+        # return self.report_file.file.name
+        return self.user.email
     
-    def delete(self,*args,**kwargs):
-        self.report_file.delete(save=False)
-        super().delete(*args, **kwargs)
+    # def delete(self,*args,**kwargs):
+    #     self.report_file.delete(save=False)
+    #     super().delete(*args, **kwargs)
 
 
 class UserCV(models.Model):

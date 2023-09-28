@@ -3,13 +3,14 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.core.cache import cache
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from app.models import Question
 from app.serializers import QuestionListSerializer
 
 class QuestionListApiView(APIView): 
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         question = Question.objects.prefetch_related('answers')
 
@@ -18,6 +19,7 @@ class QuestionListApiView(APIView):
         return Response({"questions": serializer.data})
     
 class GetQuestionApiView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, language, level):
         query = Q()
         for index in request.data['data']:
@@ -29,6 +31,7 @@ class GetQuestionApiView(APIView):
    
     
 class AddQuestionApiView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):        
         cache.set("user_info", request.data, 24*3600) #TODO: add user email ass cache key
         if cache.get("user_info") is not None:

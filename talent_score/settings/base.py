@@ -138,12 +138,12 @@ CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTP_ONLY = True
 # CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000/',
-    'http://127.0.0.1:5173/',
-    'http://localhost:5173/',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
     'http://localhost:5174',
-    'https://talent-score-front-end-deploy-noi3.vercel.app/',
-    'https://talent-score.vercel.app/'
+    'https://talent-score-front-end-deploy-noi3.vercel.app',
+    'https://talent-score.vercel.app'
 
 ]
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]

@@ -33,12 +33,14 @@ def get_education_score(request):
         for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
-
+                
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
                 education_stage = stage
                 
             if stage['name'] == 'olimpiada-suallari':
                 olimpia_stage = stage
+                
+        
         if umumi_stage != None:
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
                 education_weight = check(umumi_stage["formData"]["education"], key = "master")
@@ -304,7 +306,8 @@ def get_programming_skills_score(stagedata):
             category_scores.append(category_score)
 
         if len(set(category_scores)) == 1:
-            print(f"All category scores are the same. min is {min(category_scores)}")
+            # print(f"All category scores are the same. min is {min(category_scores)}")
+            pass
         else:
             minimum_score = min(category_scores)
             category_scores.remove(minimum_score)

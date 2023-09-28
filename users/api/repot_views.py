@@ -4,6 +4,7 @@ from typing import Literal, Optional, TypedDict, Union
 from decimal import Decimal
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from users.models import ReportModel, UserAccount, UserAccountFilePage
@@ -12,78 +13,33 @@ from users.serializers.user_account_file_serializers import UserAccountFilePage
 from users.helpers.sync_user_helpers import *
 from users.helpers.report_score_result import get_report_score
 from users.utils.random_unique_key_utils import generate_unique_random_key
+
 class ReportUploadAPIView(APIView):
+    # parser_classes = (MultiPartParser,)
+
     def post(self, request, *args, **kwargs):
+        # print(request.data.get('report_file'))
+        req_data = request.data.get('report_file')
+        format, imgstr = req_data.split(';base64,') 
+        ext = format.split('/')[-1] 
+        cont_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+        # print(req_data)
         try:
-            text_data = request.data.get('report_file')
-            user = UserAccount.objects.first()  # Change this to fetch the user based on your logic
-            # general_questions = request.data.get('general_questions')
-            # secondary_education_questions = request.data.get('secondary_education_questions')
-            # olympiad_questions = request.data.get('olympiad_questions')
-            # work_experience_questions = request.data.get('work_experience_questions')
-            # special_skills_questions = request.data.get('special_skills_questions')
-            # language_skills_questions = request.data.get('language_skills_questions')
-            # special_skills_certificate_questions = request.data.get('special_skills_certificate_questions')
-            # sport_questions = request.data.get('sport_questions')
-            # program_questions = request.data.get('program_questions')
-            user_info = request.data.get("user_info")
-            print(user_info)
-            print(5)
-            for data in user_info:
-                if data.get("name") =="umumi-suallar":
-                    general_questions = {'formData':data.get('formData')}
-                if data.get("name") =="orta-texniki-ve-ali-tehsil-suallari":
-                    secondary_education_questions = {'formData':data.get('formData')}
-                if data.get("name") =="olimpiada-suallar":
-                    olympiad_questions = {'formData':data.get('formData')}
-                if data.get("name") =="is-tecrubesi-substage":
-                    work_experience_questions = {'formData':data.get('formData')}
-                if data.get("name") =="xususi-bacariqlar-substage":
-                    special_skills_questions = {'formData':data.get('formData')}
-                if data.get("name") =="dil-bilikleri-substage":
-                    language_skills_questions = {'formData':data.get('formData')}
-                if data.get("name") == "elave-dil-bilikleri-substage":
-                    extra_language_skills_questions = {'formData':data.get('formData')}
-                if data.get("name") == "xususi-bacariqlar-sertifikat-substage":
-                    special_skills_certificate_questions = {'formData':data.get('formData')}
-                if data.get("name") == "idman-substage":
-                    sport_questions = {'formData':data.get('formData')}
-                if data.get("name") == "proqram-bilikleri-substage":
-                    program_questions = {'formData':data.get('formData')}
+          
+          user = UserAccount.objects.get(id=request.user.id)
+        except ReportModel.DoesNotExist:
+            return Response({'error': 'User not found with the provided email.'}, status=status.HTTP_404_NOT_FOUND)
+        # print(email,cont_data)
 
-            print(user_info)
-            # Decode the base64 data and validate it
-            bytes_data =base64.b64decode(text_data, validate=True)
 
-            # Check if the first 4 bytes match the PDF signature
-            # if bytes_data[0:4] != b'%PDF':
-            #     raise ValueError('Missing the PDF file signature')
 
-            # Create a ContentFile from the decoded bytes
-            pdf_file = ContentFile(bytes_data, name='output.pdf')
-            user_account_file_serializer = UserAccountFilePage(user_id=user.id, file=pdf_file, file_category='REPORT')
-            report = ReportModel(user=user,
-                                 report_file=user_account_file_serializer, 
-                                 general_questions=general_questions,
-                                 secondary_education_questions = secondary_education_questions,
-                                 olympiad_questions = olympiad_questions,
-                                 work_experience_questions = work_experience_questions,
-                                 special_skills_certificate_questions = special_skills_certificate_questions,
-                                 special_skills_questions = special_skills_questions,
-                                 language_skills_questions = language_skills_questions,
-                                 extra_language_skills_questions = extra_language_skills_questions,
-                                 sport_questions = sport_questions,
-                                 program_questions = program_questions)
-            # return Response({'message': 'Report file uploaded successfully.'}, status=status.HTTP_201_CREATED)
-            if user_account_file_serializer and report:
-                user_account_file_serializer.save()
-                report.save()
-                return Response({'message': 'Report file uploaded successfully.'}, status=status.HTTP_201_CREATED)
-            else:
-                return Response(user_account_file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        file_serializer = ReportUploadSerializer(data=data)
 
-        except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        if file_serializer.is_valid():
+            file_serializer.save()
+            return Response(file_serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SkillInfo(TypedDict):
@@ -134,19 +90,17 @@ class ReportInfoAPIView(APIView):
 
 
 class UserScoreAPIView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
-        # user = (
-        #     UserAccount.objects.filter(email=email)
-        #     .only("email")
-        #     .first()
-        # )
+        user = UserAccount.objects.filter(id=request.user.id).first()
         education_score = 1
         experience_score = 1
         special_skills_score = 1
         language_score = 1
         programming_skills_score = 1
         sport_score = 1
-        # report = ReportModel.objects.filter(user=user).last()
+        # report = ReportModel.objects.select_related("report_file__user").filter(report_file__user=user).last()
+        report = ReportModel.objects.create(user=user)
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':''},
                 'language': {'text': 'Language skills',"score":1,'result':''},
                 'special': {'text': 'Special talent','score':1, 'result':''},
@@ -158,31 +112,32 @@ class UserScoreAPIView(APIView):
 
         for stage in user_info:
             if stage['name'] == "umumi-suallar":
-
                 education_score = get_education_score(request)
                 data['education']['score'] = 1-education_score
                 data['education']['result'] = get_report_score(education_score)
-
-                # report.education_score = education_score
+                report.education_score = education_score
+                report.general_questions = stage
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
-                print(experience_score)
                 data['work']['score'] = 1-experience_score
                 data['work']['result'] = get_report_score(experience_score)
-                # report.work_experiance_score = experience_score
+                report.work_experiance_score = experience_score
+                report.work_experience_questions = stage
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
                 data['special']['result'] = get_report_score(special_skills_score)
                 data['special']['score'] = 1-special_skills_score
-                # report.special_skills_score = special_skills_score
+                report.special_skills_score = special_skills_score
+                report.special_skills_questions = stage
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)
                 data['language']['result'] = get_report_score(language_score)
                 data['language']['score'] = 1-language_score
-                # report.language_score = language_score
+                report.language_score = language_score
+                report.language_skills_questions = stage
 
             if stage['name'] == 'idman-substage':
                 sport_stage:list = stage['formData']['sports']
@@ -191,20 +146,35 @@ class UserScoreAPIView(APIView):
                     if level['value']['answer'] == 'Peşəkar':
                         sport_stage2:list = list(filter(lambda x: x['name'] == 'idman-substage2', user_info))
                         sport_stage2:list = sport_stage2[0]['formData']['professionalSports']
+                        
                         break
 
                 sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
 
                 data['sport']['result'] = get_report_score(sport_score)
                 data['sport']['score'] = 1-sport_score
-                # report.sport_score = sport_score
+                report.sport_score = sport_score
+                report.sport_questions = stage
 
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)
                 data['program']['result'] = get_report_score(programming_skills_score)
                 data['program']['score'] = 1-programming_skills_score
-                # report.program_score = programming_skills_score
-            # # report.save()
+                report.program_score = programming_skills_score
+                report.program_questions = stage
+
+            if stage['name'] == 'idman-substage2':
+                report.sport2_questions = stage
+
+            if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
+                education_stage = stage
+                report.secondary_education_questions = stage
+            if stage['name'] == 'olimpiada-suallari':
+                olimpia_stage = stage
+                report.olympiad_questions = stage
+            if stage['name'] == 'xususi-bacariqlar-sertifikat-substage':
+                report.special_skills_certificate_questions = stage
+            report.save()
 
 
         return Response(

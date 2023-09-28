@@ -1,4 +1,4 @@
-import math, base64, pandas as pd, openai, environ, json
+import math, base64,  openai, environ, json
 from django.db import DatabaseError
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
@@ -101,7 +101,6 @@ def registerView(request):
 
 @rest_decorators.api_view(["POST"])
 @rest_decorators.permission_classes([rest_permissions.IsAuthenticated])
-
 def logoutView(request):
     try:
         refreshToken = request.COOKIES.get(settings.SIMPLE_JWT["AUTH_COOKIE_REFRESH"])

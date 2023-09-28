@@ -1,4 +1,4 @@
-import math, base64, pandas as pd, openai, environ, json
+import math, base64, openai, environ, json
 from rest_framework.views import APIView
 from users.models import ReportModel
 from rest_framework.response import Response

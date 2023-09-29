@@ -77,7 +77,6 @@ class UserAccountFilePage(models.Model):
     file_category = models.CharField(max_length=20, choices=FileCategoryChoices.choices)
     
     file = models.FileField(upload_to=user_account_file_upload_path, blank=True, null=True) #TODO: delete blank=True, null=True
-    # date_crated = models.DateField(blank=True, null=True)
     class Meta:
         verbose_name = "UserAccountFilePage"
 

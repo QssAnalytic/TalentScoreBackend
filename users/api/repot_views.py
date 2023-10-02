@@ -29,7 +29,7 @@ class ReportUploadAPIView(APIView):
             ext = format.split('/')[-1]
             cont_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         except:
-            return Response({'error': 'User not found with the provided email.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'data structure is false'}, status=status.HTTP_404_NOT_FOUND)
         
         user = request.user
         report = ReportModel.objects.get(user=user)

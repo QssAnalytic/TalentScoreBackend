@@ -28,7 +28,7 @@ from users import models
 
 # from app.helpers.async_user_helpers import *
 from users.helpers.sync_user_helpers import *
-from users.serializers import user_serializers
+from users.serializers import user_serializers, user_account_file_serializers
 
 # Create your views here.
 env = environ.Env()
@@ -220,29 +220,14 @@ class UserFilesAPIView(APIView):
         return Response({'message': 'Files uploaded successfully'}, status=rest_status.HTTP_201_CREATED)
 
 
-# class UserFilesAPIView(APIView):
-#     # parser_classes = (MultiPartParser,)
-    
-#     def post(self, request, *args, **kwargs):
-#         serializer = user_serializers.UserVerificationFileUploadSerializer(data=request.data, many=True)
+class UserAccountFilesAPIView(APIView):
+    permission_classes = [rest_permissions.IsAuthenticated]
+    def get(self, request):
+        user_account_data = models.UserAccountFilePage.objects.filter(user = request.user)
         
-#         if serializer.is_valid():
-#             uploaded_data = serializer.validated_data
-#             print(uploaded_data)
-#         #     try:
-#         #         user = UserAccount.objects.get(email='tami@mail.ru')  # Retrieve the user
-#         #     except UserAccount.DoesNotExist:
-#         #         return Response({'message': 'User not found'})
-
-#         #     for data in uploaded_data:
-#         #         category = data['category']
-#         #         uploaded_files = data['files']
-
-#         #         for uploaded_file in uploaded_files:
-#         #             models.UserVerificationFile.objects.create(user=user, category=category, file=uploaded_file)
-
-#         #     return Response({'message': 'Files uploaded successfully'})
-#         # else:
-#         #     return Response(serializer.errors)
-#         return Response({'message': 'Files uploaded successfully'})
+        serializer = user_account_file_serializers.UserAccountFilePageSerializer(user_account_data, many=True)
+        if serializer.data == []:
+            return Response(False, status=rest_status.HTTP_202_ACCEPTED)
+        return Response(serializer.data, status=rest_status.HTTP_200_OK)
+        
 

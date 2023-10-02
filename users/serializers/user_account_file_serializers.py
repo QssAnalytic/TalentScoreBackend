@@ -10,4 +10,5 @@ from users.models import UserAccountFilePage
 class UserAccountFilePageSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccountFilePage
-        fields = ("user", "file", "file_category")
+        fields = ("user","file", "file_category")
+

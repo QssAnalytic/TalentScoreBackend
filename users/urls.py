@@ -11,11 +11,14 @@ urlpatterns = [
     path('refresh-token/', user_views.CookieTokenRefreshView.as_view()),
     path('logout/', user_views.logoutView),
     path('user/', user_views.user),
+    path('user-accounts-files/', user_views.UserAccountFilesAPIView.as_view()),
     path('user-education-score/', repot_views.UserScoreAPIView.as_view()),
+
     path('get-summry-prompt/<str:email>/', cv_views.SummryPromptAPIView.as_view()),
     path('get-experiance-prompt/<str:email>/', cv_views.ExperiancePromptAPIView.as_view()),
     path('get-cv-content-prompt/<str:email>/', cv_views.CvContentPromptAPIView.as_view()),
     path('get-job-title-prompt/<str:email>/', cv_views.JobTitleAPIView.as_view()),
+
     path('user-info-post/', user_views.UserInfoPost.as_view()),
     path('upload-report/', repot_views.ReportUploadAPIView.as_view()),
     path('get-report/', repot_views.ReportInfoAPIView.as_view()),

@@ -18,7 +18,7 @@ class CustomAuthentication(jwt_authentication.JWTAuthentication):
         header = self.get_header(request)
         
         raw_token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE']) or None 
-        
+        print(request.COOKIES)
         if header is None:
             return None
         else:

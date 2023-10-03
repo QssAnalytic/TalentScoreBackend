@@ -124,6 +124,7 @@ class CookieTokenRefreshSerializer(jwt_serializers.TokenRefreshSerializer):
 
     def validate(self, attrs):
         attrs["refresh"] = self.context["request"].COOKIES.get("refresh")
+        print(self.context["request"].COOKIES.get("refresh"))
         if attrs["refresh"]:
             return super().validate(attrs)
         else:
@@ -137,6 +138,7 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
 
     def finalize_response(self, request, response, *args, **kwargs):
         if response.data.get("refresh"):
+            
             response.set_cookie(
                 key=settings.SIMPLE_JWT["AUTH_COOKIE_REFRESH"],
                 value=response.data["refresh"],

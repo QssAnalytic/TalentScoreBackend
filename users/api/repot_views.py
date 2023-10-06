@@ -16,6 +16,8 @@ from users.serializers.user_account_file_serializers import UserAccountFilePage,
 from users.helpers.sync_user_helpers import *
 from users.helpers.report_score_result import get_report_score
 from users.utils.random_unique_key_utils import generate_unique_random_key
+from users.utils.user_utils import round_to_non_zero
+
 
 class ReportUploadAPIView(APIView):
     # parser_classes = (MultiPartParser,)
@@ -128,77 +130,81 @@ class UserScoreAPIView(APIView):
                 'program': {'text': 'Program skills','score':1, 'result':''}}
         user_info = request.data.get('user_info')
 
-        with transaction.atomic():
-            for stage in user_info:
-                if stage['name'] == "umumi-suallar":
-                    education_score = get_education_score(request)
-                    data['education']['score'] = 1-education_score
-                    data['education']['result'] = get_report_score(education_score)
-                    report.education_score = education_score
-                    report.general_questions = stage
-    
-                if stage['name'] == "is-tecrubesi-substage":
-                    experience_score = get_experience_score(stage)
-                    data['work']['score'] = 1-experience_score
-                    data['work']['result'] = get_report_score(experience_score)
-                    report.work_experiance_score = experience_score
-                    report.work_experience_questions = stage
-    
-                if stage['name'] == "xususi-bacariqlar-substage":
-                    special_skills_score = get_skills_score(stage)
-                    data['special']['result'] = get_report_score(special_skills_score)
-                    data['special']['score'] = 1-special_skills_score
-                    report.special_skills_score = special_skills_score
-                    report.special_skills_questions = stage
-    
-                if stage['name'] == "dil-bilikleri-substage":
-                    language_score = get_language_score(stage)
-                    data['language']['result'] = get_report_score(language_score)
-                    data['language']['score'] = 1-language_score
-                    report.language_score = language_score
-                    report.language_skills_questions = stage
-    
-                if stage['name'] == 'idman-substage':
-                    sport_stage:list = stage['formData']['sports']
-                    sport_stage2 = None
-                    for level in sport_stage:
-                        if level['value']['answer'] == 'Peşəkar':
-                            sport_stage2:list = list(filter(lambda x: x['name'] == 'idman-substage2', user_info))
-                            sport_stage2:list = sport_stage2[0]['formData']['professionalSports']
-                            
-                            break
+        
+        for stage in user_info:
+            
+            if stage['name'] == "umumi-suallar":
+                education_score = get_education_score(request)
+                data['education']['score'] = round_to_non_zero(1-education_score)
+                data['education']['result'] = get_report_score(education_score)
+                report.education_score = data['education']['score']
+                print(type(data['education']['result']))
+                report.general_questions = stage
+
+            if stage['name'] == "is-tecrubesi-substage":
+                experience_score = get_experience_score(stage)
+                
+                data['work']['score'] = round_to_non_zero(1-experience_score)
+                data['work']['result'] = get_report_score(experience_score)
+                report.work_experiance_score =  data['work']['score']
+                report.work_experience_questions = stage
+
+            if stage['name'] == "xususi-bacariqlar-substage":
+                special_skills_score = get_skills_score(stage)
+                data['special']['result'] = get_report_score(special_skills_score)
+                data['special']['score'] = round_to_non_zero(1-special_skills_score)
+                report.special_skills_score = data['special']['score']
+                report.special_skills_questions = stage
+
+            if stage['name'] == "dil-bilikleri-substage":
+                language_score = get_language_score(stage)
+                data['language']['result'] = get_report_score(language_score)
+                data['language']['score'] = round_to_non_zero(1-language_score)
+                report.language_score = data['language']['score']
+                report.language_skills_questions = stage
+
+            if stage['name'] == 'idman-substage':
+                sport_stage:list = stage['formData']['sports']
+                sport_stage2 = None
+                for level in sport_stage:
+                    if level['value']['answer'] == 'Peşəkar':
+                        sport_stage2:list = list(filter(lambda x: x['name'] == 'idman-substage2', user_info))
+                        sport_stage2:list = sport_stage2[0]['formData']['professionalSports']
                         
-                    sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
-    
-                    data['sport']['result'] = get_report_score(sport_score)
-                    data['sport']['score'] = 1-sport_score
-                    report.sport_score = sport_score
-                    report.sport_questions = stage
-    
-                if stage['name'] == "proqram-bilikleri-substage":
-                    programming_skills_score = get_programming_skills_score(stage)
-                    data['program']['result'] = get_report_score(programming_skills_score)
-                    data['program']['score'] = 1-programming_skills_score
-                    report.program_score = programming_skills_score
-                    report.program_questions = stage
-    
-                if stage['name'] == 'idman-substage2':
-                    report.sport2_questions = stage
-    
-                if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
-                    education_stage = stage
-                    report.secondary_education_questions = stage
-                if stage['name'] == 'olimpiada-suallari':
-                    olimpia_stage = stage
-                    report.olympiad_questions = stage
-                if stage['name'] == 'xususi-bacariqlar-sertifikat-substage':
-                    report.special_skills_certificate_questions = stage
-                user.report_test = True
+                        break
+                    
+                sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
+
+                data['sport']['result'] = get_report_score(sport_score)
+                data['sport']['score'] = round_to_non_zero(1-sport_score)
+                report.sport_score = data['sport']['score']
+                report.sport_questions = stage
+
+            if stage['name'] == "proqram-bilikleri-substage":
+                programming_skills_score = get_programming_skills_score(stage)
+                data['program']['result'] = get_report_score(programming_skills_score)
+                data['program']['score'] = round_to_non_zero(1-programming_skills_score)
+                
+                report.program_score = data['program']['score']
+                report.program_questions = stage
+
+            if stage['name'] == 'idman-substage2':
+                report.sport2_questions = stage
+
+            if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
+                education_stage = stage
+                report.secondary_education_questions = stage
+            if stage['name'] == 'olimpiada-suallari':
+                olimpia_stage = stage
+                report.olympiad_questions = stage
+            if stage['name'] == 'xususi-bacariqlar-sertifikat-substage':
+                report.special_skills_certificate_questions = stage
+            user.report_test = True
+            with transaction.atomic():
                 user.save()
                 report.save()
-    
 
         return Response(
             {"data":data,"report_key": generate_unique_random_key()}
         )
-    
+

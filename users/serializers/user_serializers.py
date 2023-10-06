@@ -43,7 +43,7 @@ class LoginSerializer(serializers.Serializer):
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
-        fields = ("email","first_name","birth_date","last_name","gender")
+        fields = ("email","first_name","birth_date","last_name","gender", "report_test")
 
 
 class ReportSerializer(serializers.ModelSerializer):

@@ -1,5 +1,32 @@
 from datetime import datetime
-import numpy as np
+from decimal import Decimal, getcontext, ROUND_HALF_UP
+
+
+def round_to_non_zero(num):
+        # Convert the number to a Decimal object
+        print(num)
+        
+        if num != 1:
+        
+            num_decimal = Decimal(str(num))
+        
+            # Initialize the precision with a reasonable maximum value as an integer
+            max_precision = 9  # For example, set to 9 for 9 decimal places
+        
+            while True:
+                    # Set the precision for the current iteration
+                    getcontext().prec = max_precision
+                    # Round the number using ROUND_HALF_UP rounding method
+                    rounded_num = num_decimal.quantize(Decimal('1.' + '0' * max_precision), rounding=ROUND_HALF_UP)
+                    # Check if the rounded result is non-zero
+                    if rounded_num != 0:
+                        return rounded_num
+                    # Increase the maximum precision (this value should be adjusted based on your needs)
+                    max_precision += 1
+        return 1
+        
+
+
 
 def get_date_weight(finnly_date):
         if 0 <= finnly_date < 1:
@@ -64,14 +91,14 @@ def get_bachelor_weight(bachelors):
                                         else:
                                                 toefl_score_divided = lang["language_score"]/9
                                                 language_weight *= find_divide(toefl_score_divided)
-                                language_weight = np.round(language_weight,3)
+                                language_weight = round(language_weight,3)
                                 total_muraciyyet_weight *= language_weight
                         elif m['muraciyyet_type'] == 'SAT':
                                sat_weight = m['answer_weight']
                                total_muraciyyet_weight*=sat_weight
                 total_muraciyyet_weight = (total_muraciyyet_weight)**(1/power_count) 
-                total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
-                total_bachelors_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
+                total_muraciyyet_weight = round(total_muraciyyet_weight,3)
+                total_bachelors_weight = round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
                 
         elif bachelors['bachelor']['criterion']['criterion_type'] == 'Lokal imtahan': 
                 total_bachelors_weight = bachelors['bachelor']['criterion']['lokal_test']['answer_weight']
@@ -87,14 +114,14 @@ def get_bachelor_weight(bachelors):
                                 for lang in m['language_type']:
                                     power_count+=1
                                     language_weight *= lang['answer_weight']
-                                language_weight = np.round(language_weight,3)
+                                language_weight = round(language_weight,3)
                                 total_muraciyyet_weight *= language_weight
                         elif m['muraciyyet_type'] == 'SAT':
                                sat_weight = m['answer_weight']
                                total_muraciyyet_weight*=sat_weight
                 total_muraciyyet_weight = (total_muraciyyet_weight)**(1/power_count) 
-                total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
-                total_bachelors_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)   
+                total_muraciyyet_weight = round(total_muraciyyet_weight,3)
+                total_bachelors_weight = round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)   
                          
         return total_bachelors_weight
 
@@ -116,14 +143,14 @@ def get_master_weight(masters):
                                 for lang in m['language_type']:
                                     power_count+=1
                                     language_weight *= lang['answer_weight']
-                                language_weight = np.round(language_weight,3)
+                                language_weight = round(language_weight,3)
                                 total_muraciyyet_weight *= language_weight
                         elif m['muraciyyet_type'] == 'SAT':
                                sat_weight = m['answer_weight']
                                total_muraciyyet_weight*=sat_weight
                 total_muraciyyet_weight = (total_muraciyyet_weight)**(1/power_count) 
-                total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
-                total_masters_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
+                total_muraciyyet_weight = round(total_muraciyyet_weight,3)
+                total_masters_weight = round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
                 
         elif masters['master']['criterion']['criterion_type'] == 'Lokal imtahan': 
                 total_masters_weight = masters['master']['criterion']['lokal_test']['answer_weight']
@@ -140,13 +167,13 @@ def get_master_weight(masters):
                                 for lang in m['language_type']:
                                     power_count+=1
                                     language_weight *= lang['answer_weight']
-                                language_weight = np.round(language_weight,3)
+                                language_weight = round(language_weight,3)
                                 total_masters_weight *= language_weight
                         elif m['muraciyyet_type'] == 'SAT':
                                sat_weight = m['answer_weight']
                                total_masters_weight*=sat_weight
                 total_masters_weight = (total_masters_weight)**(1/power_count) 
-                total_masters_weight = np.round(total_masters_weight,3)
+                total_masters_weight = round(total_masters_weight,3)
                               
         return total_masters_weight
 
@@ -168,14 +195,14 @@ def get_phd_weight(phds):
                                 for lang in m['language_type']:
                                     power_count+=1
                                     language_weight *= lang['answer_weight']
-                                language_weight = np.round(language_weight,3)
+                                language_weight = round(language_weight,3)
                                 total_muraciyyet_weight *= language_weight
                         elif m['muraciyyet_type'] == 'SAT':
                                sat_weight = m['answer_weight']
                                total_muraciyyet_weight*=sat_weight
                 total_muraciyyet_weight = (total_muraciyyet_weight)**(1/power_count) 
-                total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
-                total_phds_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
+                total_muraciyyet_weight = round(total_muraciyyet_weight,3)
+                total_phds_weight = round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
                 
         elif phds['phd']['criterion']['criterion_type'] == 'Lokal imtahan': 
                 total_phds_weight = phds['phd']['criterion']['lokal_test']['answer_weight']
@@ -192,12 +219,12 @@ def get_phd_weight(phds):
                                 for lang in m['language_type']:
                                     power_count+=1
                                     language_weight *= lang['answer_weight']
-                                language_weight = np.round(language_weight,3)
+                                language_weight = round(language_weight,3)
                                 total_phds_weight *= language_weight
                         elif m['muraciyyet_type'] == 'SAT':
                                sat_weight = m['answer_weight']
                                total_phds_weight*=sat_weight
                 total_phds_weight = (total_phds_weight)**(1/power_count) 
-                total_phds_weight = np.round(total_phds_weight,3)
+                total_phds_weight = round(total_phds_weight,3)
                               
         return total_phds_weight

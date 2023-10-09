@@ -51,26 +51,24 @@ def get_education_score(request):
                 bachelor_weight_list = []
                 master_weight_list = []
                 phd_weight_list = []
-                print(userdata)
-                for edu in userdata:
-                        if edu.get("bachelor") is not None:
-                                if edu["bachelor"] != {}:
+                for edu in userdata:               
+                        if edu.get("tehsil") is not None:
+                                if edu["tehsil"]['answer'] == 'Bakalavr':
                                         bachelor_weight = get_bachelor_weight(edu)
                                         bachelor_weight_list.append(bachelor_weight)
-                        if edu.get("master") is not None:
-                                if edu["master"] != {}:
+                                if edu["tehsil"]['answer'] == 'Master':
                                         master_weight = get_master_weight(edu)
                                         master_weight_list.append(master_weight)
 
-                        if edu.get("phd") is not None:
-                                if edu["phd"] != {}:
+                                if edu["tehsil"]['answer'] == 'PhD':
                                         phd_weight = get_phd_weight(edu)
                                         phd_weight_list.append(phd_weight)
                 if bachelor_weight_list!=[]:
-                        max_bachelor_weight = max(bachelor_weight_list)
-                        max_master_weight = max(master_weight_list)
+                        max_bachelor_weight = max(bachelor_weight_list)                      
                 if phd_weight_list != []:
-                        max_phd_weight = max(master_weight_list)
+                        max_phd_weight = max(phd_weight_list)
+                if master_weight_list != []:
+                     max_master_weight = max(master_weight_list)                   
                 education_degree_weight = np.round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
         total_education_weight = work_activite_weight*education_weight*(education_grand_weight*education_degree_weight*olimp_highest_weight*olimp_rank_weight)**(1/3)
         total_education_weight = np.round(total_education_weight,7)

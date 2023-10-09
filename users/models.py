@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import BaseUserManager
+from django.core.exceptions import ValidationError
 # Create your models here.
 GENDER_CHOICES = (
     ("Female", "Female"),
@@ -34,7 +35,7 @@ class UserManager(BaseUserManager):
 class UserAccount(AbstractBaseUser):
     first_name = models.CharField(max_length = 150, null=True, blank = True)
     last_name = models.CharField(max_length = 150, null=True, blank = True)
-    email = models.EmailField(unique=True, blank=True, null=True)
+    email = models.EmailField(unique=True)
     birth_date = models.DateField( blank=True, null=True)
     gender = models.CharField(max_length=10, choices = GENDER_CHOICES, blank=True, null=True)
     native_language = models.CharField(max_length=50, blank=True, null=True)
@@ -56,9 +57,9 @@ class UserAccount(AbstractBaseUser):
       return self.is_superuser
 
     def has_module_perms(self, app_label):
-        return self.is_superuser    
-    def __str__(self):
-        
+        return self.is_superuser 
+       
+    def __str__(self):        
         return self.email
 
 
@@ -76,13 +77,18 @@ class UserAccountFilePage(models.Model):
     )
     file_category = models.CharField(max_length=20, choices=FileCategoryChoices.choices)
     
-    file = models.FileField(upload_to=user_account_file_upload_path, blank=True, null=True) #TODO: delete blank=True, null=True
+    file = models.FileField(upload_to=user_account_file_upload_path) #TODO: delete blank=True, null=True
     # date_crated = models.DateField(blank=True, null=True)
     class Meta:
         verbose_name = "UserAccountFilePage"
 
     def __str__(self) -> str:
         return f'{self.file_category} of {self.user}'
+    
+    # def clean(self):
+    #     # Ensure that the file field is not blank
+    #     if self.file == None:
+    #         raise ValidationError("File cannot be blank.")
 
 class ReportModel(models.Model):
 
@@ -164,5 +170,3 @@ class UserVerificationFile(models.Model):
     class Meta:
         verbose_name = 'UserVerificationFile'
         verbose_name_plural = 'UserVerificationFiles'
-
-#

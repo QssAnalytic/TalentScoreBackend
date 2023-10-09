@@ -17,18 +17,17 @@ class ReportUploadAPIView(APIView):
         try:
             text_data = request.data.get('report_file')
             user = UserAccount.objects.first()  # Change this to fetch the user based on your logic
-            # general_questions = request.data.get('general_questions')
-            # secondary_education_questions = request.data.get('secondary_education_questions')
-            # olympiad_questions = request.data.get('olympiad_questions')
-            # work_experience_questions = request.data.get('work_experience_questions')
-            # special_skills_questions = request.data.get('special_skills_questions')
-            # language_skills_questions = request.data.get('language_skills_questions')
-            # special_skills_certificate_questions = request.data.get('special_skills_certificate_questions')
-            # sport_questions = request.data.get('sport_questions')
-            # program_questions = request.data.get('program_questions')
+            general_questions = request.data.get('general_questions')
+            secondary_education_questions = request.data.get('secondary_education_questions')
+            olympiad_questions = request.data.get('olympiad_questions')
+            work_experience_questions = request.data.get('work_experience_questions')
+            special_skills_questions = request.data.get('special_skills_questions')
+            language_skills_questions = request.data.get('language_skills_questions')
+            extra_language_skills_questions = request.data.get('extra_language_skills_questions')
+            special_skills_certificate_questions = request.data.get('special_skills_certificate_questions')
+            sport_questions = request.data.get('sport_questions')
+            program_questions = request.data.get('program_questions')
             user_info = request.data.get("user_info")
-            print(user_info)
-            print(5)
             for data in user_info:
                 if data.get("name") =="umumi-suallar":
                     general_questions = {'formData':data.get('formData')}
@@ -50,8 +49,6 @@ class ReportUploadAPIView(APIView):
                     sport_questions = {'formData':data.get('formData')}
                 if data.get("name") == "proqram-bilikleri-substage":
                     program_questions = {'formData':data.get('formData')}
-
-            print(user_info)
             # Decode the base64 data and validate it
             bytes_data =base64.b64decode(text_data, validate=True)
 
@@ -158,29 +155,27 @@ class UserScoreAPIView(APIView):
 
         for stage in user_info:
             if stage['name'] == "umumi-suallar":
-
                 education_score = get_education_score(request)
                 data['education']['score'] = 1-education_score
-                data['education']['result'] = get_report_score(education_score)
+                data['education']['result'] = get_report_score(1-education_score)
 
                 # report.education_score = education_score
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
-                print(experience_score)
                 data['work']['score'] = 1-experience_score
-                data['work']['result'] = get_report_score(experience_score)
+                data['work']['result'] = get_report_score(1-experience_score)
                 # report.work_experiance_score = experience_score
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
-                data['special']['result'] = get_report_score(special_skills_score)
+                data['special']['result'] = get_report_score(1-special_skills_score)
                 data['special']['score'] = 1-special_skills_score
                 # report.special_skills_score = special_skills_score
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)
-                data['language']['result'] = get_report_score(language_score)
+                data['language']['result'] = get_report_score(1-language_score)
                 data['language']['score'] = 1-language_score
                 # report.language_score = language_score
 
@@ -195,13 +190,13 @@ class UserScoreAPIView(APIView):
 
                 sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
 
-                data['sport']['result'] = get_report_score(sport_score)
+                data['sport']['result'] = get_report_score(1-sport_score)
                 data['sport']['score'] = 1-sport_score
                 # report.sport_score = sport_score
 
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)
-                data['program']['result'] = get_report_score(programming_skills_score)
+                data['program']['result'] = get_report_score(1-programming_skills_score)
                 data['program']['score'] = 1-programming_skills_score
                 # report.program_score = programming_skills_score
             # # report.save()

@@ -78,7 +78,7 @@ def loginView(request):
         res["X-CSRFToken"] = csrf.get_token(request)
         
         return res
-    raise rest_exceptions.AuthenticationFailed("Username or Password is incorrect!")
+    raise rest_exceptions.AuthenticationFailed("Email or Password is incorrect!")
 
 
 @swagger_auto_schema(
@@ -87,7 +87,6 @@ def loginView(request):
 @rest_decorators.api_view(["POST"])
 @rest_decorators.permission_classes([])
 def registerView(request):
-    print(request.data)
     serializer = user_serializers.RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 

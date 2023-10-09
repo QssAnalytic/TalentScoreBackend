@@ -103,7 +103,7 @@ def get_master_weight(masters):
         total_muraciyyet_weight = 1
         total_masters_weight = 1
         power_count = 0
-        if masters['master']['criterion']['criterion_type'] == 'her ikisi':
+        if masters['criterian']['answer'] == 'her ikisi':
                 lokal_test_weight = masters['master']['criterion']['lokal_test']['answer_weight']
                 
                 muraciyyet = masters['master']['criterion']['muraciyyet']
@@ -125,12 +125,12 @@ def get_master_weight(masters):
                 total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
                 total_masters_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
                 
-        elif masters['master']['criterion']['criterion_type'] == 'Lokal imtahan': 
-                total_masters_weight = masters['master']['criterion']['lokal_test']['answer_weight']
+        elif masters['criterian']['answer'] == 'Lokal imtahan': 
+                total_masters_weight =1-(float(masters['local']['score'])/float(masters['local']['maxScore'])) 
                 
-        elif masters['master']['criterion']['criterion_type'] == 'Müraciyyət': 
+        elif masters['criterian']['answer'] == 'Müraciyyət': 
                 muraciyyet = masters['master']['criterion']['muraciyyet']
-                total_masters_weight = 1
+                total_masters_weight = 1 
                 for m in muraciyyet:
                         if m['muraciyyet_type'] == 'Atestat':
                                 power_count+=1     

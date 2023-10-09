@@ -127,6 +127,8 @@ class ReportModel(models.Model):
 
 class UserCV(models.Model):
     pass
+
+    
 class CertificateModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)

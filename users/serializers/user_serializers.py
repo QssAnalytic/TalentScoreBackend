@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from users.models import UserAccount, ReportModel#, UserFile
+from rest_framework.exceptions import ValidationError
 
 UserAccount=get_user_model()
 
@@ -36,10 +37,18 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return "user"
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.EmailField() 
+    email = serializers.EmailField(required=True) 
     password = serializers.CharField(
-        style={"input_type": "password"}, write_only=True)
+        style={"input_type": "password"}, write_only=True, required=True)
     
+    def validate(self, data):
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            raise ValidationError("Both email and password are required.")
+        return data
+
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount

@@ -44,18 +44,19 @@ def get_bachelor_weight(bachelors):
         language_weight = 1
         total_muraciyyet_weight = 1
         total_bachelors_weight = 1
-        power_count = 0
-        if bachelors['bachelor']['criterion']['criterion_type'] == 'her ikisi':
-                local_test_score_divided = bachelors['bachelor']['criterion']['lokal_test']["score"]/bachelors['bachelor']['criterion']['lokal_test']["max_score"]
+        lokal_test_weight = 1
+        power_count = 1 #TODO make it 0 later
+        if bachelors['criterian']['answer'] == 'her ikisi':
+                local_test_score_divided = 1-(int(bachelors['local']['score'])/int(bachelors['local']['maxScore']))
                 lokal_test_weight = find_divide(local_test_score_divided)
-                muraciyyet = bachelors['bachelor']['criterion']['muraciyyet']
+                muraciyyet = bachelors['application']
                 for m in muraciyyet:
-                        if m['muraciyyet_type'] == 'Atestat':
+                        if m == 'Attestat':
                                 power_count+=1  
                                 atestat_score_divided  =  m['score']/300
                                 atestat_weight = find_divide(atestat_score_divided)
                                 total_muraciyyet_weight *= atestat_weight
-                        elif m['muraciyyet_type'] == 'language':
+                        elif m == 'language':
                                 for lang in m['language_type']:
                                         power_count+=1
                                         if lang["language_name"] == "IELTS":
@@ -66,17 +67,17 @@ def get_bachelor_weight(bachelors):
                                                 language_weight *= find_divide(toefl_score_divided)
                                 language_weight = np.round(language_weight,3)
                                 total_muraciyyet_weight *= language_weight
-                        elif m['muraciyyet_type'] == 'SAT':
+                        elif m == 'SAT':
                                sat_weight = m['answer_weight']
                                total_muraciyyet_weight*=sat_weight
                 total_muraciyyet_weight = (total_muraciyyet_weight)**(1/power_count) 
                 total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
                 total_bachelors_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
                 
-        elif bachelors['bachelor']['criterion']['criterion_type'] == 'Lokal imtahan': 
-                total_bachelors_weight = bachelors['bachelor']['criterion']['lokal_test']['answer_weight']
+        elif bachelors['criterian']['answer'] == 'Lokal imtahan': 
+                total_bachelors_weight = 1-(float(bachelors['local']['score'])/float(bachelors['local']['maxScore']))
                 
-        elif bachelors['bachelor']['criterion']['criterion_type'] == 'Müraciyyət': 
+        elif bachelors['criterian']['answer'] == 'Müraciyyət': 
                 muraciyyet = bachelors['bachelor']['criterion']['muraciyyet']
                 for m in muraciyyet:
                         if m['muraciyyet_type'] == 'Atestat':
@@ -94,8 +95,7 @@ def get_bachelor_weight(bachelors):
                                total_muraciyyet_weight*=sat_weight
                 total_muraciyyet_weight = (total_muraciyyet_weight)**(1/power_count) 
                 total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
-                total_bachelors_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)   
-                         
+                total_bachelors_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)         
         return total_bachelors_weight
 
 def get_master_weight(masters):
@@ -155,7 +155,7 @@ def get_phd_weight(phds):
         total_muraciyyet_weight = 1
         total_phds_weight = 1
         power_count = 0
-        if phds['phd']['criterion']['criterion_type'] == 'her ikisi':
+        if phds['criterian']['answer'] == 'her ikisi':
                 lokal_test_weight = phds['phd']['criterion']['lokal_test']['answer_weight']
                 
                 muraciyyet = phds['phd']['criterion']['muraciyyet']
@@ -177,10 +177,10 @@ def get_phd_weight(phds):
                 total_muraciyyet_weight = np.round(total_muraciyyet_weight,3)
                 total_phds_weight = np.round((lokal_test_weight*total_muraciyyet_weight)**(1/2),3)    
                 
-        elif phds['phd']['criterion']['criterion_type'] == 'Lokal imtahan': 
-                total_phds_weight = phds['phd']['criterion']['lokal_test']['answer_weight']
+        elif phds['criterian']['answer'] == 'Lokal imtahan': 
+                total_phds_weight = 1-(float(phds['local']['score'])/float(phds['local']['maxScore']))
                 
-        elif phds['phd']['criterion']['criterion_type'] == 'Müraciyyət': 
+        elif phds['criterian']['answer'] == 'Müraciyyət': 
                 muraciyyet = phds['phd']['criterion']['muraciyyet']
                 total_phds_weight = 1
                 for m in muraciyyet:

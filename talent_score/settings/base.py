@@ -9,7 +9,13 @@ environ.Env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost','127.0.0.1','192.168.8.38', 'nazimbudaqli.pythonanywhere.com']
+ALLOWED_HOSTS = [
+    'localhost','127.0.0.1',
+    '192.168.8.160',
+    'nazimbudaqli.pythonanywhere.com',
+    'qssanalyticstalentscore.pythonanywhere.com'
+    ]
+
 SECRET_KEY = env("SECRET_KEY")
 
 INSTALLED_APPS = [
@@ -114,6 +120,36 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
 }
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost:5174',
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
+    'https://talent-scoring-frontend.vercel.app',
+    'https://talent-scoring-frontend-fikaroo.vercel.app',
+    'https://talent-scoring-frontend-git-main-fikaroo.vercel.app',
+    'https://talentscoring.vercel.app',
+    'https://talent-score-front-end-deploy-noi3.vercel.app',
+    'https://talentscore-report.netlify.app',
+    'https://talent-score.vercel.app'
+]
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTP_ONLY = True
+# CORS_ALLOW_ALL_ORIGINS = True
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000/',
+    'http://127.0.0.1:5173/',
+    'http://localhost:5173/',
+    'http://localhost:5174',
+    'https://talent-score-front-end-deploy-noi3.vercel.app/',
+    'https://talent-score.vercel.app/'
+
+]
+CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SAMESITE = "None"
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -151,21 +187,21 @@ SIMPLE_JWT = {
     # Cookie name. Enables cookies if value is set.
     'AUTH_COOKIE_REFRESH': 'refresh',
     # A string like "example.com", or None for standard domain cookie.
-    'AUTH_COOKIE_DOMAIN': None,
+    'AUTH_COOKIE_DOMAIN': 'https://talent-score.vercel.app',
     # Whether the auth cookies should be secure (https:// only).
-    'AUTH_COOKIE_SECURE': True, 
+    'AUTH_COOKIE_SECURE': True,
     # Http only cookie flag.It's not fetch by javascript.
     'AUTH_COOKIE_HTTP_ONLY': True,
     'AUTH_COOKIE_PATH': '/',        # The path of the auth cookie.
     # Whether to set the flag restricting cookie leaks on cross-site requests. This can be 'Lax', 'Strict', or None to disable the flag.
-    'AUTH_COOKIE_SAMESITE': "Lax", # TODO: Modify to Lax
+    'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
 }
 
 USE_S3 = True
 
 if USE_S3:
     # aws settings
-    
+
     AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
     AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")

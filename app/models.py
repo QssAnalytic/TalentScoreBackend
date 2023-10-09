@@ -13,7 +13,7 @@ class Answer(models.Model):
     questionIdd = models.ForeignKey(
         "app.Question", on_delete=models.CASCADE, related_name='answers')
     answer_title = models.CharField(max_length=100, null=True, blank=True)
-
+    sub_answer_question = models.CharField(max_length=150, blank=True, null=True)
     answer_weight = models.CharField(max_length=150,  null=True, blank=True)
     answer_weight_for_hashing = models.CharField(max_length=150, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -49,7 +49,25 @@ class Answer(models.Model):
             return "answer={}; question={}".format(self.answer_title, self.questionIdd.question_title)
         else:
             return "answer={}; question=None".format(self.answer_title)
+
+
+class SubAnswer(models.Model):
+    answer = models.ForeignKey('app.Answer', on_delete = models.CASCADE, related_name='subanswers')
+    sub_answer_title = models.CharField(max_length=150)
+    sub_answer_weight = models.CharField(max_length=150,  null=True, blank=True)
+    sub_answer_weight_for_hashing = models.CharField(max_length=150, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        env = environ.Env()
+        environ.Env.read_env()
+        hash_key = ast.literal_eval(env("hash_key"))
+        cipher = Fernet(hash_key)
+        if self.sub_answer_weight_for_hashing!=None:
+
+            self.asub_answer_weight = cipher.encrypt(self.sub_answer_weight_for_hashing.encode())
+        return super().save(*args, **kwargs)
     
+
 class Question(models.Model):
 
     question_title = models.CharField(verbose_name='question', max_length=255)

@@ -3,7 +3,7 @@ from django.urls import path, include
 
 from django.contrib import admin
 
-from users.api import repot_views, user_views, certificate_views, cv_views
+from users.api import repot_views, user_views, certificate_views, cv_views, country_views
 
 urlpatterns = [
     path('login/', user_views.loginView),
@@ -29,5 +29,5 @@ urlpatterns = [
     path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
-
+    path('get-countries/', country_views.GetCountrysAPIView.as_view())
 ]

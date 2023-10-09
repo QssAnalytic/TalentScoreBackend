@@ -166,4 +166,8 @@ class UserVerificationFile(models.Model):
         verbose_name = 'UserVerificationFile'
         verbose_name_plural = 'UserVerificationFiles'
 
-#
+class Country(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name

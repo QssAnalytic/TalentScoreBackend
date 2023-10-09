@@ -115,13 +115,23 @@ class UserScoreAPIView(APIView):
     def post(self, request):
         user = UserAccount.objects.filter(id=request.user.id).first()
         education_score = 1
+        general_question_stage = None
+        secondary_education_questions_stage = None
+        olympiad_questions_stage = None
         experience_score = 1
+        work_experience_questions_stage = None
         special_skills_score = 1
+        special_skills_questions_stage = None
+        special_skills_certificate_questions_stage = None
         language_score = 1
+        language_skills_questions_stage = None
         programming_skills_score = 1
+        program_questions_stage = None
         sport_score = 1
+        sport_questions_stage = None
+        sport2_questions_stage = None
         # report = ReportModel.objects.select_related("report_file__user").filter(report_file__user=user).last()
-        report = ReportModel.objects.create(user=user)
+
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':''},
                 'language': {'text': 'Language skills',"score":1,'result':''},
                 'special': {'text': 'Special talent','score':1, 'result':''},
@@ -137,31 +147,31 @@ class UserScoreAPIView(APIView):
                 education_score = get_education_score(request)
                 data['education']['score'] = round_to_non_zero(1-education_score)
                 data['education']['result'] = get_report_score(education_score)
-                report.education_score = data['education']['score']
-                print(type(data['education']['result']))
-                report.general_questions = stage
+                # report.education_score = data['education']['score']
+                
+                general_question_stage = stage
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
                 
                 data['work']['score'] = round_to_non_zero(1-experience_score)
                 data['work']['result'] = get_report_score(experience_score)
-                report.work_experiance_score =  data['work']['score']
-                report.work_experience_questions = stage
+                # report.work_experiance_score =  data['work']['score']
+                work_experience_questions_stage = stage
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
                 data['special']['result'] = get_report_score(special_skills_score)
                 data['special']['score'] = round_to_non_zero(1-special_skills_score)
-                report.special_skills_score = data['special']['score']
-                report.special_skills_questions = stage
+                # report.special_skills_score = data['special']['score']
+                special_skills_certificate_questions_stage = stage
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)
                 data['language']['result'] = get_report_score(language_score)
                 data['language']['score'] = round_to_non_zero(1-language_score)
-                report.language_score = data['language']['score']
-                report.language_skills_questions = stage
+                # report.language_score = data['language']['score']
+                language_skills_questions_stage = stage
 
             if stage['name'] == 'idman-substage':
                 sport_stage:list = stage['formData']['sports']
@@ -177,33 +187,50 @@ class UserScoreAPIView(APIView):
 
                 data['sport']['result'] = get_report_score(sport_score)
                 data['sport']['score'] = round_to_non_zero(1-sport_score)
-                report.sport_score = data['sport']['score']
-                report.sport_questions = stage
+                # report.sport_score = data['sport']['score']
+                sport_questions_stage = stage
 
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)
                 data['program']['result'] = get_report_score(programming_skills_score)
                 data['program']['score'] = round_to_non_zero(1-programming_skills_score)
                 
-                report.program_score = data['program']['score']
-                report.program_questions = stage
+                # report.program_score = data['program']['score']
+                program_questions_stage = stage
 
             if stage['name'] == 'idman-substage2':
-                report.sport2_questions = stage
+                sport2_questions_stage = stage
 
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
-                education_stage = stage
-                report.secondary_education_questions = stage
+                
+                secondary_education_questions_stage = stage
             if stage['name'] == 'olimpiada-suallari':
-                olimpia_stage = stage
-                report.olympiad_questions = stage
+                
+                olympiad_questions_stage = stage
             if stage['name'] == 'xususi-bacariqlar-sertifikat-substage':
-                report.special_skills_certificate_questions = stage
-            user.report_test = True
-            with transaction.atomic():
-                user.save()
-                report.save()
-
+                special_skills_certificate_questions_stage = stage
+        user.report_test = True
+        with transaction.atomic():
+            user.save()
+            report = ReportModel.objects.create(user=user,
+                                                general_questions = general_question_stage,
+                                                secondary_education_questions = secondary_education_questions_stage,
+                                                olympiad_questions=olympiad_questions_stage,
+                                                work_experience_questions=work_experience_questions_stage,
+                                                language_skills_questions=language_skills_questions_stage,
+                                                extra_language_skills_questions = special_skills_questions_stage,
+                                                special_skills_certificate_questions = special_skills_certificate_questions_stage,
+                                                sport_questions = sport_questions_stage,
+                                                sport2_questions = sport2_questions_stage,
+                                                program_questions = program_questions_stage,
+                                                education_score = data['education']['score'],
+                                                language_score = data['language']['score'],
+                                                special_skills_score = data['special']['score'],
+                                                sport_score = data['sport']['score'],
+                                                work_experiance_score = data['work']['score'],
+                                                program_score=data['program']['score']
+                                            )
+        
         return Response(
             {"data":data,"report_key": generate_unique_random_key()}
         )

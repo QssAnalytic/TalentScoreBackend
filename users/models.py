@@ -42,7 +42,8 @@ class UserAccount(AbstractBaseUser):
     is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
-    test = models.CharField(max_length = 150, null=True, blank = True)
+    # test = models.CharField(max_length = 150, null=True, blank = True)
+    report_test = models.BooleanField(default=False, blank=True, null=True) #TODO: delete blank=True, null=True
     objects = UserManager()
     
     USERNAME_FIELD = 'email'
@@ -77,7 +78,6 @@ class UserAccountFilePage(models.Model):
     file_category = models.CharField(max_length=20, choices=FileCategoryChoices.choices)
     
     file = models.FileField(upload_to=user_account_file_upload_path, blank=True, null=True) #TODO: delete blank=True, null=True
-    # date_crated = models.DateField(blank=True, null=True)
     class Meta:
         verbose_name = "UserAccountFilePage"
 
@@ -118,11 +118,12 @@ class ReportModel(models.Model):
         verbose_name = "ReportModel"
 
     def __str__(self) -> str:
-        return self.report_file.file.name
+        # return self.report_file.file.name
+        return self.user.email
     
-    def delete(self,*args,**kwargs):
-        self.report_file.delete(save=False)
-        super().delete(*args, **kwargs)
+    # def delete(self,*args,**kwargs):
+    #     self.report_file.delete(save=False)
+    #     super().delete(*args, **kwargs)
 
 
 class UserCV(models.Model):
@@ -165,4 +166,8 @@ class UserVerificationFile(models.Model):
         verbose_name = 'UserVerificationFile'
         verbose_name_plural = 'UserVerificationFiles'
 
-#
+class Country(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name

@@ -1,5 +1,6 @@
 from functools import reduce
 from pprint import pprint
+
 import math, time
 import ast
 from typing import TypeVar
@@ -33,12 +34,14 @@ def get_education_score(request):
         for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
-
+                
             if stage['name'] == 'orta-texniki-ve-ali-tehsil-suallari':
                 education_stage = stage
                 
             if stage['name'] == 'olimpiada-suallari':
                 olimpia_stage = stage
+                
+        
         if umumi_stage != None:
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
                 education_weight = check(umumi_stage["formData"]["education"], key = "master")
@@ -51,7 +54,6 @@ def get_education_score(request):
                 bachelor_weight_list = []
                 master_weight_list = []
                 phd_weight_list = []
-                print(userdata)
                 for edu in userdata:
                         if edu.get("bachelor") is not None:
                                 if edu["bachelor"] != {}:
@@ -71,10 +73,12 @@ def get_education_score(request):
                         max_master_weight = max(master_weight_list)
                 if phd_weight_list != []:
                         max_phd_weight = max(master_weight_list)
-                education_degree_weight = np.round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
+                education_degree_weight = round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
+
         total_education_weight = work_activite_weight*education_weight*(education_grand_weight*education_degree_weight*olimp_highest_weight*olimp_rank_weight)**(1/3)
-        total_education_weight = np.round(total_education_weight,7)
+        total_education_weight = round(total_education_weight,7)
         return total_education_weight
+        
 
 
 def get_experience_score(stagedata):
@@ -105,7 +109,7 @@ def get_experience_score(stagedata):
             experiance_score = max_working_form_weight * profession_degree_weight * finnly_date_weight
 
         return experiance_score
-    return 1
+    return 0
 
 
 def get_skills_score(stagedata):
@@ -141,15 +145,15 @@ def get_skills_score(stagedata):
         return formula_result
 
     else:
-        return 1
+        return 0
 
 
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
                 language_skills:bool = stagedata['formData']['haveLanguageSkills']['answer']
                 total_language_weight = 1
-                if language_skills == 'Var':
-                        return total_language_weight
+                if language_skills != 'Var':
+                        return 0
 
                 userdata = stagedata["formData"]["languageSkills"]
                 for data in userdata:
@@ -214,7 +218,7 @@ def get_programming_skills_score(stagedata):
                 if value != 0:
                     result['msOfficeScore'] *= value
         else:
-            result["msOfficeScore"] = 0
+            result["msOfficeScore"] = 1
 
 
         level_scores_mapping = {
@@ -304,7 +308,8 @@ def get_programming_skills_score(stagedata):
             category_scores.append(category_score)
 
         if len(set(category_scores)) == 1:
-            print(f"All category scores are the same. min is {min(category_scores)}")
+            # print(f"All category scores are the same. min is {min(category_scores)}")
+            pass
         else:
             minimum_score = min(category_scores)
             category_scores.remove(minimum_score)
@@ -333,4 +338,4 @@ def get_programming_skills_score(stagedata):
 
             return programming_skills_score
 
-    return 1
+    return 0

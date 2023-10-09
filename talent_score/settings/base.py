@@ -9,13 +9,15 @@ environ.Env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = True
 
+# ALLOWED_HOSTS = [
+#     'localhost','127.0.0.1',
+#     '192.168.8.160',
+#     'nazimbudaqli.pythonanywhere.com',
+#     'qssanalyticstalentscore.pythonanywhere.com'
+#     ]
 ALLOWED_HOSTS = [
-    'localhost','127.0.0.1',
-    '192.168.8.160', 
-    'nazimbudaqli.pythonanywhere.com',
-    'qssanalyticstalentscore.pythonanywhere.com'
+    '*'
     ]
-
 SECRET_KEY = env("SECRET_KEY")
 
 INSTALLED_APPS = [
@@ -135,24 +137,25 @@ CORS_ALLOWED_ORIGINS = [
 ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
-CSRF_COOKIE_HTTP_ONLY = True    
+CSRF_COOKIE_HTTP_ONLY = True
 # CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:3000/',
-    'http://127.0.0.1:5173/',
-    'http://localhost:5173/',
+    'http://localhost:3000',
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
     'http://localhost:5174',
-    'https://talent-score-front-end-deploy-noi3.vercel.app/',
-    'https://talent-score.vercel.app/'
+    'https://talent-score-front-end-deploy-noi3.vercel.app',
+    'https://talent-score.vercel.app'
 
 ]
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
+
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = "None"
 SESSION_COOKIE_SAMESITE = "None"
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,

@@ -26,7 +26,7 @@ urlpatterns = [
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
     
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),
-    path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
+    # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
     path('get-countries/', country_views.GetCountrysAPIView.as_view())

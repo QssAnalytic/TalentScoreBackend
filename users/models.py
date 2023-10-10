@@ -113,7 +113,7 @@ class ReportModel(models.Model):
     program_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     program_color = models.CharField(max_length=30, default='#8800E0')
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True) #TODO: delete blank=True, null=True
-    file_key = models.UUIDField(unique=True, editable=False, blank=True, null=True) #TODO: delete blank=True, null=True
+    file_key = models.UUIDField(unique=True, blank=True, null=True) #TODO: delete blank=True, null=True
     user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True, blank=True, related_name='reports')
 
     class Meta:

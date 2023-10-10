@@ -4,6 +4,8 @@ from rest_framework.views import APIView
 from typing import Literal, Optional, TypedDict, Union
 from decimal import Decimal
 from django.db import transaction
+from django.db.models import Prefetch, Q
+from django.db import connection #DELETE
 from rest_framework.parsers import FileUploadParser, MultiPartParser
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -62,51 +64,82 @@ class SkillInfo(TypedDict):
     work_experiance_score: Union[float, None]
     program_score: Union[float, None]
 
+from django.db import connection
+from django.db import reset_queries
+
+
+def database_debug(func):
+    def inner_func(self, request, *args, **kwargs):
+        reset_queries()
+        results = func(self, request)
+        query_info = connection.queries
+        print('function_name: {}'.format(func.__name__))
+        print('query_count: {}'.format(len(query_info)))
+        queries = ['{}\n'.format(query['sql']) for query in query_info]
+        print('queries: \n{}'.format(''.join(queries)))
+        return results
+    return inner_func
 
 class ReportInfoAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    
     def get(self, request, *args, **kwargs):
         user = request.user
-        rep = ReportModel.objects.filter(user = user).values('education_score', 'education_color',
-                                                             'language_score', 'language_color',
-                                                             'special_skills_score', 'special_skills_color',
-                                                             'sport_score', 'sport_color',
-                                                             'work_experiance_score', 'work_experiance_color',
-                                                             'program_score', 'program_color',
-                                                             'date_created', 'file_key'
-                                                             )
-        if rep.exists():
-            data = {
+        file_id = request.data.get("id")
+        report_prefetch = Prefetch(
+            'report',
+            queryset=ReportModel.objects.all(),
+            to_attr='report_data'
+        )
+        
+        data = {
                 "education": {
-                    "score": rep[0]['education_score'],
-                    "color": rep[0]['education_color']
+                    "score": None,
+                    "color": None
                 },
                 "language": {
-                    "score": rep[0]['language_score'],
-                    "color": rep[0]['language_color']
+                    "score": None,
+                    "color": None
                 },
                 "special_skills": {
-                    "score": rep[0]['special_skills_score'],
-                    "color": rep[0]['special_skills_color']
+                    "score": None,
+                    "color": None
                 },
                 "sport": {
-                    "score": rep[0]['sport_score'],
-                    "color": rep[0]['sport_color']
+                    "score": None,
+                    "color": None
                 },
                 "work_experience": {
-                    "score": rep[0]['work_experiance_score'],
-                    "color": rep[0]['work_experiance_color']
+                    "score": None,
+                    "color": None
                 },
                 "program": {
-                    "score": rep[0]['program_score'],
-                    "color": rep[0]['program_color']
+                    "score": None,
+                    "color": None
                 },
-                "date_created": rep[0]['date_created'],
-                "file_key": rep[0]['file_key']
+                "date_created": None,
+                "file_key": None
             }
-            return Response({"data": data}, status=status.HTTP_200_OK)
+        
+        rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
+        
+        for i in rep:
+            
+            data['education']['score'] = i.report_data[0].education_score
+            data['education']['color'] = i.report_data[0].education_color
+            data['language']['score'] = i.report_data[0].language_score
+            data['language']['color'] = i.report_data[0].language_color
+            data['special_skills']['score'] = i.report_data[0].special_skills_score
+            data['special_skills']['color'] = i.report_data[0].special_skills_color
+            data['sport']['score'] = i.report_data[0].sport_score
+            data['sport']['color'] = i.report_data[0].sport_color
+            data['work_experience']['score'] = i.report_data[0].work_experiance_score
+            data['work_experience']['clolor'] = i.report_data[0].work_experiance_color
+            data['program']['score'] = i.report_data[0].program_score
+            data['program']['color'] = i.report_data[0].program_color
+            data['file_key'] = i.report_data[0].file_key
+        return Response({"data": data}, status=status.HTTP_200_OK)
     
-        return JsonResponse({"data": None})
 
 
 
@@ -130,6 +163,7 @@ class UserScoreAPIView(APIView):
         sport_score = 1
         sport_questions_stage = None
         sport2_questions_stage = None
+        report_file_secret_key = generate_unique_random_key()
         # report = ReportModel.objects.select_related("report_file__user").filter(report_file__user=user).last()
 
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':''},
@@ -228,10 +262,11 @@ class UserScoreAPIView(APIView):
                                                 special_skills_score = data['special']['score'],
                                                 sport_score = data['sport']['score'],
                                                 work_experiance_score = data['work']['score'],
-                                                program_score=data['program']['score']
+                                                program_score=data['program']['score'],
+                                                file_key = report_file_secret_key
                                             )
         
         return Response(
-            {"data":data,"report_key": generate_unique_random_key()}
+            {"data":data,"report_key": report_file_secret_key}
         )
 

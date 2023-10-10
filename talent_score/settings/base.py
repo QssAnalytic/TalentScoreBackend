@@ -200,7 +200,7 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
 }
 
-USE_S3 = True
+USE_S3 = False
 
 if USE_S3:
     # aws settings

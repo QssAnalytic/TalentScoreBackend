@@ -1,4 +1,4 @@
-import uuid
+import uuid, re
 
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -10,10 +10,12 @@ GENDER_CHOICES = (
 
 )
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError(("The Email must be set"))
+        
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -111,7 +113,7 @@ class ReportModel(models.Model):
     program_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     program_color = models.CharField(max_length=30, default='#8800E0')
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True) #TODO: delete blank=True, null=True
-    file_key = models.UUIDField(unique=True, editable=False, blank=True, null=True) #TODO: delete blank=True, null=True
+    file_key = models.UUIDField(unique=True, blank=True, null=True) #TODO: delete blank=True, null=True
     user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True, blank=True, related_name='reports')
 
     class Meta:

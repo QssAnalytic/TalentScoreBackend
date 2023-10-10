@@ -230,18 +230,18 @@ class UploadCertificateAPIView(APIView):
                 return response.Response(user_accout_serializer.errors or cert_serializer.errors, status=rest_status.HTTP_400_BAD_REQUEST)
 
 
-class CreateUniqueCertificateValue(APIView):
-    def get(self, request):
-        code = generate_unique_random_key()
-        print(code)
-        d = models.UniqueRandom.objects.filter(unique_value=code).exists()
-        MAX_TRIES = 31
-        loop_count = 0
-        while d:
-            loop_count+=1
-            code = generate_unique_random_key()
-            d = models.UniqueRandom.objects.filter(unique_value=code).exists()
-            if loop_count > MAX_TRIES:
-                return response.Response("REQUEST_TIMEOUT", status=rest_status.HTTP_408_REQUEST_TIMEOUT)
+# class CreateUniqueCertificateValue(APIView):
+#     def get(self, request):
+#         code = generate_unique_random_key()
+#         print(code)
+#         d = models.UniqueRandom.objects.filter(unique_value=code).exists()
+#         MAX_TRIES = 31
+#         loop_count = 0
+#         while d:
+#             loop_count+=1
+#             code = generate_unique_random_key()
+#             d = models.UniqueRandom.objects.filter(unique_value=code).exists()
+#             if loop_count > MAX_TRIES:
+#                 return response.Response("REQUEST_TIMEOUT", status=rest_status.HTTP_408_REQUEST_TIMEOUT)
         
-        return response.Response({'code': code, 'unique':not d})
+#         return response.Response({'code': code, 'unique':not d})

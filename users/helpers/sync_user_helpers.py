@@ -169,6 +169,7 @@ def get_language_score(stagedata):
 
 
 def get_sport_skills_score(sport_stage = None, sport_stage2 = None):
+        
         heveskar_weight = 0.3
         pesekar_weight = 0.03
         pesekar_total_score = 1

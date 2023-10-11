@@ -139,7 +139,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:5174',
     'https://talent-score-front-end-deploy-noi3.vercel.app',
-    'https://talent-score.vercel.app'
+    'https://talent-score.vercel.app',
+    'https://web-production-5301.up.railway.app'
 
 ]
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]

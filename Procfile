@@ -1,1 +1,1 @@
-web: gunicorn 'talent_score.wsgi'
+web: gunicorn.talent_score.wsgi --log-file-

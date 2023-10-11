@@ -244,27 +244,27 @@ class UserScoreAPIView(APIView):
             if stage['name'] == 'xususi-bacariqlar-sertifikat-substage':
                 special_skills_certificate_questions_stage = stage
         user.report_test = True
-        with transaction.atomic():
-            user.save()
-            report = ReportModel.objects.create(user=user,
-                                                general_questions = general_question_stage,
-                                                secondary_education_questions = secondary_education_questions_stage,
-                                                olympiad_questions=olympiad_questions_stage,
-                                                work_experience_questions=work_experience_questions_stage,
-                                                language_skills_questions=language_skills_questions_stage,
-                                                extra_language_skills_questions = special_skills_questions_stage,
-                                                special_skills_certificate_questions = special_skills_certificate_questions_stage,
-                                                sport_questions = sport_questions_stage,
-                                                sport2_questions = sport2_questions_stage,
-                                                program_questions = program_questions_stage,
-                                                education_score = data['education']['score'],
-                                                language_score = data['language']['score'],
-                                                special_skills_score = data['special']['score'],
-                                                sport_score = data['sport']['score'],
-                                                work_experiance_score = data['work']['score'],
-                                                program_score=data['program']['score'],
-                                                file_key = report_file_secret_key
-                                            )
+        # with transaction.atomic():
+        #     user.save()
+        #     report = ReportModel.objects.create(user=user,
+        #                                         general_questions = general_question_stage,
+        #                                         secondary_education_questions = secondary_education_questions_stage,
+        #                                         olympiad_questions=olympiad_questions_stage,
+        #                                         work_experience_questions=work_experience_questions_stage,
+        #                                         language_skills_questions=language_skills_questions_stage,
+        #                                         extra_language_skills_questions = special_skills_questions_stage,
+        #                                         special_skills_certificate_questions = special_skills_certificate_questions_stage,
+        #                                         sport_questions = sport_questions_stage,
+        #                                         sport2_questions = sport2_questions_stage,
+        #                                         program_questions = program_questions_stage,
+        #                                         education_score = data['education']['score'],
+        #                                         language_score = data['language']['score'],
+        #                                         special_skills_score = data['special']['score'],
+        #                                         sport_score = data['sport']['score'],
+        #                                         work_experiance_score = data['work']['score'],
+        #                                         program_score=data['program']['score'],
+        #                                         file_key = report_file_secret_key
+        #                                     )
         
         return Response(
             {"data":data,"report_key": report_file_secret_key}

@@ -10,7 +10,6 @@ GENDER_CHOICES = (
 
 )
 
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         if not email:

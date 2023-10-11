@@ -20,7 +20,9 @@ from users.helpers.report_score_result import get_report_score
 from users.utils.random_unique_key_utils import generate_unique_random_key
 from users.utils.user_utils import round_to_non_zero
 
+from users.permissions import CanCreateReportPermission
 
+    
 class ReportUploadAPIView(APIView):
     # parser_classes = (MultiPartParser,)
     permission_classes = [IsAuthenticated]
@@ -39,6 +41,7 @@ class ReportUploadAPIView(APIView):
         user = request.user
         
         report = ReportModel.objects.filter(user=user).first()
+        
         if report != None:
             data_to_serialize = {
                 'user': user.id,
@@ -50,6 +53,8 @@ class ReportUploadAPIView(APIView):
                 if file_serializer.is_valid():
                     report.report_file = file_serializer.save()
                     report.save()
+                    print(report.report_file.id)
+
                     return Response({'message': "file uploaded"}, status=status.HTTP_201_CREATED)
                 return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response("you must pass report", status=status.HTTP_400_BAD_REQUEST)
@@ -126,28 +131,30 @@ class ReportInfoAPIView(APIView):
         
         rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
         
-        for i in rep:
-            
-            data['education']['score'] = i.report_data[0].education_score
-            data['education']['color'] = i.report_data[0].education_color
-            data['language']['score'] = i.report_data[0].language_score
-            data['language']['color'] = i.report_data[0].language_color
-            data['special_skills']['score'] = i.report_data[0].special_skills_score
-            data['special_skills']['color'] = i.report_data[0].special_skills_color
-            data['sport']['score'] = i.report_data[0].sport_score
-            data['sport']['color'] = i.report_data[0].sport_color
-            data['work_experience']['score'] = i.report_data[0].work_experiance_score
-            data['work_experience']['clolor'] = i.report_data[0].work_experiance_color
-            data['program']['score'] = i.report_data[0].program_score
-            data['program']['color'] = i.report_data[0].program_color
-            data['file_key'] = i.report_data[0].file_key
-        return Response({"data": data}, status=status.HTTP_200_OK)
+        if rep.exists():
+            for i in rep:
+
+                data['education']['score'] = i.report_data[0].education_score
+                data['education']['color'] = i.report_data[0].education_color
+                data['language']['score'] = i.report_data[0].language_score
+                data['language']['color'] = i.report_data[0].language_color
+                data['special_skills']['score'] = i.report_data[0].special_skills_score
+                data['special_skills']['color'] = i.report_data[0].special_skills_color
+                data['sport']['score'] = i.report_data[0].sport_score
+                data['sport']['color'] = i.report_data[0].sport_color
+                data['work_experience']['score'] = i.report_data[0].work_experiance_score
+                data['work_experience']['clolor'] = i.report_data[0].work_experiance_color
+                data['program']['score'] = i.report_data[0].program_score
+                data['program']['color'] = i.report_data[0].program_color
+                data['file_key'] = i.report_data[0].file_key
+            return Response({"data": data}, status=status.HTTP_200_OK)
+        return Response({"data": None}, status=status.HTTP_204_NO_CONTENT)
     
 
 
 
 class UserScoreAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, CanCreateReportPermission]
     def post(self, request):
         user = UserAccount.objects.filter(id=request.user.id).first()
         education_score = 1
@@ -161,6 +168,7 @@ class UserScoreAPIView(APIView):
         special_skills_certificate_questions_stage = None
         language_score = 1
         language_skills_questions_stage = None
+        extra_language_skills_questions_stage = None
         programming_skills_score = 1
         program_questions_stage = None
         sport_score = 1
@@ -201,7 +209,7 @@ class UserScoreAPIView(APIView):
                 data['special']['result'] = get_report_score(special_skills_score)
                 data['special']['score'] = round_to_non_zero(1-special_skills_score)
                 # report.special_skills_score = data['special']['score']
-                special_skills_certificate_questions_stage = stage
+                special_skills_questions_stage = stage
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)
@@ -261,7 +269,8 @@ class UserScoreAPIView(APIView):
                                                 olympiad_questions=olympiad_questions_stage,
                                                 work_experience_questions=work_experience_questions_stage,
                                                 language_skills_questions=language_skills_questions_stage,
-                                                extra_language_skills_questions = special_skills_questions_stage,
+                                                extra_language_skills_questions=extra_language_skills_questions_stage,
+                                                special_skills_questions = special_skills_questions_stage,
                                                 special_skills_certificate_questions = special_skills_certificate_questions_stage,
                                                 sport_questions = sport_questions_stage,
                                                 sport2_questions = sport2_questions_stage,
@@ -274,6 +283,7 @@ class UserScoreAPIView(APIView):
                                                 program_score=data['program']['score'],
                                                 file_key = report_file_secret_key
                                             )
+            
         
         return Response(
             {"data":data,"report_key": report_file_secret_key}

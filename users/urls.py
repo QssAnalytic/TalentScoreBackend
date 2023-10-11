@@ -3,7 +3,8 @@ from django.urls import path, include
 
 from django.contrib import admin
 
-from users.api import repot_views, user_views, certificate_views, cv_views, country_views
+from users.api import user_views, certificate_views, cv_views, country_views
+from users.api import repot_views
 
 urlpatterns = [
     path('login/', user_views.loginView),

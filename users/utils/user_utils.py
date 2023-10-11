@@ -4,8 +4,6 @@ from decimal import Decimal, getcontext, ROUND_HALF_UP
 
 def round_to_non_zero(num):
         # Convert the number to a Decimal object
-        print(num)
-        
         if num != 1:
         
             num_decimal = Decimal(str(num))

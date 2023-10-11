@@ -9,12 +9,6 @@ environ.Env.read_env()
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DEBUG = True
 
-# ALLOWED_HOSTS = [
-#     'localhost','127.0.0.1',
-#     '192.168.8.160',
-#     'nazimbudaqli.pythonanywhere.com',
-#     'qssanalyticstalentscore.pythonanywhere.com'
-#     ]
 ALLOWED_HOSTS = [
     '*'
     ]
@@ -145,7 +139,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5173',
     'http://localhost:5174',
     'https://talent-score-front-end-deploy-noi3.vercel.app',
-    'https://talent-score.vercel.app'
+    'https://talent-score.vercel.app',
+    'https://web-production-5301.up.railway.app'
 
 ]
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]

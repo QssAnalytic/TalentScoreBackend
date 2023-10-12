@@ -32,6 +32,9 @@ class UserManager(BaseUserManager):
             raise ValueError(("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields)
 
+def user_profile_image_file_upath(instance, filename):
+    return f'{instance.email}/{filename}'
+
 class UserAccount(AbstractBaseUser):
     first_name = models.CharField(max_length = 150, null=True, blank = True)
     last_name = models.CharField(max_length = 150, null=True, blank = True)
@@ -45,6 +48,7 @@ class UserAccount(AbstractBaseUser):
     is_staff=models.BooleanField(default=False)
     # test = models.CharField(max_length = 150, null=True, blank = True)
     report_test = models.BooleanField(default=False, blank=True, null=True) #TODO: delete blank=True, null=True
+    profile_photo = models.ImageField(upload_to=user_profile_image_file_upath, blank=True, null=True)
     objects = UserManager()
     
     USERNAME_FIELD = 'email'
@@ -59,9 +63,9 @@ class UserAccount(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser    
-    def __str__(self):
+    # def __str__(self):
         
-        return self.email
+    #     return self.email
 
 
 def user_account_file_upload_path(instance, filename):

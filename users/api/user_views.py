@@ -239,6 +239,7 @@ class UserProfilePhotoUploadAPIView(APIView):
         serializer = user_serializers.UserProfileSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            print(request.data)
             return Response(serializer.data, status=rest_status.HTTP_201_CREATED)
         return Response(serializer.errors, status=rest_status.HTTP_400_BAD_REQUEST)
     def delete(self, request):

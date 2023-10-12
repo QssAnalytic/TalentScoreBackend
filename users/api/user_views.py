@@ -6,7 +6,7 @@ from django.forms import EmailField
 from django.contrib.auth import authenticate, login
 from django.middleware import csrf
 from rest_framework.views import APIView
-from rest_framework.parsers import FileUploadParser, MultiPartParser
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework import (
     exceptions as rest_exceptions,
     
@@ -231,5 +231,27 @@ class UserAccountFilesAPIView(APIView):
         if serializer.data == []:
             return Response(False, status=rest_status.HTTP_202_ACCEPTED)
         return Response(serializer.data, status=rest_status.HTTP_200_OK)
+    
+class UserProfilePhotoUploadAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request):
+        user = request.user
+        serializer = user_serializers.UserProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=rest_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=rest_status.HTTP_400_BAD_REQUEST)
+    def delete(self, request):
+        user = request.user
+
+        if user.profile_photo:
+            # Delete the user's profile photo
+            user.profile_photo.delete()
+            user.profile_photo = None  # Remove the reference to the deleted file
+            user.save()
+            return Response({'message': 'Profile photo deleted successfully.'}, status=rest_status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'message': 'No profile photo to delete.'}, status=rest_status.HTTP_404_NOT_FOUND)
+        
         
 

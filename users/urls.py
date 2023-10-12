@@ -14,7 +14,8 @@ urlpatterns = [
     path('user/', user_views.user),
     path('user-accounts-files/', user_views.UserAccountFilesAPIView.as_view()),
     path('user-education-score/', repot_views.UserScoreAPIView.as_view()),
-
+    path('upload-profile-photo/', user_views.UserProfilePhotoUploadAPIView.as_view()),
+    
     path('get-summry-prompt/', cv_views.SummryPromptAPIView.as_view()),
     path('get-experiance-prompt/', cv_views.ExperiancePromptAPIView.as_view()),
     path('get-cv-content-prompt/', cv_views.CvContentPromptAPIView.as_view()),

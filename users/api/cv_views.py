@@ -98,7 +98,7 @@ class JobTitleAPIView(APIView):
 
             # response.choices[0].message.content
 
-            print(response.choices[0].message.content)    
+               
             return response.choices[0].message.content
         sample_job_title = generate_summary_job_title()
         return Response({"sample_job_title": sample_job_title})
@@ -282,7 +282,7 @@ class ExperiancePromptAPIView(APIView):
 
             # response.choices[0].message.content
 
-            print(response.choices[0].message.content)
+            
 
             return response.choices[0].message.content
         job_experience = generate_summary_job_experience()
@@ -372,7 +372,7 @@ class CvContentPromptAPIView(APIView):
             )
 
 
-            print(response.choices[0].message.content)
+            
 
             return response.choices[0].message.content
     

@@ -185,8 +185,7 @@ class SummryPromptAPIView(APIView):
                 # max_tokens = 100
             )
 
-
-            print(response.choices[0].message.content)    
+ 
             return response.choices[0].message.content
         sample_summary = generate_cv_summary()
         sample_summary.replace("\n\n", "\n")

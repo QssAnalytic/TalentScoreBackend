@@ -63,9 +63,9 @@ class UserAccount(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser    
-    # def __str__(self):
+    def __str__(self):
         
-    #     return self.email
+        return self.email
 
 
 def user_account_file_upload_path(instance, filename):
@@ -122,9 +122,9 @@ class ReportModel(models.Model):
     class Meta:
         verbose_name = "ReportModel"
 
-    # def __str__(self) -> str:
-    #     # return self.report_file.file.name
-    #     return self.user.email
+    def __str__(self) -> str:
+        # return self.report_file.file.name
+        return self.user.email
     
     # def delete(self,*args,**kwargs):
     #     self.report_file.delete(save=False)

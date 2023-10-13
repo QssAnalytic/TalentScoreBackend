@@ -99,34 +99,12 @@ class ReportInfoAPIView(APIView):
             to_attr='report_data'
         )
         
-        data = {
-                "education": {
-                    "score": None,
-                    "color": None
-                },
-                "language": {
-                    "score": None,
-                    "color": None
-                },
-                "special_skills": {
-                    "score": None,
-                    "color": None
-                },
-                "sport": {
-                    "score": None,
-                    "color": None
-                },
-                "work_experience": {
-                    "score": None,
-                    "color": None
-                },
-                "program": {
-                    "score": None,
-                    "color": None
-                },
-                "date_created": None,
-                "file_key": None
-            }
+        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':'limited'},
+                'language': {'text': 'Language skills',"score":1,'result':'limited'},
+                'special': {'text': 'Special talent','score':1, 'result':'limited'},
+                'sport': {'text': 'Sport skills','score':1, 'result':'limited'},
+                'work': {'text': 'Work experience','score':1, 'result':'limited'},
+                'program': {'text': 'Program skills','score':1, 'result':'limited'}}
         
         rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
         
@@ -137,16 +115,16 @@ class ReportInfoAPIView(APIView):
                 data['education']['color'] = i.report_data[0].education_color
                 data['language']['score'] = i.report_data[0].language_score
                 data['language']['color'] = i.report_data[0].language_color
-                data['special_skills']['score'] = i.report_data[0].special_skills_score
-                data['special_skills']['color'] = i.report_data[0].special_skills_color
+                data['special']['score'] = i.report_data[0].special_skills_score
+                data['special']['color'] = i.report_data[0].special_skills_color
                 data['sport']['score'] = i.report_data[0].sport_score
                 data['sport']['color'] = i.report_data[0].sport_color
-                data['work_experience']['score'] = i.report_data[0].work_experiance_score
-                data['work_experience']['clolor'] = i.report_data[0].work_experiance_color
+                data['work']['score'] = i.report_data[0].work_experiance_score
+                data['work']['clolor'] = i.report_data[0].work_experiance_color
                 data['program']['score'] = i.report_data[0].program_score
                 data['program']['color'] = i.report_data[0].program_color
-                data['file_key'] = i.report_data[0].file_key
-            return Response({"data": data}, status=status.HTTP_200_OK)
+                report_key  = i.report_data[0].file_key
+            return Response({"data": data, "report_key":report_key}, status=status.HTTP_200_OK)
         return Response({"data": None}, status=status.HTTP_204_NO_CONTENT)
     
 

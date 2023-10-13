@@ -87,7 +87,7 @@ def loginView(request):
 @rest_decorators.api_view(["POST"])
 @rest_decorators.permission_classes([])
 def registerView(request):
-    print(request.data)
+    
     serializer = user_serializers.RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -124,7 +124,7 @@ class CookieTokenRefreshSerializer(jwt_serializers.TokenRefreshSerializer):
 
     def validate(self, attrs):
         attrs["refresh"] = self.context["request"].COOKIES.get("refresh")
-        print(self.context["request"].COOKIES.get("refresh"))
+        
         if attrs["refresh"]:
             return super().validate(attrs)
         else:
@@ -239,16 +239,16 @@ class UserProfilePhotoUploadAPIView(APIView):
         serializer = user_serializers.UserProfileSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
-            print(request.data)
+            
             return Response(serializer.data, status=rest_status.HTTP_201_CREATED)
         return Response(serializer.errors, status=rest_status.HTTP_400_BAD_REQUEST)
     def delete(self, request):
         user = request.user
 
         if user.profile_photo:
-            # Delete the user's profile photo
+            
             user.profile_photo.delete()
-            user.profile_photo = None  # Remove the reference to the deleted file
+            user.profile_photo = None  
             user.save()
             return Response({'message': 'Profile photo deleted successfully.'}, status=rest_status.HTTP_204_NO_CONTENT)
         else:

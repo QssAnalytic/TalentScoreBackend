@@ -1,4 +1,4 @@
-import uuid
+import uuid, re
 
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -14,6 +14,7 @@ class UserManager(BaseUserManager):
     def create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError(("The Email must be set"))
+        
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -31,6 +32,9 @@ class UserManager(BaseUserManager):
             raise ValueError(("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields)
 
+def user_profile_image_file_upath(instance, filename):
+    return f'{instance.email}/{filename}'
+
 class UserAccount(AbstractBaseUser):
     first_name = models.CharField(max_length = 150, null=True, blank = True)
     last_name = models.CharField(max_length = 150, null=True, blank = True)
@@ -42,7 +46,9 @@ class UserAccount(AbstractBaseUser):
     is_active=models.BooleanField(default=True)
     is_superuser=models.BooleanField(default=False)
     is_staff=models.BooleanField(default=False)
-    test = models.CharField(max_length = 150, null=True, blank = True)
+    # test = models.CharField(max_length = 150, null=True, blank = True)
+    report_test = models.BooleanField(default=False, blank=True, null=True) #TODO: delete blank=True, null=True
+    profile_photo = models.ImageField(upload_to=user_profile_image_file_upath, blank=True, null=True)
     objects = UserManager()
     
     USERNAME_FIELD = 'email'
@@ -57,9 +63,9 @@ class UserAccount(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser    
-    def __str__(self):
+    # def __str__(self):
         
-        return self.email
+    #     return self.email
 
 
 def user_account_file_upload_path(instance, filename):
@@ -77,7 +83,6 @@ class UserAccountFilePage(models.Model):
     file_category = models.CharField(max_length=20, choices=FileCategoryChoices.choices)
     
     file = models.FileField(upload_to=user_account_file_upload_path, blank=True, null=True) #TODO: delete blank=True, null=True
-    # date_crated = models.DateField(blank=True, null=True)
     class Meta:
         verbose_name = "UserAccountFilePage"
 
@@ -111,18 +116,19 @@ class ReportModel(models.Model):
     program_score = models.DecimalField(max_digits=16, decimal_places=13, default=1)
     program_color = models.CharField(max_length=30, default='#8800E0')
     date_created = models.DateTimeField(auto_now_add=True, blank=True, null=True) #TODO: delete blank=True, null=True
-    file_key = models.UUIDField(unique=True, editable=False, blank=True, null=True) #TODO: delete blank=True, null=True
+    file_key = models.UUIDField(unique=True, blank=True, null=True) #TODO: delete blank=True, null=True
     user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True, blank=True, related_name='reports')
 
     class Meta:
         verbose_name = "ReportModel"
 
     def __str__(self) -> str:
-        return self.report_file.file.name
+        # return self.report_file.file.name
+        return self.user.email
     
-    def delete(self,*args,**kwargs):
-        self.report_file.delete(save=False)
-        super().delete(*args, **kwargs)
+    # def delete(self,*args,**kwargs):
+    #     self.report_file.delete(save=False)
+    #     super().delete(*args, **kwargs)
 
 
 class UserCV(models.Model):
@@ -165,4 +171,8 @@ class UserVerificationFile(models.Model):
         verbose_name = 'UserVerificationFile'
         verbose_name_plural = 'UserVerificationFiles'
 
-#
+class Country(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self) -> str:
+        return self.name

@@ -135,18 +135,19 @@ class ReportInfoAPIView(APIView):
 
 class UserScoreAPIView(APIView):
     def post(self, request):
-        # user = (
-        #     UserAccount.objects.filter(email=email)
-        #     .only("email")
-        #     .first()
-        # )
+        user = (
+            UserAccount.objects.
+            first()
+        )
+        print(user)
         education_score = 1
         experience_score = 1
         special_skills_score = 1
         language_score = 1
         programming_skills_score = 1
         sport_score = 1
-        # report = ReportModel.objects.filter(user=user).last()
+        report = ReportModel.objects.filter(user=user).last()
+        print(report)
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':''},
                 'language': {'text': 'Language skills',"score":1,'result':''},
                 'special': {'text': 'Special talent','score':1, 'result':''},
@@ -163,26 +164,26 @@ class UserScoreAPIView(APIView):
                 data['education']['score'] = 1-education_score
                 data['education']['result'] = get_report_score(education_score)
 
-                # report.education_score = education_score
+                report.education_score = education_score
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
                 print(experience_score)
                 data['work']['score'] = 1-experience_score
                 data['work']['result'] = get_report_score(experience_score)
-                # report.work_experiance_score = experience_score
+                report.work_experiance_score = experience_score
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
                 data['special']['result'] = get_report_score(special_skills_score)
                 data['special']['score'] = 1-special_skills_score
-                # report.special_skills_score = special_skills_score
+                report.special_skills_score = special_skills_score
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)
                 data['language']['result'] = get_report_score(language_score)
                 data['language']['score'] = 1-language_score
-                # report.language_score = language_score
+                report.language_score = language_score
 
             if stage['name'] == 'idman-substage':
                 sport_stage:list = stage['formData']['sports']
@@ -197,14 +198,14 @@ class UserScoreAPIView(APIView):
 
                 data['sport']['result'] = get_report_score(sport_score)
                 data['sport']['score'] = 1-sport_score
-                # report.sport_score = sport_score
+                report.sport_score = sport_score
 
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)
                 data['program']['result'] = get_report_score(programming_skills_score)
                 data['program']['score'] = 1-programming_skills_score
-                # report.program_score = programming_skills_score
-            # # report.save()
+                report.program_score = programming_skills_score
+            report.save()
 
 
         return Response(

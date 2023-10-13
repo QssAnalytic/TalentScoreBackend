@@ -1,5 +1,8 @@
 import math, base64, pandas as pd, openai, environ, json
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
+from users.serializers.cv_serializers import CvProgramQuestionsSerializer
+from rest_framework.permissions import IsAuthenticated
 from users.models import ReportModel
 from rest_framework.response import Response
 env = environ.Env()
@@ -368,3 +371,17 @@ class CvContentPromptAPIView(APIView):
         if "Note" in cv_content[-1]:
             cv_content.pop()
         return Response({"cv_content": cv_content})
+    
+
+
+
+class CvProgramQuestionAPIView(ListAPIView):
+    serializer_class = CvProgramQuestionsSerializer
+    queryset = ReportModel.objects.all()
+    permission_classes = (IsAuthenticated, )
+
+    def get_queryset(self):
+        user = self.request.user
+        if user:
+            queryset = ReportModel.objects.filter(user=user)
+        return queryset

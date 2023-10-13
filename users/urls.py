@@ -5,6 +5,7 @@ from django.contrib import admin
 
 from users.api import repot_views, user_views, certificate_views, cv_views
 
+
 urlpatterns = [
     path('login/', user_views.loginView),
     path('register/', user_views.registerView),
@@ -21,10 +22,11 @@ urlpatterns = [
     path('get-report/', repot_views.ReportInfoAPIView.as_view()),
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
-    
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),
     path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
+
+    path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),
 
 ]

@@ -86,8 +86,8 @@ class UserAccountFilePage(models.Model):
     class Meta:
         verbose_name = "UserAccountFilePage"
 
-    def __str__(self) -> str:
-        return f'{self.file_category} of {self.user}'
+    # def __str__(self) -> str:
+    #     return f'{self.file_category} of {self.user}'
 
 class ReportModel(models.Model):
 
@@ -122,9 +122,9 @@ class ReportModel(models.Model):
     class Meta:
         verbose_name = "ReportModel"
 
-    def __str__(self) -> str:
-        # return self.report_file.file.name
-        return self.user.email
+    # def __str__(self) -> str:
+    #     # return self.report_file.file.name
+    #     return self.user.email
     
     # def delete(self,*args,**kwargs):
     #     self.report_file.delete(save=False)

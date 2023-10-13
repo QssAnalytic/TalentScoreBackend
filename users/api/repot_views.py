@@ -236,8 +236,8 @@ class UserScoreAPIView(APIView):
             if stage['name'] == "proqram-bilikleri-substage":
                 programming_skills_score = get_programming_skills_score(stage)
                 data['program']['result'] = get_report_score(programming_skills_score)
-                data['program']['score'] = round_to_non_zero(1-programming_skills_score)
-                program_questions_stage = stage
+                data['program']['score'] = 1-programming_skills_score
+
 
             if stage['name'] == 'idman-substage2':
                 sport2_questions_stage = stage

@@ -43,55 +43,32 @@ class LoginSerializer(serializers.Serializer):
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
-        fields = ("email","gender")
+        fields = ("email","first_name","birth_date","last_name","gender", "report_test", "profile_photo")
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAccount
+        fields = ['profile_photo']
 
 
 class ReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReportModel
         fields = "__all__"
-# class UserInfoSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = UserAccount
-#         fields = ('email','user_info')
-    
 
-    #     return value
 
-# class UserFileUploadSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = UserFile
-#         fields = ('user', 'category', 'file')
-
-#     def create(self, validated_data):
-#         user = validated_data['user']
-#         category = validated_data['category']
-#         file = validated_data['file']
-
-#         # Check if the category allows multiple files
-#         if category.allows_multiple_files and category.file_count >= 1:
-#             # Create a new UserFile instance for each uploaded file
-#             instances = [UserFile(user=user, category=category, file=uploaded_file) for uploaded_file in file]
-#             UserFile.objects.bulk_create(instances)
-#         else:
-#             # For categories that allow only one file, create or update the existing instance
-#             instance, created = UserFile.objects.get_or_create(user=user, category=category)
-#             instance.file = file[0]
-#             instance.save()
-        
-#         return instance
-from django.core.files.uploadedfile import InMemoryUploadedFile
 class CategoryFileSerializer(serializers.Serializer):
     category = serializers.CharField(max_length=150)
     file = serializers.FileField(allow_empty_file=False)
 
 class UserVerificationFileUploadSerializer(serializers.Serializer):
-    # def to_internal_value(self, data):
-    #     category_file_data = []
-    #     for category, files in data.lists():
-    #         category_file_data.append({'category': category, 'files': files})
+    def to_internal_value(self, data):
+        category_file_data = []
+        for category, files in data.lists():
+            category_file_data.append({'category': category, 'files': files})
         
-    #     return category_file_data
+        return category_file_data
     
 
     category = serializers.CharField(max_length=150) #for test

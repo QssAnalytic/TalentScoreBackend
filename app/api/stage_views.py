@@ -1,4 +1,5 @@
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import ViewSet
 from django.db.models import Prefetch
@@ -36,7 +37,7 @@ class StageQuestionApiView(APIView):
 class StageQuestionViewSet(ViewSet):
     queryset = Stage.objects.all()
 
-
+    permission_classes = [IsAuthenticated]
     def list(self, request, slug):
         # item = Stage.objects.prefetch_related('questions__answers').filter(slug=slug).order_by('questions__id')
         item = Stage.objects.prefetch_related('questions__answers__subanswers').filter(slug=slug)
@@ -52,9 +53,9 @@ class StageQuestionViewSet(ViewSet):
         return Response(serializer.data)  
 
 class StageParentListApiView(APIView):
-
+    permission_classes = [IsAuthenticated]
     def get(self, request):
-
+        
         stage = Stage.objects.filter(parent=None)
         serializer = StageParentListSerializer(stage, many = True)
 
@@ -63,14 +64,14 @@ class StageParentListApiView(APIView):
 class StageChildListApiView(APIView):
 
     def get(self, request):
-
+        
         stage = Stage.objects.exclude(parent=None)
         serializer = StageParentListSerializer(stage, many = True)
 
         return Response(serializer.data)
     
 class StageObjectApiView(APIView):
-
+    permission_classes = [IsAuthenticated]
     def get(self, request, slug):
 
         stage = Stage.objects.filter(slug=slug).first()

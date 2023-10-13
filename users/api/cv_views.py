@@ -1,21 +1,23 @@
-import math, base64, pandas as pd, openai, environ, json
+import math, base64, openai, environ, json
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from users.serializers.cv_serializers import CvProgramQuestionsSerializer
 from rest_framework.permissions import IsAuthenticated
 from users.models import ReportModel
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 env = environ.Env()
 environ.Env.read_env()
 
 class JobTitleAPIView(APIView):
-    def get(self, request, email):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
         openai.api_key = env("api_key")
         
         
         def generate_summary_job_title(i = 0, print_response = True, temperature = 0.7):
     
-            report_data = ReportModel.objects.select_related('report_file__user').filter(report_file__user__email=email).first()
+            report_data = ReportModel.objects.filter(user=request.user).first()
             ######################
             ##  Create Prompt   ##
             ######################
@@ -40,8 +42,10 @@ class JobTitleAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
-
+            if idman_substage_2 != None:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
+            else:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
             prompt += "" if xususi_bacariqlar['formData']['haveSpecialSkills']['answer'] != 'Var' else f"Here is detailed information about my background on other skills: {xususi_bacariqlar['formData']['skills']} + {xususi_bacariqlar['formData']['specialSkills']}. "
 
             prompt += "" if proqram_bilikleri_substage['formData']['haveProgramSkills']['answer'] != 'Var' else f"Here is detailed information about my background on programming skills: {proqram_bilikleri_substage['formData']['programSkills']} and programs {proqram_bilikleri_substage['formData']['whichProgram']}. "
@@ -97,18 +101,19 @@ class JobTitleAPIView(APIView):
 
             # response.choices[0].message.content
 
-            print(response.choices[0].message.content)    
+               
             return response.choices[0].message.content
         sample_job_title = generate_summary_job_title()
         return Response({"sample_job_title": sample_job_title})
 
 class SummryPromptAPIView(APIView):
-    def get(self, request, email):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
         openai.api_key = env("api_key")
 
         def generate_cv_summary(i = 1,  print_response = True, 
                                temperature = 0.7):
-            report_data = ReportModel.objects.select_related('report_file__user').filter(report_file__user__email=email).first()
+            report_data = ReportModel.objects.filter(user=request.user).first()
             ######################
             ##  Create Prompt   ##
             ######################
@@ -132,9 +137,10 @@ class SummryPromptAPIView(APIView):
             prompt += "" if olimpiada_suallar['formData']['wonOlympics']['answer'] == 'Xeyr' else f" I have participated in {olimpiada_suallar['formData']['subjectOlympiad']['answer']} subject which was in {olimpiada_suallar['formData']['highestOlympiad']['answer']} level and got {olimpiada_suallar['formData']['rankOlympiad']['answer']}. "
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
-
-            prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
-
+            if idman_substage_2 != None:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
+            else:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
             prompt += "" if xususi_bacariqlar['formData']['haveSpecialSkills']['answer'] != 'Var' else f"Here is detailed information about my background on other skills: {xususi_bacariqlar['formData']['skills']} + {xususi_bacariqlar['formData']['specialSkills']}. "
 
             prompt += "" if proqram_bilikleri_substage['formData']['haveProgramSkills']['answer'] != 'Var' else f"Here is detailed information about my background on programming skills: {proqram_bilikleri_substage['formData']['programSkills']} and programs {proqram_bilikleri_substage['formData']['whichProgram']}. "
@@ -182,8 +188,7 @@ class SummryPromptAPIView(APIView):
                 # max_tokens = 100
             )
 
-
-            print(response.choices[0].message.content)    
+ 
             return response.choices[0].message.content
         sample_summary = generate_cv_summary()
         sample_summary.replace("\n\n", "\n")
@@ -192,7 +197,8 @@ class SummryPromptAPIView(APIView):
 
 
 class ExperiancePromptAPIView(APIView):
-    def get(self, request, email):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
         # df = pd.read_excel("sample_df.xlsx")
 
         openai.api_key = env("api_key")
@@ -205,7 +211,7 @@ class ExperiancePromptAPIView(APIView):
             ######################
             ##  Create Prompt   ##
             ######################
-            report_data = ReportModel.objects.select_related('report_file__user').filter(report_file__user__email=email).first()
+            report_data = ReportModel.objects.filter(user=request.user).first()
             umumi_suallar = report_data.general_questions
             orta_texniki_suallar = report_data.secondary_education_questions
             olimpiada_suallar = report_data.olympiad_questions
@@ -225,8 +231,10 @@ class ExperiancePromptAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
-
+            if idman_substage_2 != None:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
+            else:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
             prompt += "" if xususi_bacariqlar['formData']['haveSpecialSkills']['answer'] != 'Var' else f"Here is detailed information about my background on other skills: {xususi_bacariqlar['formData']['skills']} + {xususi_bacariqlar['formData']['specialSkills']}. "
 
             prompt += "" if proqram_bilikleri_substage['formData']['haveProgramSkills']['answer'] != 'Var' else f"Here is detailed information about my background on programming skills: {proqram_bilikleri_substage['formData']['programSkills']} and programs {proqram_bilikleri_substage['formData']['whichProgram']}. "
@@ -277,7 +285,7 @@ class ExperiancePromptAPIView(APIView):
 
             # response.choices[0].message.content
 
-            print(response.choices[0].message.content)
+            
 
             return response.choices[0].message.content
         job_experience = generate_summary_job_experience()
@@ -285,7 +293,8 @@ class ExperiancePromptAPIView(APIView):
         return Response({"job_experience": job_experience})
     
 class CvContentPromptAPIView(APIView):
-    def get(self, request, email):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
     
         openai.api_key = env("api_key")
         def generate_cv_content(i = 0, print_response = True, 
@@ -294,7 +303,7 @@ class CvContentPromptAPIView(APIView):
             ######################
             ##  Create Prompt   ##
             ######################
-            report_data = ReportModel.objects.select_related('report_file__user').filter(report_file__user__email=email).first()
+            report_data = ReportModel.objects.filter(user=request.user).first()
             umumi_suallar = report_data.general_questions
             orta_texniki_suallar = report_data.secondary_education_questions
             olimpiada_suallar = report_data.olympiad_questions
@@ -315,7 +324,10 @@ class CvContentPromptAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
+            if idman_substage_2 != None:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
+            else:
+                prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
 
             prompt += "" if xususi_bacariqlar['formData']['haveSpecialSkills']['answer'] != 'Var' else f"Here is detailed information about my background on other skills: {xususi_bacariqlar['formData']['skills']} + {xususi_bacariqlar['formData']['specialSkills']}. "
 
@@ -363,7 +375,7 @@ class CvContentPromptAPIView(APIView):
             )
 
 
-            print(response.choices[0].message.content)
+            
 
             return response.choices[0].message.content
     

@@ -1,4 +1,4 @@
-import math, base64, pandas as pd, openai, environ, json
+import math, base64,  openai, environ, json
 from django.db import DatabaseError
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
@@ -6,7 +6,7 @@ from django.forms import EmailField
 from django.contrib.auth import authenticate, login
 from django.middleware import csrf
 from rest_framework.views import APIView
-from rest_framework.parsers import FileUploadParser, MultiPartParser
+from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
 from rest_framework import (
     exceptions as rest_exceptions,
     
@@ -28,7 +28,7 @@ from users import models
 
 # from app.helpers.async_user_helpers import *
 from users.helpers.sync_user_helpers import *
-from users.serializers import user_serializers
+from users.serializers import user_serializers, user_account_file_serializers
 
 # Create your views here.
 env = environ.Env()
@@ -76,7 +76,7 @@ def loginView(request):
         res.data = tokens
 
         res["X-CSRFToken"] = csrf.get_token(request)
-
+        
         return res
     raise rest_exceptions.AuthenticationFailed("Username or Password is incorrect!")
 
@@ -124,6 +124,7 @@ class CookieTokenRefreshSerializer(jwt_serializers.TokenRefreshSerializer):
 
     def validate(self, attrs):
         attrs["refresh"] = self.context["request"].COOKIES.get("refresh")
+        print(self.context["request"].COOKIES.get("refresh"))
         if attrs["refresh"]:
             return super().validate(attrs)
         else:
@@ -137,6 +138,7 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
 
     def finalize_response(self, request, response, *args, **kwargs):
         if response.data.get("refresh"):
+            
             response.set_cookie(
                 key=settings.SIMPLE_JWT["AUTH_COOKIE_REFRESH"],
                 value=response.data["refresh"],
@@ -220,29 +222,36 @@ class UserFilesAPIView(APIView):
         return Response({'message': 'Files uploaded successfully'}, status=rest_status.HTTP_201_CREATED)
 
 
-# class UserFilesAPIView(APIView):
-#     # parser_classes = (MultiPartParser,)
-    
-#     def post(self, request, *args, **kwargs):
-#         serializer = user_serializers.UserVerificationFileUploadSerializer(data=request.data, many=True)
+class UserAccountFilesAPIView(APIView):
+    permission_classes = [rest_permissions.IsAuthenticated]
+    def get(self, request):
+        user_account_data = models.UserAccountFilePage.objects.filter(user = request.user)
         
-#         if serializer.is_valid():
-#             uploaded_data = serializer.validated_data
-#             print(uploaded_data)
-#         #     try:
-#         #         user = UserAccount.objects.get(email='tami@mail.ru')  # Retrieve the user
-#         #     except UserAccount.DoesNotExist:
-#         #         return Response({'message': 'User not found'})
+        serializer = user_account_file_serializers.UserAccountFilePageSerializer(user_account_data, many=True)
+        if serializer.data == []:
+            return Response(False, status=rest_status.HTTP_202_ACCEPTED)
+        return Response(serializer.data, status=rest_status.HTTP_200_OK)
+    
+class UserProfilePhotoUploadAPIView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    def post(self, request):
+        user = request.user
+        serializer = user_serializers.UserProfileSerializer(user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=rest_status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=rest_status.HTTP_400_BAD_REQUEST)
+    def delete(self, request):
+        user = request.user
 
-#         #     for data in uploaded_data:
-#         #         category = data['category']
-#         #         uploaded_files = data['files']
-
-#         #         for uploaded_file in uploaded_files:
-#         #             models.UserVerificationFile.objects.create(user=user, category=category, file=uploaded_file)
-
-#         #     return Response({'message': 'Files uploaded successfully'})
-#         # else:
-#         #     return Response(serializer.errors)
-#         return Response({'message': 'Files uploaded successfully'})
+        if user.profile_photo:
+            # Delete the user's profile photo
+            user.profile_photo.delete()
+            user.profile_photo = None  # Remove the reference to the deleted file
+            user.save()
+            return Response({'message': 'Profile photo deleted successfully.'}, status=rest_status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({'message': 'No profile photo to delete.'}, status=rest_status.HTTP_404_NOT_FOUND)
+        
+        
 

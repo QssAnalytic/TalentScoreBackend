@@ -1,14 +1,14 @@
 def get_report_score(float_value):
     
     result = ''
-    if 0 <= float_value <= 20:
+    if 0 <= float_value <= 0.2:
             result = 'limited'
-    elif 21 <= float_value <= 40:
+    elif 0.21 <= float_value <= 0.4:
         result = 'decent'
-    elif 41 <= float_value <= 60:
+    elif 0.41 <= float_value <= 0.6:
         result = 'moderate'
-    elif 61 <= float_value <= 80:
+    elif 0.61 <= float_value <= 0.8:
         result = 'solid'
-    elif 81 <= float_value <= 100:
+    elif 0.81 <= float_value <= 1:
         result = 'extensive'
     return result

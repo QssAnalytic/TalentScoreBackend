@@ -23,7 +23,7 @@ urlpatterns = [
 
     path('user-info-post/', user_views.UserInfoPost.as_view()),
     path('upload-report/', repot_views.ReportUploadAPIView.as_view()),
-    path('get-report/', repot_views.ReportInfoAPIView.as_view()),
+    path('get-report/<int:id>/', repot_views.ReportInfoAPIView.as_view()),
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
     

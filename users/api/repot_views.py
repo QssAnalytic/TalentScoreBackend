@@ -90,9 +90,9 @@ def database_debug(func):
 class ReportInfoAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
-    def get(self, request, *args, **kwargs):
+    def get(self, request, id, *args, **kwargs):
         user = request.user
-        file_id = request.data.get("id")
+        file_id = id
         report_prefetch = Prefetch(
             'report',
             queryset=ReportModel.objects.all(),

@@ -30,7 +30,7 @@ urlpatterns = [
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),
     # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
-    path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
+    # path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
     path('cv-program/', cv_views.CvProgramQuestionAPIView.as_view()),
 
     path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),

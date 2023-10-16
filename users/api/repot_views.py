@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.core.files.base import ContentFile
-from users.models import ReportModel, UserAccount, UserAccountFilePage
+from users.models import ReportModel, UserAccount, UserAccountFilePage, UserProfile
 from users.serializers.report_serializers import ReportUploadSerializer, GetReportSerializer
 from users.serializers.user_account_file_serializers import UserAccountFilePage, UserAccountFilePageSerializer
 
@@ -21,6 +21,8 @@ from users.utils.user_utils import round_to_non_zero
 
 from users.permissions import CanCreateReportPermission
 
+from django.db import connection
+from django.db import reset_queries
     
 class ReportUploadAPIView(APIView):
     # parser_classes = (MultiPartParser,)
@@ -71,8 +73,6 @@ class SkillInfo(TypedDict):
     work_experiance_score: Union[float, None]
     program_score: Union[float, None]
 
-from django.db import connection
-from django.db import reset_queries
 
 
 def database_debug(func):
@@ -93,11 +93,12 @@ class ReportInfoAPIView(APIView):
     def get(self, request, id, *args, **kwargs):
         user = request.user
         file_id = id
-        report_prefetch = Prefetch(
-            'report',
-            queryset=ReportModel.objects.all(),
-            to_attr='report_data'
-        )
+        reset_queries()
+        # report_prefetch = Prefetch(
+        #     'report',
+        #     queryset=ReportModel.objects.all(),
+        #     to_attr='report_data'
+        # )
         
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':'limited'},
                 'language': {'text': 'Language skills',"score":1,'result':'limited'},
@@ -106,25 +107,41 @@ class ReportInfoAPIView(APIView):
                 'work': {'text': 'Work experience','score':1, 'result':'limited'},
                 'program': {'text': 'Program skills','score':1, 'result':'limited'}}
         
-        rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
-        
-        if rep.exists():
-            for i in rep:
+        # rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
+        user_profile_query = UserProfile.objects.filter(user=user)
 
-                data['education']['score'] = i.report_data[0].education_score
-                data['education']['color'] = i.report_data[0].education_color
-                data['language']['score'] = i.report_data[0].language_score
-                data['language']['color'] = i.report_data[0].language_color
-                data['special']['score'] = i.report_data[0].special_skills_score
-                data['special']['color'] = i.report_data[0].special_skills_color
-                data['sport']['score'] = i.report_data[0].sport_score
-                data['sport']['color'] = i.report_data[0].sport_color
-                data['work']['score'] = i.report_data[0].work_experiance_score
-                data['work']['clolor'] = i.report_data[0].work_experiance_color
-                data['program']['score'] = i.report_data[0].program_score
-                data['program']['color'] = i.report_data[0].program_color
-                report_key  = i.report_data[0].file_key
-            return Response({"data": data, "report_key":report_key}, status=status.HTTP_200_OK)
+        # Trigger the execution by accessing the data or using the query.
+        user_profile = user_profile_query.first()
+
+        # Now, create the query for UserAccountFilePage.
+        rep_query = UserAccountFilePage.objects.filter(Q(user=user_profile) & Q(id=file_id))
+        print(rep_query)
+        # Trigger the execution by accessing the data or using the query.
+        rep = rep_query.first()
+
+
+        # Print the executed queries
+        queries = connection.queries
+        print(queries)
+        for query in queries:
+            print(query['sql'])
+        # if rep.exists():
+        #     for i in rep:
+
+        #         data['education']['score'] = i.report_data[0].education_score
+        #         data['education']['color'] = i.report_data[0].education_color
+        #         data['language']['score'] = i.report_data[0].language_score
+        #         data['language']['color'] = i.report_data[0].language_color
+        #         data['special']['score'] = i.report_data[0].special_skills_score
+        #         data['special']['color'] = i.report_data[0].special_skills_color
+        #         data['sport']['score'] = i.report_data[0].sport_score
+        #         data['sport']['color'] = i.report_data[0].sport_color
+        #         data['work']['score'] = i.report_data[0].work_experiance_score
+        #         data['work']['clolor'] = i.report_data[0].work_experiance_color
+        #         data['program']['score'] = i.report_data[0].program_score
+        #         data['program']['color'] = i.report_data[0].program_color
+        #         report_key  = i.report_data[0].file_key
+        #     return Response({"data": data, "report_key":report_key}, status=status.HTTP_200_OK)
         return Response({"data": None}, status=status.HTTP_204_NO_CONTENT)
     
 

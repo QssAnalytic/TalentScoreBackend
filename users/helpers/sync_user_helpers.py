@@ -194,7 +194,7 @@ def get_programming_skills_score(stagedata):
         'othersScore': 1,
     }
 
-    if userdata['haveProgramSkills']['answer'] != "Yoxdur":
+    if userdata['haveProgramSkills']['answer'] == "Var":
         # Calculating officeScore
         word_score = 0
         excel_score = 0
@@ -235,16 +235,19 @@ def get_programming_skills_score(stagedata):
         }
 
         for program in userdata['programSkills']:
-            if program['whichProgram'] == 'design' and program['whichProgram'] != [] and program['whichProgram'] != '' and program['whichProgram'] != 0:
+            if program['whichProgram']["answer_title"] == 'Dizayn Proqramları' and program['whichProgram'] != [] and program['whichProgram'] != '' and program['whichProgram'] != 0:
+                
                 for data in program['whichLevel']:
-                    if data['value']['answer'] == 'Junior':
-                        lst['programs'][0] += 1
-                    if data['value']['answer'] == 'Middle':
-                        lst['programs'][1] += 1
-                    if data['value']['answer'] == 'Senior':
-                        lst['programs'][2] += 1
+                    if data['value']['answer'] == 'İlkin':
+                        lst['design'][0] += 1
+                    if data['value']['answer'] == 'Orta':
+                        
+                        lst['design'][1] += 1
+                    if data['value']['answer'] == 'İrəli':
+                        lst['design'][2] += 1
 
-            if program['whichProgram'] == 'Proqramlaşdırma dilləri' and program['whichProgram'] != [] and program['whichProgram'] != 0:
+            if program['whichProgram']["answer_title"] == 'Proqramlaşdırma dilləri' and program['whichProgram'] != [] and program['whichProgram'] != 0:
+                
                 for data in program['whichLevel']:
                     if data['value']['answer'] == 'Junior':
                         lst['programs'][0] += 1
@@ -256,11 +259,11 @@ def get_programming_skills_score(stagedata):
             if userdata['whichProgram'] == 'others' and userdata['whichProgram'] != []:
                 for data in userdata['whichProgram']:
                     if data['value']['answer'] == 'Junior':
-                        lst['programs'][0] += 1
+                        lst['others'][0] += 1
                     if data['value']['answer'] == 'Middle':
-                        lst['programs'][1] += 1
+                        lst['others'][1] += 1
                     if data['value']['answer'] == 'Senior':
-                        lst['programs'][2] += 1
+                        lst['others'][2] += 1
 
         levels = ['Junior', 'Middle', 'Senior']
 

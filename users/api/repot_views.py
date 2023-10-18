@@ -91,14 +91,9 @@ class ReportInfoAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request, id, *args, **kwargs):
+        
         user = request.user
         file_id = id
-        reset_queries()
-        # report_prefetch = Prefetch(
-        #     'report',
-        #     queryset=ReportModel.objects.all(),
-        #     to_attr='report_data'
-        # )
         
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':'limited'},
                 'language': {'text': 'Language skills',"score":1,'result':'limited'},
@@ -108,27 +103,29 @@ class ReportInfoAPIView(APIView):
                 'program': {'text': 'Program skills','score':1, 'result':'limited'}}
         
         # rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
-        user_profile_query = UserProfile.objects.filter(user=user)
-        user_profile = user_profile_query.first()
+        user_profile = UserProfile.objects.filter(user=user).first()
+        
+        rep_data = UserAccountFilePage.objects.select_related("user__user").filter(Q(user=user_profile) & Q(id=file_id))
+        print(rep_data)
+        if rep_data.exists():
+            
+            rep = rep_data.first()
+            
 
-        rep = UserAccountFilePage.objects.select_related("user").filter(Q(user=user_profile) & Q(id=file_id))
-        # if rep.exists():
-        #     for i in rep:
-
-        #         data['education']['score'] = i.report_data[0].education_score
-        #         data['education']['color'] = i.report_data[0].education_color
-        #         data['language']['score'] = i.report_data[0].language_score
-        #         data['language']['color'] = i.report_data[0].language_color
-        #         data['special']['score'] = i.report_data[0].special_skills_score
-        #         data['special']['color'] = i.report_data[0].special_skills_color
-        #         data['sport']['score'] = i.report_data[0].sport_score
-        #         data['sport']['color'] = i.report_data[0].sport_color
-        #         data['work']['score'] = i.report_data[0].work_experiance_score
-        #         data['work']['clolor'] = i.report_data[0].work_experiance_color
-        #         data['program']['score'] = i.report_data[0].program_score
-        #         data['program']['color'] = i.report_data[0].program_color
-        #         report_key  = i.report_data[0].file_key
-        #     return Response({"data": data, "report_key":report_key}, status=status.HTTP_200_OK)
+            data['education']['score'] = rep.user.education_score
+            data['education']['color'] = rep.user.education_color
+            data['language']['score'] = rep.user.language_score
+            data['language']['color'] = rep.user.language_color
+            data['special']['score'] = rep.user.special_skills_score
+            data['special']['color'] = rep.user.special_skills_color
+            data['sport']['score'] = rep.user.sport_score
+            data['sport']['color'] = rep.user.sport_color
+            data['work']['score'] = rep.user.work_experiance_score
+            data['work']['clolor'] = rep.user.work_experiance_color
+            data['program']['score'] = rep.user.program_score
+            data['program']['color'] = rep.user.program_color
+            report_key  = rep.user.free_report_file_key
+            return Response({"data": data, "report_key":report_key}, status=status.HTTP_200_OK)
 
         return Response({"data": "rep"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -137,9 +134,11 @@ class ReportInfoAPIView(APIView):
 
 
 class UserScoreAPIView(APIView):
-    permission_classes = [IsAuthenticated, CanCreateReportPermission]
+    # permission_classes = [IsAuthenticated, CanCreateReportPermission]
     def post(self, request):
-        user = UserAccount.objects.filter(id=request.user.id).first()
+        
+        # user = UserAccount.objects.filter(id=request.user.id).first()
+        user = UserAccount.objects.filter(email = "tami@mail.ru").first()
         education_score = 1
         general_question_stage = None
         secondary_education_questions_stage = None
@@ -157,7 +156,7 @@ class UserScoreAPIView(APIView):
         sport_score = 1
         sport_questions_stage = None
         sport2_questions_stage = None
-        # report_file_secret_key = generate_unique_random_key()
+        report_file_secret_key = generate_unique_random_key()
 
 
         data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':'limited'},
@@ -237,29 +236,29 @@ class UserScoreAPIView(APIView):
             if stage['name'] == 'xususi-bacariqlar-sertifikat-substage':
                 special_skills_certificate_questions_stage = stage
         
-        # with transaction.atomic():
-        #     user.report_test = True
-        #     user.save()
-        #     report = ReportModel.objects.create(user=user,
-        #                                         general_questions = general_question_stage,
-        #                                         secondary_education_questions = secondary_education_questions_stage,
-        #                                         olympiad_questions=olympiad_questions_stage,
-        #                                         work_experience_questions=work_experience_questions_stage,
-        #                                         language_skills_questions=language_skills_questions_stage,
-        #                                         extra_language_skills_questions=extra_language_skills_questions_stage,
-        #                                         special_skills_questions = special_skills_questions_stage,
-        #                                         special_skills_certificate_questions = special_skills_certificate_questions_stage,
-        #                                         sport_questions = sport_questions_stage,
-        #                                         sport2_questions = sport2_questions_stage,
-        #                                         program_questions = program_questions_stage,
-        #                                         education_score = data['education']['score'],
-        #                                         language_score = data['language']['score'],
-        #                                         special_skills_score = data['special']['score'],
-        #                                         sport_score = data['sport']['score'],
-        #                                         work_experiance_score = data['work']['score'],
-        #                                         program_score=data['program']['score'],
-        #                                         file_key = report_file_secret_key
-        #                                     )
+        with transaction.atomic():
+            user.report_test = True
+            user.save()
+            report = UserProfile.objects.create(user=user,
+                                                general_questions = general_question_stage,
+                                                secondary_education_questions = secondary_education_questions_stage,
+                                                olympiad_questions=olympiad_questions_stage,
+                                                work_experience_questions=work_experience_questions_stage,
+                                                language_skills_questions=language_skills_questions_stage,
+                                                extra_language_skills_questions=extra_language_skills_questions_stage,
+                                                special_skills_questions = special_skills_questions_stage,
+                                                special_skills_certificate_questions = special_skills_certificate_questions_stage,
+                                                sport_questions = sport_questions_stage,
+                                                sport2_questions = sport2_questions_stage,
+                                                program_questions = program_questions_stage,
+                                                education_score = data['education']['score'],
+                                                language_score = data['language']['score'],
+                                                special_skills_score = data['special']['score'],
+                                                sport_score = data['sport']['score'],
+                                                work_experiance_score = data['work']['score'],
+                                                program_score=data['program']['score'],
+                                                free_report_file_key= report_file_secret_key
+                                            )
             
         return Response(
             {"data":data}

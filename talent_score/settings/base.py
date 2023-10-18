@@ -47,7 +47,7 @@ INTERNAL_IPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django_sqlprint_middleware.SqlPrintMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

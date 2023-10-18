@@ -22,7 +22,7 @@ urlpatterns = [
     path('get-cv-content-prompt/', cv_views.CvContentPromptAPIView.as_view()),
     path('get-job-title-prompt/', cv_views.JobTitleAPIView.as_view()),
 
-    path('user-info-post/', user_views.UserInfoPost.as_view()),
+    # path('user-info-post/', user_views.UserInfoPost.as_view()),
     path('upload-report/', repot_views.ReportUploadAPIView.as_view()),
     path('get-report/<int:id>/', repot_views.ReportInfoAPIView.as_view()),
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
@@ -31,9 +31,9 @@ urlpatterns = [
     # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     # path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
-    path('cv-program/', cv_views.CvProgramQuestionAPIView.as_view()),
+    # path('cv-program/', cv_views.CvProgramQuestionAPIView.as_view()),
 
-    path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),
+    # path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),
 
 
     path('get-countries/', country_views.GetCountrysAPIView.as_view())

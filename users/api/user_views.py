@@ -166,28 +166,28 @@ def user(request):
     return Response(serializer.data)
 
 
-class UserInfoPost(APIView):
-    @swagger_auto_schema(
-        request_body=user_serializers.ReportSerializer, #TODO: create report serializer and use it
-        operation_description="POST user_info email",
-    )
-    def post(self, request):
-        serializer = user_serializers.UserInfoSerializer(request.data)
-        email = serializer.data.get("email")
-        user_info = serializer.data.get("user_info")
+# class UserInfoPost(APIView):
+#     @swagger_auto_schema(
+#         request_body=user_serializers.ReportSerializer, #TODO: create report serializer and use it
+#         operation_description="POST user_info email",
+#     )
+#     def post(self, request):
+#         serializer = user_serializers.UserInfoSerializer(request.data)
+#         email = serializer.data.get("email")
+#         user_info = serializer.data.get("user_info")
 
-        try:
-            user = UserAccount.objects.get(email=email)
-        except UserAccount.DoesNotExist:
-            return Response(status=rest_status.HTTP_404_NOT_FOUND)
-        except DatabaseError as db_error:
-            return Response(status=rest_status.HTTP_500_INTERNAL_SERVER_ERROR)
+#         try:
+#             user = UserAccount.objects.get(email=email)
+#         except UserAccount.DoesNotExist:
+#             return Response(status=rest_status.HTTP_404_NOT_FOUND)
+#         except DatabaseError as db_error:
+#             return Response(status=rest_status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        # formatted_user_info = json.dumps(user_info)
-        user.user_info = user_info
-        user.save()
+#         # formatted_user_info = json.dumps(user_info)
+#         user.user_info = user_info
+#         user.save()
 
-        return Response(status=rest_status.HTTP_200_OK)
+#         return Response(status=rest_status.HTTP_200_OK)
 
 
 # class UserFilesAPIView(APIView):

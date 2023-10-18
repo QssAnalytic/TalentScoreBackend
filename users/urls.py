@@ -28,13 +28,10 @@ urlpatterns = [
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),
+    path('get-cv-info/', cv_views.CVInfoAPIView.as_view()),
     # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
-    path('cv-program/', cv_views.CvProgramQuestionAPIView.as_view()),
-
-    path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),
-
 
     path('get-countries/', country_views.GetCountrysAPIView.as_view())
 

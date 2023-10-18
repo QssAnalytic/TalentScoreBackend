@@ -397,5 +397,16 @@ class CVInfoAPIView(APIView):
     def get(self, request):
         user = request.user
         cv_info = ReportModel.objects.filter(user = user).values('secondary_education_questions', 'work_experience_questions', 'program_questions')
-        romeve_answer_weight_key = remove_answer_weight(dict(cv_info[0]))
-        return Response(romeve_answer_weight_key)
+        remove_answer_weight_key = remove_answer_weight(dict(cv_info[0]))
+        level_dict = {"value":None}
+        for data in remove_answer_weight_key['program_questions']['formData']['programSkills'][0]['whichLevel']:
+            if data['value']['answer'] == 'Junior' or data['value']['answer'] == 'İlkin':
+                data['value']['value'] = 40
+
+            if data['value']['answer'] == 'Middle' or data['value']['answer'] == 'Orta':
+                data['value']['value'] = 70
+
+            if data['value']['answer'] == 'Senior' or data['value']['answer'] == 'İrəli':
+                data['value']['value'] = 90
+
+        return Response(remove_answer_weight_key)

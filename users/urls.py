@@ -33,6 +33,7 @@ urlpatterns = [
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
 
+    path('resume-upload/', cv_views.CVUploadAPIView.as_view(), name='upload-resume-file'),
     path('get-countries/', country_views.GetCountrysAPIView.as_view())
 
 ]

@@ -6,10 +6,14 @@ from users.models import ReportModel
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import IsAuthenticated
-from users.models import ReportModel
-from rest_framework.response import Response
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from users.serializers.cv_serializers import CVInfoSerializer
+
+from django.core.files.base import ContentFile
+
+from users.models import Resume 
+from users.serializers.cv_serializers import CVInfoSerializer, ResumeSerializer
+from users.serializers.user_account_file_serializers import UserAccountFilePageSerializer
 from users.utils.remove_answer_weight import remove_answer_weight
 env = environ.Env()
 environ.Env.read_env()
@@ -412,3 +416,38 @@ class CVInfoAPIView(APIView):
                     program['value']['value'] = 90
 
         return Response(remove_answer_weight_key)
+    
+
+class CVUploadAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        user = request.user
+        if 'resume_file' not in request.data:
+            return Response({'error': 'Missing cv_file field in request data.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            req_data = request.data.get('resume_file')
+            format, imgstr = req_data.split(';base64,')
+            ext = format.split('/')[-1]
+            cont_data = ContentFile(base64.b64decode(imgstr), name='resume.' + ext)
+        except:
+            return Response({'error': 'data structure is false'}, status=status.HTTP_404_NOT_FOUND)
+        
+        data_to_serialize = {
+                'user': user.id,
+                'file': cont_data,
+                'file_category': 'CV',
+            }
+        file_serializer = UserAccountFilePageSerializer(data=data_to_serialize)
+        resume_data = request.data
+        resume_serializer = ResumeSerializer(data=request.data)
+        if file_serializer.is_valid() :
+            file_instance = file_serializer.save()
+            resume_data['resume_file'] = file_instance.id
+            resume_serializer = ResumeSerializer(data=resume_data)
+            if resume_serializer.is_valid():
+                resume_serializer.save()
+                return Response({'message': 'Resume created successfully'}, status=status.HTTP_201_CREATED)
+            else:
+                return Response(resume_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

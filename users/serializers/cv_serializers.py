@@ -11,3 +11,8 @@ class ResumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resume
         fields = "__all__"
+
+class GetResumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Resume
+        exclude = ["id", "resume_file"]

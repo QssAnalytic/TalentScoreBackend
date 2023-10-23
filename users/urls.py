@@ -28,11 +28,13 @@ urlpatterns = [
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),
-    path('get-cv-info/', cv_views.CVInfoAPIView.as_view()),
+
     # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
-
+    path('get-cv-info/', cv_views.ResumeInfoAPIView.as_view()),
+    path('get-resume/<int:id>/', cv_views.OneResumeInfoAPIView.as_view()),
+    path('resume-upload/', cv_views.CVUploadAPIView.as_view(), name='upload-resume-file'),
     path('get-countries/', country_views.GetCountrysAPIView.as_view())
 
 ]

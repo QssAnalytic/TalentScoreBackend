@@ -131,8 +131,30 @@ class ReportModel(models.Model):
     #     super().delete(*args, **kwargs)
 
 
-class UserCV(models.Model):
-    pass
+
+class Resume(models.Model):
+    
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    sample_summary = models.TextField()
+    sample_job_title = models.CharField(max_length=255)
+    profile_photo = models.URLField()
+    links = models.JSONField()
+    secondary_education = models.JSONField()
+    programSkills = models.JSONField()
+    work_experience = models.JSONField()
+    resume_file = models.ForeignKey(UserAccountFilePage, models.CASCADE, blank=True, null=True, related_name="resume")
+    class Meta:
+        verbose_name = 'Resume'
+        verbose_name_plural = 'Resumes'
+
+    def __str__(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+
+
 class CertificateModel(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)

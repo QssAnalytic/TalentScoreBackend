@@ -1,12 +1,8 @@
 import environ, os, ast
 from cryptography.fernet import Fernet
 from django.db import models
-
-from django.core.files.storage import default_storage
-from django.dispatch import receiver
 from django.utils.text import slugify
-from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import BaseUserManager
+
 
 
 class Answer(models.Model):

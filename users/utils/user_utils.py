@@ -21,6 +21,7 @@ def round_to_non_zero(num):
                         return rounded_num
                     # Increase the maximum precision (this value should be adjusted based on your needs)
                     max_precision += 1
+                    s = ""
         return 1
         
 

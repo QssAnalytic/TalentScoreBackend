@@ -1,0 +1,103 @@
+[
+    {
+         "name": "orta-texniki-ve-ali-tehsil-suallari",
+         "formData": {
+           "education": [
+             {
+               "tehsil": {
+                 "answer": "Peşə təhsili"
+               },
+               "country": {
+                 "answer": "Almaniya",
+                 "answer_weight": null
+               },
+               "university": "asd",
+               "specialty": {
+                 "answer": "Aerokosmik informasiya sistemləri",
+                 "answer_weight": null
+               },
+               "date": {
+                 "start": "2023-09-13",
+                 "end": "currently working"
+               },
+               "criterian": {
+                 "answer": "Lokal imtahan",
+                 "answer_weight": null
+               },
+               "local": {
+                 "examName": "asd",
+                 "score": "123",
+                 "maxScore": "123"
+               },
+               "otherExam": {},
+               "application": [],
+               "currentWorking": true
+             }
+           ]
+         }
+       },
+       {
+         "name": "umumi-suallar",
+         "formData": {
+           "curOccupation": {
+             "answer": "Çalışıram",
+             "answer_weight": 0.5
+           },
+           "education": {
+             "answer": "Peşə təhsili",
+             "answer_weight": 0.6
+           },
+           "educationGrant": {
+             "answer": "Zərbəçi",
+             "answer_weight": 0.7
+           }
+         }
+       },
+       {
+         "name": "olimpiada-suallari",
+         "formData": {
+           "wonOlympics": {
+             "answer": "Bəli",
+             "answer_weight": null
+           },
+           "subjectOlympiad": {
+             "answer": "Azərbaycan dili və Ədəbiyyat",
+             "answer_weight": null
+           },
+           "highestOlympiad": {
+             "answer": "Rayon",
+             "answer_weight": 0.8
+           },
+           "rankOlympiad": {
+             "answer": "2-ci yer (Gümüş medal)",
+             "answer_weight": 0.2
+           }
+         }
+       },
+     {
+         "name": "is-tecrubesi-substage",
+         "formData": {
+           "haveJobExperience": {
+             "answer": "Bəli",
+             "answer_weight": null
+           },
+           "experiences": [
+             {
+               "company": "asda",
+               "profession": "asd",
+               "workingActivityForm": {
+                 "answer": "Fiziki əmək",
+                 "answer_weight": 0.5
+               },
+               "degreeOfProfes": {
+                 "answer": "Kiçik mütəxəssis",
+                 "answer_weight": 0.3
+               },
+               "startDate": "2023-09-14",
+               "endDate": "currently working",
+               "currentWorking": true
+             }
+           ]
+         }
+       }
+   ]

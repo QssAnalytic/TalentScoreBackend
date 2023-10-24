@@ -118,8 +118,8 @@ class UserAccountFilePage(models.Model):
     class Meta:
         verbose_name = "UserAccountFilePage"
 
-    # def __str__(self) -> str:
-    #     return f'{self.file_category} of {self.user}'
+    def __str__(self) -> str:
+        return f'{self.file_category} of {self.user}'
 
 class ReportModel(models.Model):
 

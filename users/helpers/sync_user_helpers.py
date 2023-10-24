@@ -55,19 +55,16 @@ def get_education_score(request):
                 master_weight_list = []
                 phd_weight_list = []
                 for edu in userdata:
-                        if edu.get("bachelor") is not None:
-                                if edu["bachelor"] != {}:
-                                        bachelor_weight = get_bachelor_weight(edu)
-                                        bachelor_weight_list.append(bachelor_weight)
-                        if edu.get("master") is not None:
-                                if edu["master"] != {}:
-                                        master_weight = get_master_weight(edu)
-                                        master_weight_list.append(master_weight)
-
-                        if edu.get("phd") is not None:
-                                if edu["phd"] != {}:
-                                        phd_weight = get_phd_weight(edu)
-                                        phd_weight_list.append(phd_weight)
+                        print(1)
+                        if edu['tehsil']['answer'] == 'Bakalavr':
+                                    bachelor_weight = get_bachelor_weight(edu)
+                                    bachelor_weight_list.append(bachelor_weight)
+                        if edu['tehsil']['answer'] == 'Magistratura':
+                                    master_weight = get_master_weight(edu)
+                                    master_weight_list.append(master_weight)
+                        if edu['tehsil']['answer'] == 'phd':
+                                    phd_weight = get_phd_weight(edu)
+                                    phd_weight_list.append(phd_weight)
                 if bachelor_weight_list!=[]:
                         max_bachelor_weight = max(bachelor_weight_list)
                         max_master_weight = max(master_weight_list)
@@ -162,6 +159,7 @@ def get_language_score(stagedata):
                                 if data['engLangCert']['answer'] == "IELTS" or data['engLangCert']['answer'] == "TOEFL":
                                         total_language_weight*=decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight']))
                                 else:
+                                        print(data['langLevel']['answer_weight'])
                                         total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
                         else:
                                 total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))

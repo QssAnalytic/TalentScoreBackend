@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from users.models import UserAccount, ReportModel#, UserFile
+from users.models import UserAccount, ReportModel, UserProfile
 
 UserAccount=get_user_model()
 
@@ -43,13 +43,13 @@ class LoginSerializer(serializers.Serializer):
 class UserAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
-        fields = ("email","first_name","birth_date","last_name","gender", "report_test", "profile_photo")
+        fields = ("email","first_name","birth_date","last_name","gender", "report_test")
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserAccount
-        fields = ['profile_photo']
+        model = UserProfile
+        fields = '__all__'
 
 
 class ReportSerializer(serializers.ModelSerializer):

@@ -23,19 +23,18 @@ from users.permissions import CanCreateReportPermission
 
 from django.db import connection
 from django.db import reset_queries
-    
+
 class ReportUploadAPIView(APIView):
     # parser_classes = (MultiPartParser,)
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def post(self, request, *args, **kwargs):
         if 'report_file' not in request.data:
             return Response({'error': 'Missing report_file field in request data.'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             req_data = request.data.get('report_file')
-            format, imgstr = req_data.split(';base64,')
-            ext = format.split('/')[-1]
-            cont_data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+            bytes_data =base64.b64decode(req_data, validate=True)
+            cont_data = ContentFile(bytes_data, name='output.pdf')
         except:
             return Response({'error': 'data structure is false'}, status=status.HTTP_404_NOT_FOUND)
         
@@ -47,7 +46,7 @@ class ReportUploadAPIView(APIView):
             data_to_serialize = {
                 'user': user.id,
                 'file': cont_data,
-                'file_category': 'REPORT',
+                'file_category': 'REPORT'
             }
             file_serializer = UserAccountFilePageSerializer(data=data_to_serialize)
             with transaction.atomic():
@@ -106,7 +105,6 @@ class ReportInfoAPIView(APIView):
         user_profile = UserProfile.objects.filter(user=user).first()
         
         rep_data = UserAccountFilePage.objects.select_related("user__user").filter(Q(user=user_profile) & Q(id=file_id))
-        print(rep_data)
         if rep_data.exists():
             
             rep = rep_data.first()
@@ -173,26 +171,25 @@ class UserScoreAPIView(APIView):
             if stage['name'] == "umumi-suallar":
                 education_score = get_education_score(request)
                 data['education']['score'] = round_to_non_zero(1-education_score)
-                data['education']['result'] = get_report_score(education_score)
+                data['education']['result'] = get_report_score(data['education']['score'])
                 general_question_stage = stage
 
             if stage['name'] == "is-tecrubesi-substage":
                 experience_score = get_experience_score(stage)
-                
                 data['work']['score'] = round_to_non_zero(1-experience_score)
-                data['work']['result'] = get_report_score(experience_score)
+                data['work']['result'] = get_report_score( data['work']['score'])
                 work_experience_questions_stage = stage
 
             if stage['name'] == "xususi-bacariqlar-substage":
                 special_skills_score = get_skills_score(stage)
-                data['special']['result'] = get_report_score(special_skills_score)
                 data['special']['score'] = round_to_non_zero(1-special_skills_score)
+                data['special']['result'] = get_report_score(data['special']['score'])
                 special_skills_questions_stage = stage
 
             if stage['name'] == "dil-bilikleri-substage":
                 language_score = get_language_score(stage)
-                data['language']['result'] = get_report_score(language_score)
                 data['language']['score'] = round_to_non_zero(1-language_score)
+                data['language']['result'] = get_report_score(data['language']['score'])
                 language_skills_questions_stage = stage
 
             if stage['name'] == 'idman-substage':

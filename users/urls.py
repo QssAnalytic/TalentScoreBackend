@@ -8,13 +8,13 @@ from users.api import repot_views
 
 
 urlpatterns = [
-    path('login/', user_views.loginView),
-    path('register/', user_views.registerView),
+    path('login/', user_views.loginView, name='login'),
+    path('register/', user_views.registerView, name='register'),
     path('refresh-token/', user_views.CookieTokenRefreshView.as_view()),
-    path('logout/', user_views.logoutView),
+    path('logout/', user_views.logoutView, name='logout'),
     path('user/', user_views.user),
     path('user-accounts-files/', user_views.UserAccountFilesAPIView.as_view()),
-    path('user-education-score/', repot_views.UserScoreAPIView.as_view()),
+    path('user-education-score/', repot_views.UserScoreAPIView.as_view(), name='user-score'),
     path('upload-profile-photo/', user_views.UserProfilePhotoUploadAPIView.as_view()),
     
     path('get-summry-prompt/', cv_views.SummryPromptAPIView.as_view()),
@@ -23,8 +23,8 @@ urlpatterns = [
     path('get-job-title-prompt/', cv_views.JobTitleAPIView.as_view()),
 
     # path('user-info-post/', user_views.UserInfoPost.as_view()),
-    path('upload-report/', repot_views.ReportUploadAPIView.as_view()),
-    path('get-report/<int:id>/', repot_views.ReportInfoAPIView.as_view()),
+    path('upload-report/', repot_views.ReportUploadAPIView.as_view(), name='report-upload'),
+    path('get-report/<int:id>/', repot_views.ReportInfoAPIView.as_view(), name='report-info'),
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),

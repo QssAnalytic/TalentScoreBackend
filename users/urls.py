@@ -20,7 +20,7 @@ urlpatterns = [
     path('get-summry-prompt/', cv_views.SummryPromptAPIView.as_view()),
     path('get-experiance-prompt/', cv_views.ExperiancePromptAPIView.as_view()),
     path('get-cv-content-prompt/', cv_views.CvContentPromptAPIView.as_view()),
-    path('get-job-title-prompt/', cv_views.JobTitleAPIView.as_view()),
+    path('get-job-title-prompt/', cv_views.JobTitleAPIView.as_view(), name='job-title-prompt'),
 
     # path('user-info-post/', user_views.UserInfoPost.as_view()),
     path('upload-report/', repot_views.ReportUploadAPIView.as_view()),
@@ -31,9 +31,9 @@ urlpatterns = [
     # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     # path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),
-    # path('cv-program/', cv_views.CvProgramQuestionAPIView.as_view()),
+    path('cv-program/', cv_views.CvProgramQuestionAPIView.as_view(), name='cv-program'),
 
-    # path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),
+    path('get-cv-education-content/', cv_views.CVEducationContenAPIView.as_view(), name='cv-education-list'),
 
 
     path('get-countries/', country_views.GetCountrysAPIView.as_view())

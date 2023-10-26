@@ -2,13 +2,12 @@ import math, base64, openai, environ, json
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-from users.models import ReportModel
+from users.models import ReportModel, UserProfile
 from rest_framework.response import Response
-# from users.serializers.cv_serializers import CVEducationSerializer
+from users.serializers.cv_serializers import CVEducationSerializer
 from rest_framework.generics import ListAPIView
-# from users.serializers.cv_serializers import CvProgramQuestionsSerializer
+from users.serializers.cv_serializers import CvProgramQuestionsSerializer
 from rest_framework.permissions import IsAuthenticated
-from users.models import ReportModel
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 env = environ.Env()
@@ -22,20 +21,20 @@ class JobTitleAPIView(APIView):
         
         def generate_summary_job_title(i = 0, print_response = True, temperature = 0.7):
     
-            report_data = ReportModel.objects.filter(user=request.user).first()
+            userprofile_data = UserProfile.objects.filter(user=request.user).first()
             ######################
             ##  Create Prompt   ##
             ######################
 
-            umumi_suallar = report_data.general_questions
-            orta_texniki_suallar = report_data.secondary_education_questions
-            olimpiada_suallar = report_data.olympiad_questions
-            is_tecrubesi = report_data.work_experience_questions
-            xususi_bacariqlar = report_data.special_skills_questions
-            dil_bilikleri = report_data.language_skills_questions
-            idman_substage = report_data.sport_questions
-            proqram_bilikleri_substage = report_data.program_questions
-            idman_substage_2 = report_data.sport2_questions
+            umumi_suallar = userprofile_data.general_questions
+            orta_texniki_suallar = userprofile_data.secondary_education_questions
+            olimpiada_suallar = userprofile_data.olympiad_questions
+            is_tecrubesi = userprofile_data.work_experience_questions
+            xususi_bacariqlar = userprofile_data.special_skills_questions
+            dil_bilikleri = userprofile_data.language_skills_questions
+            idman_substage = userprofile_data.sport_questions
+            proqram_bilikleri_substage = userprofile_data.program_questions
+            idman_substage_2 = userprofile_data.sport2_questions
 
             prompt = ''
             # prompt += f'Hello, my name is {df.iloc[i].name_surname}. I am {df.iloc[i].age} years old. I am {df.iloc[i].gender}. '
@@ -118,20 +117,20 @@ class SummryPromptAPIView(APIView):
 
         def generate_cv_summary(i = 1,  print_response = True, 
                                temperature = 0.7):
-            report_data = ReportModel.objects.filter(user=request.user).first()
+            userprofile_data = UserProfile.objects.filter(user=request.user).first()
             ######################
             ##  Create Prompt   ##
             ######################
 
-            umumi_suallar = report_data.general_questions
-            orta_texniki_suallar = report_data.secondary_education_questions
-            olimpiada_suallar = report_data.olympiad_questions
-            is_tecrubesi = report_data.work_experience_questions
-            xususi_bacariqlar = report_data.special_skills_questions
-            dil_bilikleri = report_data.language_skills_questions
-            idman_substage = report_data.sport_questions
-            proqram_bilikleri_substage = report_data.program_questions
-            idman_substage_2 = report_data.sport2_questions
+            umumi_suallar = userprofile_data.general_questions
+            orta_texniki_suallar = userprofile_data.secondary_education_questions
+            olimpiada_suallar = userprofile_data.olympiad_questions
+            is_tecrubesi = userprofile_data.work_experience_questions
+            xususi_bacariqlar = userprofile_data.special_skills_questions
+            dil_bilikleri = userprofile_data.language_skills_questions
+            idman_substage = userprofile_data.sport_questions
+            proqram_bilikleri_substage = userprofile_data.program_questions
+            idman_substage_2 = userprofile_data.sport2_questions
 
             prompt = ''
             # prompt += f'Hello, my name is {df.iloc[i].name_surname}. I am {df.iloc[i].age} years old. I am {df.iloc[i].gender}. '
@@ -216,16 +215,16 @@ class ExperiancePromptAPIView(APIView):
             ######################
             ##  Create Prompt   ##
             ######################
-            report_data = ReportModel.objects.filter(user=request.user).first()
-            umumi_suallar = report_data.general_questions
-            orta_texniki_suallar = report_data.secondary_education_questions
-            olimpiada_suallar = report_data.olympiad_questions
-            is_tecrubesi = report_data.work_experience_questions
-            xususi_bacariqlar = report_data.special_skills_questions
-            dil_bilikleri = report_data.language_skills_questions
-            idman_substage = report_data.sport_questions
-            proqram_bilikleri_substage = report_data.program_questions
-            idman_substage_2 = report_data.sport2_questions
+            userprofile_data = UserProfile.objects.filter(user=request.user).first()
+            umumi_suallar = userprofile_data.general_questions
+            orta_texniki_suallar = userprofile_data.secondary_education_questions
+            olimpiada_suallar = userprofile_data.olympiad_questions
+            is_tecrubesi = userprofile_data.work_experience_questions
+            xususi_bacariqlar = userprofile_data.special_skills_questions
+            dil_bilikleri = userprofile_data.language_skills_questions
+            idman_substage = userprofile_data.sport_questions
+            proqram_bilikleri_substage = userprofile_data.program_questions
+            idman_substage_2 = userprofile_data.sport2_questions
             prompt = ''
             # prompt += f'Hello, my name is {df.iloc[i].name_surname}. I am {df.iloc[i].age} years old. I am {df.iloc[i].gender}. '
             prompt += f"I have education level of {umumi_suallar['formData']['education']['answer']}. "
@@ -308,16 +307,16 @@ class CvContentPromptAPIView(APIView):
             ######################
             ##  Create Prompt   ##
             ######################
-            report_data = ReportModel.objects.filter(user=request.user).first()
-            umumi_suallar = report_data.general_questions
-            orta_texniki_suallar = report_data.secondary_education_questions
-            olimpiada_suallar = report_data.olympiad_questions
-            is_tecrubesi = report_data.work_experience_questions
-            xususi_bacariqlar = report_data.special_skills_questions
-            dil_bilikleri = report_data.language_skills_questions
-            idman_substage = report_data.sport_questions
-            proqram_bilikleri_substage = report_data.program_questions
-            idman_substage_2 = report_data.sport2_questions
+            userprofile_data = UserProfile.objects.filter(user=request.user).first()
+            umumi_suallar = userprofile_data.general_questions
+            orta_texniki_suallar = userprofile_data.secondary_education_questions
+            olimpiada_suallar = userprofile_data.olympiad_questions
+            is_tecrubesi = userprofile_data.work_experience_questions
+            xususi_bacariqlar = userprofile_data.special_skills_questions
+            dil_bilikleri = userprofile_data.language_skills_questions
+            idman_substage = userprofile_data.sport_questions
+            proqram_bilikleri_substage = userprofile_data.program_questions
+            idman_substage_2 = userprofile_data.sport2_questions
 
             prompt = ''
             # prompt += f'Hello, my name is {df.iloc[i].name_surname}. I am {df.iloc[i].age} years old. I am {df.iloc[i].gender}. '
@@ -391,30 +390,31 @@ class CvContentPromptAPIView(APIView):
 
 
 
-# class CVEducationContenAPIView(generics.ListAPIView):
-#     serializer_class = CVEducationSerializer
-#     permission_classes = (IsAuthenticated,)
+class CVEducationContenAPIView(generics.ListAPIView):
+    serializer_class = CVEducationSerializer
+    permission_classes = (IsAuthenticated,)
 
-#     def get_queryset(self):
-#         user = self.request.user
+    def get_queryset(self):
+        user = self.request.user
 
-#         if user.is_authenticated:
-#             return ReportModel.objects.filter(user=user)
-#         else:
-#             return ReportModel.objects.none() 
+        if user.is_authenticated:
+            return UserProfile.objects.filter(user=user)
+        else:
+            return UserProfile.objects.none() 
     
 
 
 
-# class CvProgramQuestionAPIView(ListAPIView):
-#     serializer_class = CvProgramQuestionsSerializer
-#     queryset = ReportModel.objects.all()
-#     permission_classes = (IsAuthenticated, )
+class CvProgramQuestionAPIView(ListAPIView):
+    serializer_class = CvProgramQuestionsSerializer
+    queryset = UserProfile.objects.all()
+    permission_classes = (IsAuthenticated, )
 
-#     def get_queryset(self):
-#         user = self.request.user
-#         if user:
-#             queryset = ReportModel.objects.filter(user=user)
-#         return queryset
+    def get_queryset(self):
+        user = self.request.user
+        if user:
+            queryset = UserProfile.objects.filter(user=user)
+        return queryset
+
 
 

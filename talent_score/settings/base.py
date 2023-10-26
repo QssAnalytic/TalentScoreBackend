@@ -47,7 +47,7 @@ INTERNAL_IPS = [
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    # "debug_toolbar.middleware.DebugToolbarMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django_sqlprint_middleware.SqlPrintMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -103,7 +103,7 @@ ROOT_URLCONF = 'talent_score.urls'
 
 AUTH_USER_MODEL = 'users.UserAccount'
 
-
+TESTING = True
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

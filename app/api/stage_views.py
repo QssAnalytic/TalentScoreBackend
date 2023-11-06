@@ -37,7 +37,7 @@ class StageQuestionApiView(APIView):
 class StageQuestionViewSet(ViewSet):
     queryset = Stage.objects.all()
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def list(self, request, slug):
         # item = Stage.objects.prefetch_related('questions__answers').filter(slug=slug).order_by('questions__id')
         item = Stage.objects.prefetch_related('questions__answers__subanswers').filter(slug=slug)
@@ -53,7 +53,7 @@ class StageQuestionViewSet(ViewSet):
         return Response(serializer.data)  
 
 class StageParentListApiView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     def get(self, request):
         
         stage = Stage.objects.filter(parent=None)

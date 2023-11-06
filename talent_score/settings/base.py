@@ -116,23 +116,23 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
 }
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-    'http://localhost:5174',
-    'http://127.0.0.1:5173',
-    'http://localhost:5173',
-    'https://talent-scoring-frontend.vercel.app',
-    'https://talent-scoring-frontend-fikaroo.vercel.app',
-    'https://talent-scoring-frontend-git-main-fikaroo.vercel.app',
-    'https://talentscoring.vercel.app',
-    'https://talent-score-front-end-deploy-noi3.vercel.app',
-    'https://talentscore-report.netlify.app',
-    'https://talent-score.vercel.app'
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:3000',
+#     'http://localhost:5174',
+#     'http://127.0.0.1:5173',
+#     'http://localhost:5173',
+#     'https://talent-scoring-frontend.vercel.app',
+#     'https://talent-scoring-frontend-fikaroo.vercel.app',
+#     'https://talent-scoring-frontend-git-main-fikaroo.vercel.app',
+#     'https://talentscoring.vercel.app',
+#     'https://talent-score-front-end-deploy-noi3.vercel.app',
+#     'https://talentscore-report.netlify.app',
+#     'https://talent-score.vercel.app'
+# ]
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTP_ONLY = True
-# CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = True
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:5173',

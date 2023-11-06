@@ -35,6 +35,7 @@ urlpatterns = [
     path('get-cv-info/', cv_views.ResumeInfoAPIView.as_view()),
     path('get-resume/<int:id>/', cv_views.OneResumeInfoAPIView.as_view()),
     path('resume-upload/', cv_views.CVUploadAPIView.as_view(), name='upload-resume-file'),
-    path('get-countries/', country_views.GetCountrysAPIView.as_view())
+    path('get-countries/', country_views.GetCountrysAPIView.as_view()),
+    path('change-position/', cv_views.ChangeTitlePromptAPIView.as_view())
 
 ]

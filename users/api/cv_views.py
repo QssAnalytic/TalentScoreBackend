@@ -472,7 +472,7 @@ class ChangeTitlePromptAPIView(APIView):
         position = request.data.get('position')
 
 
-        def generate_summary_job_experience(i = 1,  job_no = 1,
+        def generate_position_for_cv(i = 1,  job_no = 1,
                                temperature = 0.7):
 
             ######################
@@ -557,6 +557,6 @@ class ChangeTitlePromptAPIView(APIView):
             
 
             return response.choices[0].message.content
-        job_experience = generate_summary_job_experience()
-        job_experience = job_experience.split("\n")
-        return Response({"position": job_experience})
+        position= generate_position_for_cv()
+        position = position.split("\n")
+        return Response({"position": position})

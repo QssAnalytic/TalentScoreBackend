@@ -159,12 +159,12 @@ def get_language_score(stagedata):
                 for data in userdata:
                         
                         if data['language']['answer'] == "Ingilis dili":
-                                if data['engLangCert']['answer'] == "IELTS" or data['engLangCert']['answer'] == "TOEFL":
-                                        total_language_weight*=decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight']))
+                                if data['engLangCert']['answer'] == "İELTS" or data['engLangCert']['answer'] == "TOEFL":
+                                        total_language_weight*=float(decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight'])))
                                 else:
-                                        total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
+                                        total_language_weight*=float(decrypt_string(ast.literal_eval(data['langLevel']['answer_weight'])))
                         else:
-                                total_language_weight*=decrypt_string(ast.literal_eval(data['langLevel']['answer_weight']))
+                                total_language_weight*=float(decrypt_string(ast.literal_eval(data['langLevel']['answer_weight'])))
                 return total_language_weight
 
 

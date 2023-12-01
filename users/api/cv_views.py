@@ -119,7 +119,7 @@ class JobTitleAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            if idman_substage_2 != None:
+            if idman_substage_2 is not None:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
             else:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
@@ -214,7 +214,7 @@ class SummryPromptAPIView(APIView):
             prompt += "" if olimpiada_suallar['formData']['wonOlympics']['answer'] == 'Xeyr' else f" I have participated in {olimpiada_suallar['formData']['subjectOlympiad']['answer']} subject which was in {olimpiada_suallar['formData']['highestOlympiad']['answer']} level and got {olimpiada_suallar['formData']['rankOlympiad']['answer']}. "
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
-            if idman_substage_2 != None:
+            if idman_substage_2 is not None:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
             else:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
@@ -308,7 +308,7 @@ class ExperiancePromptAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            if idman_substage_2 != None:
+            if idman_substage_2 is not None:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
             else:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
@@ -401,7 +401,7 @@ class CvContentPromptAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            if idman_substage_2 != None:
+            if idman_substage_2 is not None:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
             else:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "
@@ -498,7 +498,7 @@ class ChangeTitlePromptAPIView(APIView):
             prompt += "I have had no work experience. " if is_tecrubesi['formData']['haveJobExperience']['answer'] == 'Xeyr' else f"Here is detailed information about my work experience: {is_tecrubesi['formData']['experiences']}. "
             prompt += f"I have no other language knowledge" if dil_bilikleri['formData']['haveLanguageSkills']['answer'] != "Var" else f"""Here is detailed information about my language knowledge: {dil_bilikleri['formData']['languageSkills']}. """
 
-            if idman_substage_2 != None:
+            if idman_substage_2 is not None:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']} and my achievements {idman_substage_2['formData']['professionalSports']}. "
             else:
                 prompt += "" if idman_substage['formData']['haveSport']['answer'] != 'Var' else f"Here is detailed information about my sport background {idman_substage['formData']}. "

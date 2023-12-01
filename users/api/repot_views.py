@@ -230,7 +230,7 @@ class UserScoreAPIView(APIView):
                 special_skills_certificate_questions_stage = stage
         
         with transaction.atomic():
-            user.report_test = True
+            # user.report_test = True
             user.save()
             report = ReportModel.objects.create(user=user,
                                                 general_questions = general_question_stage,

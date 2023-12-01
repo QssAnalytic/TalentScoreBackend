@@ -49,7 +49,7 @@ class Answer(models.Model):
 
 class SubAnswer(models.Model):
     answer = models.ForeignKey('app.Answer', on_delete = models.CASCADE, related_name='subanswers')
-    sub_answer_title = models.CharField(max_length=150)
+    answer_title = models.CharField(max_length=150)
     sub_answer_weight = models.CharField(max_length=150,  null=True, blank=True)
     answer_weight= models.CharField(max_length=150, blank=True, null=True)
 

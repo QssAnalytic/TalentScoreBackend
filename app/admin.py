@@ -10,14 +10,14 @@ from django.db import models
 
 @admin.register(model.SubAnswer)
 class SubAnswerAdmin(admin.ModelAdmin):
-    list_display = ("sub_answer_title","answer")
+    list_display = ("answer_title","answer")
     raw_id_fields = ("answer",)
 
 
 
 class SubAnswerTabularInline(admin.TabularInline):
     model = model.SubAnswer
-    fields = ("sub_answer_title","sub_answer_weight", "sub_answer_weight_for_hashing")
+    fields = ("answer_title","sub_answer_weight", "answer_weight")
 
 class AnswerTabularInline(admin.TabularInline):
     model = model.Answer

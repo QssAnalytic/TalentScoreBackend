@@ -58,9 +58,8 @@ class SubAnswer(models.Model):
         environ.Env.read_env()
         hash_key = ast.literal_eval(env("hash_key"))
         cipher = Fernet(hash_key)
-        if self.sub_answer_weight_for_hashing!=None:
-
-            self.asub_answer_weight = cipher.encrypt(self.sub_answer_weight_for_hashing.encode())
+        if self.sub_answer_weight_for_hashing==None:
+            self.sub_answer_weight_for_hashing = cipher.encrypt(self.sub_answer_weight.encode())
         return super().save(*args, **kwargs)
     
 

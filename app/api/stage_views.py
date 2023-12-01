@@ -40,6 +40,7 @@ class StageQuestionViewSet(ViewSet):
     # permission_classes = [IsAuthenticated]
     def list(self, request, slug):
         # item = Stage.objects.prefetch_related('questions__answers').filter(slug=slug).order_by('questions__id')
+        
         item = Stage.objects.prefetch_related('questions__answers__subanswers').filter(slug=slug)
         serializer = StageQuestionListSerializer(item, many = True)
 

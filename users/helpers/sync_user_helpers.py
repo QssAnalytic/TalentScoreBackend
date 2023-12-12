@@ -235,7 +235,7 @@ def get_programming_skills_score(stagedata):
         }
 
         for program in userdata['programSkills']:
-            if program['whichProgram']["answer_title"] == 'Dizayn Proqramları' and program['whichProgram'] != [] and program['whichProgram'] != '' and program['whichProgram'] != 0:
+            if program['whichProgram'] == 'Dizayn Proqramları' and program['whichProgram'] != [] and program['whichProgram'] != '' and program['whichProgram'] != 0:
                 
                 for data in program['whichLevel']:
                     if data['value']['answer'] == 'İlkin':
@@ -246,7 +246,7 @@ def get_programming_skills_score(stagedata):
                     if data['value']['answer'] == 'İrəli':
                         lst['design'][2] += 1
 
-            if program['whichProgram']["answer_title"] == 'Proqramlaşdırma dilləri' and program['whichProgram'] != [] and program['whichProgram'] != 0:
+            if program['whichProgram'] == 'Proqramlaşdırma dilləri' and program['whichProgram'] != [] and program['whichProgram'] != 0:
                 
                 for data in program['whichLevel']:
                     if data['value']['answer'] == 'Junior':

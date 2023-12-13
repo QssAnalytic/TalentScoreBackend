@@ -18,9 +18,10 @@ urlpatterns = [
     path('upload-profile-photo/', user_views.UserProfilePhotoUploadAPIView.as_view()),
     
     path('get-summry-prompt/', cv_views.SummryPromptAPIView.as_view()),
-    path('get-experiance-prompt/', cv_views.ExperiancePromptAPIView.as_view()),
+    # path('get-experiance-prompt/', cv_views.ExperiancePromptAPIView.as_view()),s
     path('get-cv-content-prompt/', cv_views.CvContentPromptAPIView.as_view()),
     path('get-job-title-prompt/', cv_views.JobTitleAPIView.as_view()),
+    path('change-job-experience/', cv_views.ChangeJobExperianceAPIView.as_view()),
 
     path('user-info-post/', user_views.UserInfoPost.as_view()),
     path('upload-report/', repot_views.ReportUploadAPIView.as_view()),
@@ -28,7 +29,7 @@ urlpatterns = [
     path('get-certificate-designation-content/', certificate_views.CertificateDesigAPIView.as_view()), ####
     path('get-certificate-intro/', certificate_views.CertificateIntroAPIView.as_view()), ####
     path('upload-cert/', certificate_views.UploadCertificateAPIView.as_view(), name='upload-certificate'),
-
+    
     # path('get-unique-cert-id/', certificate_views.CreateUniqueCertificateValue.as_view()),
 
     path('upload-file/', user_views.UserFilesAPIView.as_view(), name='upload-user-file'),

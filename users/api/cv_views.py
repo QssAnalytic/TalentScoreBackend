@@ -28,7 +28,6 @@ class ResumeInfoAPIView(APIView):
         level_dict = {"value":None}
         for data in remove_answer_weight_key['program_questions']['formData']['programSkills']:
             for program in data['whichLevel']:
-                print(program)
                 if program['value']['answer'] == 'Junior' or program['value']['answer'] == 'İlkin':
                     program['value']['value'] = 40
 

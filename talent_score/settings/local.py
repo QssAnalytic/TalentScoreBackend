@@ -9,10 +9,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 #     }
 # }
 
+import os as _os
+
+# SQLITE_PATH points at the persistent volume in production (e.g. /data/db.sqlite3),
+# so redeploys keep users and reports. scripts/prepare_data.py seeds it from db2.sqlite3 once.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db2.sqlite3',
+        'NAME': _os.environ.get('SQLITE_PATH', str(BASE_DIR / 'db2.sqlite3')),
     }
 }
 

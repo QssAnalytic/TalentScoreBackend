@@ -87,7 +87,6 @@ def loginView(request):
 @rest_decorators.api_view(["POST"])
 @rest_decorators.permission_classes([])
 def registerView(request):
-    print(request.data)
     serializer = user_serializers.RegistrationSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
 
@@ -124,7 +123,6 @@ class CookieTokenRefreshSerializer(jwt_serializers.TokenRefreshSerializer):
 
     def validate(self, attrs):
         attrs["refresh"] = self.context["request"].COOKIES.get("refresh")
-        print(self.context["request"].COOKIES.get("refresh"))
         if attrs["refresh"]:
             return super().validate(attrs)
         else:

@@ -52,7 +52,6 @@ class ReportUploadAPIView(APIView):
                 if file_serializer.is_valid():
                     report.report_file = file_serializer.save()
                     report.save()
-                    print(report.report_file.id)
 
                     return Response({'message': "file uploaded"}, status=status.HTTP_201_CREATED)
                 return Response(file_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

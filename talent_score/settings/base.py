@@ -7,7 +7,7 @@ env = environ.Env()
 environ.Env.read_env()
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DEBUG = True
+DEBUG = env.bool("DEBUG", default=False)
 
 ALLOWED_HOSTS = [
     '*'
@@ -215,7 +215,8 @@ SIMPLE_JWT = {
     'AUTH_COOKIE_SAMESITE': "None", # TODO: Modify to Lax
 }
 
-USE_S3 = True
+# S3 credentials from 2023 are rejected by AWS (403). Files go to the persistent volume unless USE_S3=true.
+USE_S3 = env.bool("USE_S3", default=False)
 
 if USE_S3:
     # aws settings
@@ -240,5 +241,5 @@ else:
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+MEDIA_ROOT = env("MEDIA_ROOT", default=os.path.join(BASE_DIR, 'media/'))
 

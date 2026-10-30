@@ -141,9 +141,12 @@ CSRF_TRUSTED_ORIGINS = [
     'https://talent-score-front-end-deploy-noi3.vercel.app',
     'https://talent-score.vercel.app',
     'https://web-production-5301.up.railway.app',
-    'https://talentscore.vercel.app'
+    'https://talentscore.vercel.app',
+    'https://talentscorefrontend-production.up.railway.app',
 
 ]
+# Extra trusted origins, comma separated, e.g. a custom domain or a local test server.
+CSRF_TRUSTED_ORIGINS += [o.strip() for o in env("EXTRA_CSRF_TRUSTED_ORIGINS", default="").split(",") if o.strip()]
 CORS_EXPOSE_HEADERS = ["Content-Type", "X-CSRFToken"]
 
 SESSION_COOKIE_SECURE = True

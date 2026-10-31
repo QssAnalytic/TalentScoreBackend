@@ -243,3 +243,14 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = env("MEDIA_ROOT", default=os.path.join(BASE_DIR, 'media/'))
 
+
+# Errors (with tracebacks, never request bodies) go to stdout so Railway logs show them.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {'console': {'class': 'logging.StreamHandler'}},
+    'loggers': {
+        'django.request': {'handlers': ['console'], 'level': 'ERROR', 'propagate': False},
+        'talent_score': {'handlers': ['console'], 'level': 'INFO', 'propagate': False},
+    },
+}

@@ -31,6 +31,9 @@ def get_education_score(request):
         max_master_weight = 1
         max_phd_weight = 1
         education_degree_weight = 1
+        # Defaults for stages the person did not reach (previously left unset -> crash).
+        work_activite_weight = education_weight = education_grand_weight = 1
+        olimp_highest_weight = olimp_rank_weight = 1
         for stage in user_info:
             if stage['name'] == 'umumi-suallar':
                 umumi_stage = stage
@@ -44,13 +47,14 @@ def get_education_score(request):
         
         if umumi_stage != None:
                 work_activite_weight = check(data = umumi_stage["formData"], key = "curOccupation")
-                education_weight = check(umumi_stage["formData"]["education"], key = "master")
+                education_answer = umumi_stage["formData"].get("education")
+                education_weight = check(education_answer, key = "master") if isinstance(education_answer, dict) else 1
                 education_grand_weight = check(data = umumi_stage["formData"], key = "educationGrant")
         if olimpia_stage !=None:
                 olimp_highest_weight = check(data = olimpia_stage["formData"], key = "highestOlympiad")
                 olimp_rank_weight = check(data = olimpia_stage["formData"], key = "rankOlympiad")
         if education_stage !=None:
-                userdata = education_stage["formData"]["education"]
+                userdata = education_stage["formData"].get("education") or []
                 bachelor_weight_list = []
                 master_weight_list = []
                 phd_weight_list = []
@@ -68,11 +72,14 @@ def get_education_score(request):
                                 if edu["phd"] != {}:
                                         phd_weight = get_phd_weight(edu)
                                         phd_weight_list.append(phd_weight)
-                if bachelor_weight_list!=[]:
-                        max_bachelor_weight = max(bachelor_weight_list)
-                        max_master_weight = max(master_weight_list)
-                if phd_weight_list != []:
-                        max_phd_weight = max(master_weight_list)
+                # Only the degrees the person actually has count (a bachelor-only applicant
+                # used to crash here on max() of an empty master list).
+                if bachelor_weight_list:
+                        max_bachelor_weight = max(w for w in bachelor_weight_list if w is not None) if any(w is not None for w in bachelor_weight_list) else 1
+                if master_weight_list:
+                        max_master_weight = max(w for w in master_weight_list if w is not None) if any(w is not None for w in master_weight_list) else 1
+                if phd_weight_list:
+                        max_phd_weight = max(w for w in phd_weight_list if w is not None) if any(w is not None for w in phd_weight_list) else 1
                 education_degree_weight = round(max_bachelor_weight*max_master_weight*max_phd_weight,3)
 
         total_education_weight = work_activite_weight*education_weight*(education_grand_weight*education_degree_weight*olimp_highest_weight*olimp_rank_weight)**(1/3)
@@ -91,8 +98,8 @@ def get_experience_score(stagedata):
         if len(userdata) > 1:
             max = 0
             for data in userdata:
-                if workingform[data["workingActivityForm"]["answer"]] > max:
-                    max = workingform[data["workingActivityForm"]["answer"]]
+                if workingform.get(data["workingActivityForm"]["answer"], 0) >= max:
+                    max = workingform.get(data["workingActivityForm"]["answer"], 0)
                     max_working_form_weight = float(decrypt_string(ast.literal_eval(data["workingActivityForm"]["answer_weight"])))
                     profession_degree_weight = float(decrypt_string(ast.literal_eval(data["degreeOfProfes"]["answer_weight"])))
                     difference = calculate_date_difference(data)
@@ -114,7 +121,7 @@ def get_experience_score(stagedata):
 
 def get_skills_score(stagedata):
 
-    if stagedata['formData']['haveSpecialSkills']['answer'] == "Var":
+    if (stagedata['formData'].get('haveSpecialSkills') or {}).get('answer') == "Var":
 
         userdata = stagedata["formData"]["skills"]
         lst = []
@@ -150,7 +157,7 @@ def get_skills_score(stagedata):
 
 def get_language_score(stagedata):
         if stagedata['formData'] != {}:
-                language_skills:bool = stagedata['formData']['haveLanguageSkills']['answer']
+                language_skills:bool = (stagedata['formData'].get('haveLanguageSkills') or {}).get('answer')
                 total_language_weight = 1
                 if language_skills != 'Var':
                         return 0
@@ -159,7 +166,7 @@ def get_language_score(stagedata):
                 for data in userdata:
                         
                         if data['language']['answer'] == "Ingilis dili":
-                                if data['engLangCert']['answer'] == "İELTS" or data['engLangCert']['answer'] == "TOEFL":
+                                if (data.get('engLangCert') or {}).get('answer') in ("İELTS", "TOEFL") and data.get('engCertResult'):
                                         total_language_weight*=float(decrypt_string(ast.literal_eval(data['engCertResult']['answer_weight'])))
                                 else:
                                         total_language_weight*=float(decrypt_string(ast.literal_eval(data['langLevel']['answer_weight'])))
@@ -194,13 +201,13 @@ def get_programming_skills_score(stagedata):
         'othersScore': 1,
     }
 
-    if userdata['haveProgramSkills']['answer'] == "Var":
+    if (userdata.get('haveProgramSkills') or {}).get('answer') == "Var":
         # Calculating officeScore
         word_score = 0
         excel_score = 0
         pp_score = 0
 
-        if userdata['programSkills'] and userdata['programSkills'] != [] and userdata['programSkills'] != 0 and userdata['programSkills'] != '0':
+        if userdata.get('programSkills') and userdata['programSkills'] != [] and userdata['programSkills'] != 0 and userdata['programSkills'] != '0':
             for answer in userdata['programSkills']:
                 for program in answer['whichLevel']:
                     if program['name'] == 'Word' and program['answer_weight'] is not None and program['value']['answer_weight'] is not None:
@@ -234,8 +241,8 @@ def get_programming_skills_score(stagedata):
             'others': [0, 0, 0]
         }
 
-        for program in userdata['programSkills']:
-            if program['whichProgram'] == 'Dizayn Proqramları' and program['whichProgram'] != [] and program['whichProgram'] != '' and program['whichProgram'] != 0:
+        for program in (userdata.get('programSkills') or []):
+            if program.get('whichProgram') == 'Dizayn Proqramları' and program['whichProgram'] != [] and program['whichProgram'] != '' and program['whichProgram'] != 0:
                 
                 for data in program['whichLevel']:
                     if data['value']['answer'] == 'İlkin':
@@ -256,7 +263,7 @@ def get_programming_skills_score(stagedata):
                     if data['value']['answer'] == 'Senior':
                         lst['programs'][2] += 1
 
-            if userdata['whichProgram'] == 'others' and userdata['whichProgram'] != []:
+            if userdata.get('whichProgram') == 'others':
                 for data in userdata['whichProgram']:
                     if data['value']['answer'] == 'Junior':
                         lst['others'][0] += 1

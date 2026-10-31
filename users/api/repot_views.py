@@ -1,3 +1,4 @@
+import logging
 import base64
 from django.http import JsonResponse
 from rest_framework.views import APIView
@@ -98,12 +99,12 @@ class ReportInfoAPIView(APIView):
             to_attr='report_data'
         )
         
-        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':'limited'},
-                'language': {'text': 'Language skills',"score":1,'result':'limited'},
-                'special': {'text': 'Special talent','score':1, 'result':'limited'},
-                'sport': {'text': 'Sport skills','score':1, 'result':'limited'},
-                'work': {'text': 'Work experience','score':1, 'result':'limited'},
-                'program': {'text': 'Program skills','score':1, 'result':'limited'}}
+        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":0, 'result':'limited'},
+                'language': {'text': 'Language skills',"score":0,'result':'limited'},
+                'special': {'text': 'Special talent','score':0, 'result':'limited'},
+                'sport': {'text': 'Sport skills','score':0, 'result':'limited'},
+                'work': {'text': 'Work experience','score':0, 'result':'limited'},
+                'program': {'text': 'Program skills','score':0, 'result':'limited'}}
         
         rep = UserAccountFilePage.objects.filter(Q(user=user) & Q(id=file_id)).prefetch_related(report_prefetch)
         
@@ -127,6 +128,46 @@ class ReportInfoAPIView(APIView):
         return Response({"data": None}, status=status.HTTP_204_NO_CONTENT)
     
 
+
+
+logger = logging.getLogger('talent_score.report')
+
+
+def _safe_weight(area, fn, *args, **kwargs):
+    """Run one area's scoring. If it fails, log the traceback (never the answers)
+    and use a neutral weight, so one bad answer does not fail the whole report."""
+    try:
+        value = fn(*args, **kwargs)
+        # The helpers return 0 for "none" (no languages, no work, ...). A weight of 0 would
+        # mean the best possible score, so "none" is mapped to 1 (the lowest score).
+        return 1 if value is None or float(value) <= 0 else min(1.0, float(value))
+    except Exception:
+        logger.exception('Talent report: the %s area could not be scored; a neutral value was used', area)
+        return 0.5
+
+
+def _sport_weight(stage, user_info):
+    if (stage['formData'].get('haveSport') or {}).get('answer') == 'Yoxdur':
+        return None
+    sport_stage = stage['formData'].get('sports') or []
+    sport_stage2 = None
+    for level in sport_stage:
+        if level['value']['answer'] == 'Peşəkar':
+            pro = [s for s in user_info if s.get('name') == 'idman-substage2']
+            sport_stage2 = pro[0]['formData']['professionalSports'] if pro else None
+            break
+    return get_sport_skills_score(sport_stage=sport_stage, sport_stage2=sport_stage2)
+
+
+def _score(weight):
+    # Percentile shown in the report: 1 - weight. A weight of 1 means "none" -> 0.
+    # (round_to_non_zero never returns for 0, so that case is handled here.)
+    return 0 if float(weight) >= 1 else round_to_non_zero(1 - float(weight))
+
+
+def _label(weight):
+    # The weight is a rarity (lower = better); the label must describe the score (1 - weight).
+    return get_report_score(round(1 - float(weight), 2))
 
 
 class UserScoreAPIView(APIView):
@@ -153,67 +194,53 @@ class UserScoreAPIView(APIView):
         report_file_secret_key = generate_unique_random_key()
 
 
-        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":1, 'result':'limited'},
-                'language': {'text': 'Language skills',"score":1,'result':'limited'},
-                'special': {'text': 'Special talent','score':1, 'result':'limited'},
-                'sport': {'text': 'Sport skills','score':1, 'result':'limited'},
-                'work': {'text': 'Work experience','score':1, 'result':'limited'},
-                'program': {'text': 'Program skills','score':1, 'result':'limited'}}
+        data: TypedDict[str, SkillInfo] = {'education':{'text': 'Education',"score":0, 'result':'limited'},
+                'language': {'text': 'Language skills',"score":0,'result':'limited'},
+                'special': {'text': 'Special talent','score':0, 'result':'limited'},
+                'sport': {'text': 'Sport skills','score':0, 'result':'limited'},
+                'work': {'text': 'Work experience','score':0, 'result':'limited'},
+                'program': {'text': 'Program skills','score':0, 'result':'limited'}}
         user_info = request.data.get('user_info')
 
         
         for stage in user_info:
             
             if stage['name'] == "umumi-suallar":
-                education_score = get_education_score(request)
-                data['education']['score'] = round_to_non_zero(1-education_score)
-                data['education']['result'] = get_report_score(education_score)
+                education_score = _safe_weight('education', get_education_score, request)
+                data['education']['score'] = _score(education_score)
+                data['education']['result'] = _label(education_score)
                 general_question_stage = stage
 
             if stage['name'] == "is-tecrubesi-substage":
-                experience_score = get_experience_score(stage)
+                experience_score = _safe_weight('work', get_experience_score, stage)
                 
-                data['work']['score'] = round_to_non_zero(1-experience_score)
-                data['work']['result'] = get_report_score(experience_score)
+                data['work']['score'] = _score(experience_score)
+                data['work']['result'] = _label(experience_score)
                 work_experience_questions_stage = stage
 
             if stage['name'] == "xususi-bacariqlar-substage":
-                special_skills_score = get_skills_score(stage)
-                data['special']['result'] = get_report_score(special_skills_score)
-                data['special']['score'] = round_to_non_zero(1-special_skills_score)
+                special_skills_score = _safe_weight('special', get_skills_score, stage)
+                data['special']['result'] = _label(special_skills_score)
+                data['special']['score'] = _score(special_skills_score)
                 special_skills_questions_stage = stage
 
             if stage['name'] == "dil-bilikleri-substage":
-                language_score = get_language_score(stage)
-                data['language']['result'] = get_report_score(language_score)
-                data['language']['score'] = round_to_non_zero(1-language_score)
+                language_score = _safe_weight('language', get_language_score, stage)
+                data['language']['result'] = _label(language_score)
+                data['language']['score'] = _score(language_score)
                 language_skills_questions_stage = stage
 
             if stage['name'] == 'idman-substage':
-                
-                if stage['formData']['haveSport']['answer'] != 'Yoxdur':
-                    
-                    sport_stage:list = stage['formData']['sports']
-                    sport_stage2 = None
-                    for level in sport_stage:
-                        if level['value']['answer'] == 'Peşəkar':
-                            sport_stage2:list = list(filter(lambda x: x['name'] == 'idman-substage2', user_info))
-                            sport_stage2:list = sport_stage2[0]['formData']['professionalSports']
-
-                            break
-                        
-                    sport_score = get_sport_skills_score(sport_stage = sport_stage, sport_stage2=sport_stage2)
-
-                    data['sport']['result'] = get_report_score(sport_score)
-                    data['sport']['score'] = round_to_non_zero(1-sport_score)
-                    sport_questions_stage = stage
-                else:
-                    sport_questions_stage = stage
+                sport_questions_stage = stage
+                if (stage['formData'].get('haveSport') or {}).get('answer') != 'Yoxdur':
+                    sport_score = _safe_weight('sport', _sport_weight, stage, user_info)
+                    data['sport']['result'] = _label(sport_score)
+                    data['sport']['score'] = _score(sport_score)
 
             if stage['name'] == "proqram-bilikleri-substage":
-                programming_skills_score = get_programming_skills_score(stage)
-                data['program']['result'] = get_report_score(programming_skills_score)
-                data['program']['score'] = 1-programming_skills_score
+                programming_skills_score = _safe_weight('program', get_programming_skills_score, stage)
+                data['program']['result'] = _label(programming_skills_score)
+                data['program']['score'] = _score(programming_skills_score)
                 program_questions_stage = stage
 
             if stage['name'] == 'idman-substage2':
